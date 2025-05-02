@@ -64,8 +64,13 @@ int main(void) {
     }
 
     printf("test results: %d/%d passed\n", *passed_tests, *total_tests);
+    if (*passed_tests != *total_tests) {
+        free(passed_tests);
+        free(total_tests);
+        return 1;
+    }
+
     free(passed_tests);
     free(total_tests);
-
     return 0;
 }
