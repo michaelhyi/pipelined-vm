@@ -21,9 +21,11 @@ test: $(TEST_FILES)
 clean:
 	rm -f $(SRC_OUTPUT) $(TEST_OUTPUT)
 
+format-setup:
+	clang-format -style=llvm -dump-config > .clang-format
+
 format:
-	find . --regex '.*\.\(c\|h\)' -exec clang-format -style=file -i {} \;
+	find . \( -name "*.c" -o -name "*.h" \) -exec clang-format -style=file -i {} +
 
 
-.PHONY: all test clean format
-
+.PHONY: all test clean format-setup format
