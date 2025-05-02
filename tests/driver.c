@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "../src/vm.h"
+#include "test_id.h"
 #include "test_if.h"
 
 int main(void) {
@@ -21,6 +22,7 @@ int main(void) {
   }
 
   test_if_exec_cycle(passed_tests, total_tests);
+  test_id_exec_cycle(passed_tests, total_tests);
 
   printf("test results: %d/%d passed\n", *passed_tests, *total_tests);
   free(passed_tests);
