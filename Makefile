@@ -30,7 +30,7 @@ clean:
 format-setup:
 	clang-format -style=llvm -dump-config > .clang-format
 
-format:
+format: format-setup
 	find . \( -name "*.c" -o -name "*.h" \) -exec clang-format -style=file -i {} +
 
 

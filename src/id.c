@@ -4,7 +4,8 @@
 
 #include "vm.h"
 
-// TODO: for all stages, handle the case where buffers are empty. (ie first time running the pipeline)
+// TODO: for all stages, handle the case where buffers are empty. (ie first time
+// running the pipeline)
 void *id_exec_cycle(void *arg) {
   dbuf_t *dbuf = (dbuf_t *)arg;
 
