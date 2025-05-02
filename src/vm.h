@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+#include "ex.h"
 #include "id.h"
 #include "if.h"
 
@@ -20,6 +21,7 @@ typedef struct vm_t {
 
     fbuf_t fbuf;
     dbuf_t dbuf;
+    ebuf_t ebuf;
 } vm_t;
 
 extern vm_t vm;

@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 typedef struct fbuf_t {
-    int ready;
+    int16_t ready;
 
     int16_t pc;
     int16_t ir;
