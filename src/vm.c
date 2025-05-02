@@ -7,4 +7,5 @@ void system_init() {
     vm.fbuf.ready = 0;
     vm.dbuf.ready = 0;
     vm.ebuf.ready = 0;
+    vm.mbuf.ready = 0;
 }

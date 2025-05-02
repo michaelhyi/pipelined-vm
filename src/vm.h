@@ -3,9 +3,10 @@
 
 #include <stdint.h>
 
-#include "ex.h"
 #include "id.h"
 #include "if.h"
+#include "ex.h"
+#include "mem.h"
 
 #define ADDRESS_SPACE (1 << 16)
 #define NUM_GENERAL_PURPOSE_REGISTERS (8)
@@ -22,6 +23,7 @@ typedef struct vm_t {
     fbuf_t fbuf;
     dbuf_t dbuf;
     ebuf_t ebuf;
+    mbuf_t mbuf;
 } vm_t;
 
 extern vm_t vm;
