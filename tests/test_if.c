@@ -38,11 +38,9 @@ void test_if_exec_cycle(int *passed_tests, int *total_tests) {
         }
         (*passed_tests)++;
 
-        if (fbuf.instruction != 0x0000 + i) {
-            fprintf(
-                stderr,
-                "expected fbuf instruction: %x, actual fbuf instruction: %x\n",
-                0x0000 + i, fbuf.instruction);
+        if (fbuf.ir != 0x0000 + i) {
+            fprintf(stderr, "expected fbuf.ir: %x, actual fbuf.ir: %x\n",
+                    0x0000 + i, fbuf.ir);
             return;
         }
         (*passed_tests)++;

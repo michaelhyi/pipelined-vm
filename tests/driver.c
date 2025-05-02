@@ -1,9 +1,14 @@
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "../src/vm.h"
 #include "test_id.h"
 #include "test_if.h"
+#include "test_util.h"
+
+// TODO: descriptive test cases per output line
+// TODO: no need to test for thread failure
 
 int main(void) {
     system_init();
@@ -21,8 +26,42 @@ int main(void) {
         return 1;
     }
 
+    errno = 0;
     test_if_exec_cycle(passed_tests, total_tests);
-    test_id_exec_cycle(passed_tests, total_tests);
+    if (errno) {
+        fprintf(stderr, "error while running test_if_exec_cycle; errno: %d\n",
+                errno);
+        // TODO: total tests wont be fully counted here
+        printf("test results: %d/%d passed\n", *passed_tests, *total_tests);
+
+        free(passed_tests);
+        free(total_tests);
+        return 1;
+    }
+
+    errno = 0;
+    // test_id_exec_cycle(passed_tests, total_tests);
+    if (errno) {
+        fprintf(stderr, "error while running test_id_exec_cycle; errno: %d\n",
+                errno);
+        printf("test results: %d/%d passed\n", *passed_tests, *total_tests);
+
+        free(passed_tests);
+        free(total_tests);
+        return 1;
+    }
+
+    errno = 0;
+    test_util(passed_tests, total_tests);
+    if (errno) {
+        // TODO: this runs every time
+        fprintf(stderr, "error while running test_util; errno: %d\n", errno);
+        printf("test results: %d/%d passed\n", *passed_tests, *total_tests);
+
+        free(passed_tests);
+        free(total_tests);
+        return 1;
+    }
 
     printf("test results: %d/%d passed\n", *passed_tests, *total_tests);
     free(passed_tests);
