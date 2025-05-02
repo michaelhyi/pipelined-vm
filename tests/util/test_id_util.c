@@ -4,8 +4,8 @@
 #include <stdio.h>
 
 #include "../../src/stages/id.h"
-#include "../../src/stages/id_util.h"
-#include "../../src/util.h"
+#include "../../src/util/bitops.h"
+#include "../../src/util/id_util.h"
 #include "../../src/vm.h"
 
 /**

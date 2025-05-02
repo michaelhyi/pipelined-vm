@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#include "id.h"
-#include "if.h"
+#include "../stages/id.h"
+#include "../stages/if.h"
 
 /**
  * Returns whether the instruction performs JSR.

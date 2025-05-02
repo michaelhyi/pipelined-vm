@@ -1,16 +1,16 @@
-#include "test_util.h"
+#include "test_bitops.h"
 
 #include <errno.h>
 #include <stdio.h>
 
-#include "../src/util.h"
+#include "../../src/util/bitops.h"
 
 static void test_bit_range(int *passed_tests);
 static void test_sign_extend(int *passed_tests);
 
-void test_util(int *passed_tests) {
+void test_bitops(int *passed_tests) {
     if (!passed_tests) {
-        fprintf(stderr, "test_util failed: passed_tests must be non-null\n");
+        fprintf(stderr, "test_bitops failed: passed_tests must be non-null\n");
         errno = EINVAL;
         return;
     }

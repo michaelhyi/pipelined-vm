@@ -3,9 +3,9 @@
 #include <errno.h>
 #include <stdio.h>
 
-#include "../util.h"
+#include "../stages/id.h"
 #include "../vm.h"
-#include "id.h"
+#include "bitops.h"
 
 int is_jsr(int16_t ir) {
     int opcode = bit_range(ir, 12, 15);

@@ -2,7 +2,7 @@
 #define TEST_ID_UTIL_H
 
 /**
- * Runs unit tests on all functions in "../src/stages/id_util.h".
+ * Runs unit tests on all functions in "../src/util/id_util.h".
  *
  * @param passed_tests pointer to a counter of passed tests
  */

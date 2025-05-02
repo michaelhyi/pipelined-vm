@@ -1,6 +1,7 @@
 #include "ex.h"
 
 #include <errno.h>
+#include <pthread.h>
 #include <stdio.h>
 
 #include "../vm.h"
@@ -8,19 +9,18 @@
 void *ex_run(void *arg) {
     if (!arg) {
         fprintf(stderr, "ex_run failed: arg must be non-null\n");
-        errno = EINVAL;
-        return NULL;
-    }
-
-    if (!vm.dbuf.ready) {
-        return NULL;
+        pthread_exit((void *)(intptr_t)EINVAL);
     }
 
     dbuf_t dbuf = vm.dbuf;
-    ebuf_t *ebuf = (ebuf_t *)arg;
 
+    if (!dbuf.ready) {
+        return NULL;
+    }
+
+    ebuf_t *ebuf = (ebuf_t *)arg;
     ebuf->ready = 1;
-    ebuf->pc = dbuf.opcode;
+    ebuf->pc = dbuf.pc;
     ebuf->opcode = dbuf.opcode;
     ebuf->reg = dbuf.reg;
 
@@ -32,14 +32,13 @@ void *ex_run(void *arg) {
     } else if (ebuf->opcode == OP_NOT) {
         ebuf->result = ~dbuf.operand1;
     } else if (ebuf->opcode == OP_BR) {
-        // TODO: handle branch
+        // TODO: handle branch prediction
     } else if (ebuf->opcode == OP_JMP) {
         // TODO: flush younger stages in pipeline, override PC
-        // TODO: handle JSRR
+        // TODO: handle JSR(R)
     } else if (ebuf->opcode == OP_LD || ebuf->opcode == OP_LDI ||
                ebuf->opcode == OP_LEA || ebuf->opcode == OP_ST ||
                ebuf->opcode == OP_STI) {
-        // TODO: send bubbles until mutliple references occur for LDI
         ebuf->result = dbuf.pc + dbuf.operand1;
     } else if (ebuf->opcode == OP_TRAP) {
         ebuf->result = dbuf.operand1;

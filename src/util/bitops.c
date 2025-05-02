@@ -1,4 +1,4 @@
-#include "util.h"
+#include "bitops.h"
 
 #include <errno.h>
 #include <stdio.h>

@@ -4,9 +4,9 @@
 #include <pthread.h>
 #include <stdio.h>
 
-#include "../util.h"
+#include "../util/bitops.h"
+#include "../util/id_util.h"
 #include "../vm.h"
-#include "id_util.h"
 
 void *id_run(void *arg) {
     // TODO: test for this case

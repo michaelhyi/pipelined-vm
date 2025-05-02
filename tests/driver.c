@@ -3,10 +3,10 @@
 #include <stdlib.h>
 
 #include "../src/vm.h"
-#include "./stages/test_id.h"
-#include "./stages/test_id_util.h"
-#include "./stages/test_if.h"
-#include "test_util.h"
+#include "stages/test_id.h"
+#include "stages/test_if.h"
+#include "util/test_bitops.h"
+#include "util/test_id_util.h"
 
 // TODO: descriptive test cases per output line
 // TODO: no need to test for thread failure
@@ -57,7 +57,7 @@ int main(void) {
     }
 
     errno = 0;
-    test_util(passed_tests);
+    test_bitops(passed_tests);
     if (errno) {
         // TODO: this runs every time
         fprintf(stderr, "error while running test_util; errno: %d\n", errno);
