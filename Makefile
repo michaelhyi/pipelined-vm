@@ -20,7 +20,7 @@ test: $(TEST_FILES)
 	$(CC) $(CFLAGS) $(TEST_FILES) -o $(TEST_OUTPUT)
 	./$(TEST_OUTPUT)
 
-valgrind: $(SRC_OUTPUT) $(TEST_OUTPUT)
+valgrind: $(SRC_OUTPUT) test
 	valgrind --leak-check=yes ./$(SRC_OUTPUT)
 	valgrind --leak-check=yes ./$(TEST_OUTPUT)
 	
@@ -28,7 +28,9 @@ clean:
 	rm -f $(SRC_OUTPUT) $(TEST_OUTPUT)
 
 format-setup:
-	clang-format -style="{BasedOnStyle: LLVM, IndentWidth: 4}" -dump-config > .clang-format
+	@if [ ! -f .clang-format ]; then \
+		clang-format -style="{BasedOnStyle: LLVM, IndentWidth: 4}" -dump-config > .clang-format; \
+	fi
 
 format: format-setup
 	find . \( -name "*.c" -o -name "*.h" \) -exec clang-format -style=file -i {} +
