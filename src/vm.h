@@ -3,18 +3,18 @@
 
 #include <stdint.h>
 
+#include "ex.h"
 #include "id.h"
 #include "if.h"
-#include "ex.h"
 #include "mem.h"
 
 #define ADDRESS_SPACE (1 << 16)
-#define NUM_GENERAL_PURPOSE_REGISTERS (8)
+#define NUM_REGISTERS (8)
 
 // TODO: add mutex locks
 typedef struct vm_t {
     int16_t mem[ADDRESS_SPACE];
-    int16_t reg[NUM_GENERAL_PURPOSE_REGISTERS];
+    int16_t reg[NUM_REGISTERS];
     int16_t pc;
     int16_t cc;
     int16_t psr;
@@ -27,6 +27,9 @@ typedef struct vm_t {
 
 extern vm_t vm;
 
+/**
+ * Initializes the virtual machine.
+ */
 void system_init(void);
 
 #endif

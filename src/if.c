@@ -4,7 +4,7 @@
 
 #include "vm.h"
 
-void *if_exec_cycle(void *arg) {
+void *if_run(void *arg) {
     fbuf_t *fbuf = (fbuf_t *)arg;
 
     fbuf->ready = 1;

@@ -27,7 +27,7 @@ int main(void) {
     }
 
     errno = 0;
-    test_if_exec_cycle(passed_tests, total_tests);
+    test_if_run(passed_tests, total_tests);
     if (errno) {
         fprintf(stderr, "error while running test_if_exec_cycle; errno: %d\n",
                 errno);

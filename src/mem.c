@@ -23,7 +23,7 @@ void *mem_run(void *arg) {
     memcpy(mbuf, &ebuf, sizeof(mbuf_t));
 
     if (ebuf.opcode == OP_LD || ebuf.opcode == OP_LDR) {
-        mbuf->result = vm.mem[ebuf.result]; 
+        mbuf->result = vm.mem[ebuf.result];
     } else if (ebuf.opcode == OP_LDI) {
         // TODO: send bubbles
     } else if (ebuf.opcode == OP_ST || ebuf.opcode == OP_STR) {
