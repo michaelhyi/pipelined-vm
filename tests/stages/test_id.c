@@ -1,9 +1,10 @@
 #include "test_id.h"
+
 #include <pthread.h>
 #include <stdio.h>
 
-#include "../src/id.h"
-#include "../src/vm.h"
+#include "../../src/stages/id.h"
+#include "../../src/vm.h"
 
 // void test_id_exec_cycle(int *passed_tests, int *total_tests) {
 //     test_id_add_register_exec_cycle(passed_tests, total_tests);

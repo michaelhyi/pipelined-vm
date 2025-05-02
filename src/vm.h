@@ -3,10 +3,10 @@
 
 #include <stdint.h>
 
-#include "ex.h"
-#include "id.h"
-#include "if.h"
-#include "mem.h"
+#include "./stages/ex.h"
+#include "./stages/id.h"
+#include "./stages/if.h"
+#include "./stages/mem.h"
 
 #define ADDRESS_SPACE (1 << 16)
 #define NUM_REGISTERS (8)

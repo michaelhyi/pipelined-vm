@@ -3,8 +3,8 @@
 #include <stdlib.h>
 
 #include "../src/vm.h"
-#include "test_id.h"
-#include "test_if.h"
+#include "./stages/test_id.h"
+#include "./stages/test_if.h"
 #include "test_util.h"
 
 // TODO: descriptive test cases per output line

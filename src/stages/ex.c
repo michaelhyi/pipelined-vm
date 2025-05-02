@@ -3,7 +3,7 @@
 #include <errno.h>
 #include <stdio.h>
 
-#include "vm.h"
+#include "../vm.h"
 
 void *ex_run(void *arg) {
     if (!arg) {

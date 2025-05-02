@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "vm.h"
+#include "../vm.h"
 
 void *mem_run(void *arg) {
     if (!arg) {

@@ -4,8 +4,8 @@
 #include <pthread.h>
 #include <stdio.h>
 
-#include "../src/if.h"
-#include "../src/vm.h"
+#include "../../src/stages/if.h"
+#include "../../src/vm.h"
 
 void test_if_run(int *passed_tests) {
     if (!passed_tests) {
