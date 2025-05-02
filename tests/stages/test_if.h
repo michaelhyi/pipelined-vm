@@ -2,7 +2,7 @@
 #define TEST_IF_H
 
 /**
- * Runs unit tests on the if_run function from "../src/if.h".
+ * Runs unit tests on the if_run function from "../src/stages/if.h".
  *
  * @param passed_tests pointer to a counter of passed tests
  */
