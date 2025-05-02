@@ -10,14 +10,18 @@ TEST_FILES = $(shell find $(SRC_DIR) $(TEST_DIR) -name '*.c' ! -name 'main.c')
 TEST_OUTPUT = vm-tests
 
 
-all: $(SRC_OUTPUT)
+all: run
 
 $(SRC_OUTPUT): $(SRC_FILES)
 	$(CC) $(CFLAGS) $(SRC_FILES) -o $(SRC_OUTPUT)
+
+run: $(SRC_OUTPUT)
 	./$(SRC_OUTPUT)
 
-test: $(TEST_FILES)
+$(TEST_OUTPUT): $(TEST_FILES)
 	$(CC) $(CFLAGS) $(TEST_FILES) -o $(TEST_OUTPUT)
+
+test: $(TEST_OUTPUT)
 	./$(TEST_OUTPUT)
 
 valgrind: $(SRC_OUTPUT) test
