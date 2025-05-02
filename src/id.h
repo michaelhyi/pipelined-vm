@@ -21,22 +21,16 @@
 #define OP_TRAP 0xF     // TRAP
 
 typedef struct dbuf_t {
+    int ready;
+
     int16_t pc;
     int opcode;
 
-    int dr;
-    int sr1;
-    int sr2;
-    int base_r;
+    int reg;
+    int operand1;
+    int operand2;
 
     int nzp;
-
-    int imm5;
-    int offset6;
-    int pcoffset9;
-    int pcoffset11;
-
-    int trapvect8;
 } dbuf_t;
 
 void *id_exec_cycle(void *arg);
