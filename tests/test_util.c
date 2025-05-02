@@ -5,34 +5,30 @@
 
 #include "../src/util.h"
 
-static void test_bit_range(int *passed_tests, int *total_tests);
-static void test_sign_extend(int *passed_tests, int *total_tests);
+static void test_bit_range(int *passed_tests);
+static void test_sign_extend(int *passed_tests);
 
-void test_util(int *passed_tests, int *total_tests) {
-    if (!passed_tests || !total_tests) {
-        fprintf(
-            stderr,
-            "test_util: passed_tests and total_tests both must be non-null\n");
+void test_util(int *passed_tests) {
+    if (!passed_tests) {
+        fprintf(stderr, "test_util failed: passed_tests must be non-null\n");
         errno = EINVAL;
         return;
     }
 
     errno = 0;
-    test_bit_range(passed_tests, total_tests);
+    test_bit_range(passed_tests);
 
     errno = 0;
-    test_sign_extend(passed_tests, total_tests);
+    test_sign_extend(passed_tests);
 }
 
-static void test_bit_range(int *passed_tests, int *total_tests) {
-    if (!passed_tests || !total_tests) {
-        fprintf(stderr, "test_bit_range: passed_tests and total_tests both "
-                        "must be non-null\n");
+static void test_bit_range(int *passed_tests) {
+    if (!passed_tests) {
+        fprintf(stderr, "test_bit_range failed: passed_tests"
+                        " must be non-null\n");
         errno = EINVAL;
         return;
     }
-
-    *total_tests += 9;
 
     int16_t n = 0;
     int16_t expected = 0;
@@ -40,10 +36,10 @@ static void test_bit_range(int *passed_tests, int *total_tests) {
     int16_t expected_errno = EINVAL;
     int actual_errno = errno;
     if (expected != actual) {
-        fprintf(
-            stderr,
-            "test_bit_range: bit_range(0, 15, 12). expected 0, actual: %d\n",
-            actual);
+        fprintf(stderr,
+                "test_bit_range failed: bit_range(0, 15, 12). expected 0, "
+                "actual: %d\n",
+                actual);
     } else {
         (*passed_tests)++;
     }
@@ -136,15 +132,13 @@ static void test_bit_range(int *passed_tests, int *total_tests) {
     }
 }
 
-static void test_sign_extend(int *passed_tests, int *total_tests) {
-    if (!passed_tests || !total_tests) {
-        fprintf(stderr, "test_sign_extend: passed_tests and total_tests both "
+static void test_sign_extend(int *passed_tests) {
+    if (!passed_tests) {
+        fprintf(stderr, "test_sign_extend failed: passed_tests "
                         "must be non-null\n");
         errno = EINVAL;
         return;
     }
-
-    *total_tests += 5;
 
     int16_t n = 0;
     int16_t expected = 0;

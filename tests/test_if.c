@@ -7,15 +7,13 @@
 #include "../src/if.h"
 #include "../src/vm.h"
 
-void test_if_run(int *passed_tests, int *total_tests) {
-    if (!passed_tests || !total_tests) {
-        fprintf(stderr, "test_if_run failed: passed_tests and total_tests must "
+void test_if_run(int *passed_tests) {
+    if (!passed_tests) {
+        fprintf(stderr, "test_if_run failed: passed_tests must "
                         "be non-null\n");
         errno = EINVAL;
         return;
     }
-
-    *total_tests += (3 * 5);
 
     vm.mem[0x3000] = 0x0000;
     vm.mem[0x3001] = 0x0001;

@@ -10,6 +10,8 @@
 // TODO: descriptive test cases per output line
 // TODO: no need to test for thread failure
 
+#define TOTAL_TESTS 29
+
 int main(void) {
     system_init();
 
@@ -19,23 +21,15 @@ int main(void) {
         return 1;
     }
 
-    int *total_tests = malloc(sizeof(int));
-    if (!total_tests) {
-        free(passed_tests);
-        fprintf(stderr, "failed to initialize tests\n");
-        return 1;
-    }
-
     errno = 0;
-    test_if_run(passed_tests, total_tests);
+    test_if_run(passed_tests);
     if (errno) {
         fprintf(stderr, "error while running test_if_exec_cycle; errno: %d\n",
                 errno);
         // TODO: total tests wont be fully counted here
-        printf("test results: %d/%d passed\n", *passed_tests, *total_tests);
+        printf("test results: %d/%d passed\n", *passed_tests, TOTAL_TESTS);
 
         free(passed_tests);
-        free(total_tests);
         return 1;
     }
 
@@ -44,33 +38,28 @@ int main(void) {
     if (errno) {
         fprintf(stderr, "error while running test_id_exec_cycle; errno: %d\n",
                 errno);
-        printf("test results: %d/%d passed\n", *passed_tests, *total_tests);
+        printf("test results: %d/%d passed\n", *passed_tests, TOTAL_TESTS);
 
         free(passed_tests);
-        free(total_tests);
         return 1;
     }
 
     errno = 0;
-    test_util(passed_tests, total_tests);
+    test_util(passed_tests);
     if (errno) {
         // TODO: this runs every time
         fprintf(stderr, "error while running test_util; errno: %d\n", errno);
-        printf("test results: %d/%d passed\n", *passed_tests, *total_tests);
-
+        printf("test results: %d/%d passed\n", *passed_tests, TOTAL_TESTS);
         free(passed_tests);
-        free(total_tests);
         return 1;
     }
 
-    printf("test results: %d/%d passed\n", *passed_tests, *total_tests);
-    if (*passed_tests != *total_tests) {
+    printf("test results: %d/%d passed\n", *passed_tests, TOTAL_TESTS);
+    if (*passed_tests != TOTAL_TESTS) {
         free(passed_tests);
-        free(total_tests);
         return 1;
     }
 
     free(passed_tests);
-    free(total_tests);
     return 0;
 }
