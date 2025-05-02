@@ -4,8 +4,8 @@
 #include <stdint.h>
 
 typedef struct fbuf_t {
-  int16_t pc;
-  int16_t instruction;
+    int16_t pc;
+    int16_t instruction;
 } fbuf_t;
 
 void *if_exec_cycle(void *arg);

@@ -28,7 +28,7 @@ clean:
 	rm -f $(SRC_OUTPUT) $(TEST_OUTPUT)
 
 format-setup:
-	clang-format -style=llvm -dump-config > .clang-format
+	clang-format -style="{BasedOnStyle: LLVM, IndentWidth: 4}" -dump-config > .clang-format
 
 format: format-setup
 	find . \( -name "*.c" -o -name "*.h" \) -exec clang-format -style=file -i {} +

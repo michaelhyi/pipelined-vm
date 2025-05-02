@@ -11,15 +11,15 @@
 
 // TODO: add mutex locks
 typedef struct vm_t {
-  int16_t mem[ADDRESS_SPACE];
-  int16_t reg[NUM_GENERAL_PURPOSE_REGISTERS];
-  int16_t pc;
-  int16_t ir;
-  int16_t cc;
-  int16_t psr;
+    int16_t mem[ADDRESS_SPACE];
+    int16_t reg[NUM_GENERAL_PURPOSE_REGISTERS];
+    int16_t pc;
+    int16_t ir;
+    int16_t cc;
+    int16_t psr;
 
-  fbuf_t fbuf;
-  dbuf_t dbuf;
+    fbuf_t fbuf;
+    dbuf_t dbuf;
 } vm_t;
 
 extern vm_t vm;

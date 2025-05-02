@@ -1,6 +1,6 @@
 #include "vm.h"
 
 int main(void) {
-  system_init();
-  return 0;
+    system_init();
+    return 0;
 }

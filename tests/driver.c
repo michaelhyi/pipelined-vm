@@ -6,27 +6,27 @@
 #include "test_if.h"
 
 int main(void) {
-  system_init();
+    system_init();
 
-  int *passed_tests = malloc(sizeof(int));
-  if (!passed_tests) {
-    fprintf(stderr, "failed to initialize tests\n");
-    return 1;
-  }
+    int *passed_tests = malloc(sizeof(int));
+    if (!passed_tests) {
+        fprintf(stderr, "failed to initialize tests\n");
+        return 1;
+    }
 
-  int *total_tests = malloc(sizeof(int));
-  if (!total_tests) {
+    int *total_tests = malloc(sizeof(int));
+    if (!total_tests) {
+        free(passed_tests);
+        fprintf(stderr, "failed to initialize tests\n");
+        return 1;
+    }
+
+    test_if_exec_cycle(passed_tests, total_tests);
+    test_id_exec_cycle(passed_tests, total_tests);
+
+    printf("test results: %d/%d passed\n", *passed_tests, *total_tests);
     free(passed_tests);
-    fprintf(stderr, "failed to initialize tests\n");
-    return 1;
-  }
+    free(total_tests);
 
-  test_if_exec_cycle(passed_tests, total_tests);
-  test_id_exec_cycle(passed_tests, total_tests);
-
-  printf("test results: %d/%d passed\n", *passed_tests, *total_tests);
-  free(passed_tests);
-  free(total_tests);
-
-  return 0;
+    return 0;
 }
