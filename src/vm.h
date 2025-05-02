@@ -1,0 +1,22 @@
+#ifndef VM_H
+#define VM_H
+
+#include <stdint.h>
+
+#define ADDRESS_SPACE (1 << 16)
+#define NUM_GENERAL_PURPOSE_REGISTERS (8)
+
+typedef struct vm_t {
+  int16_t mem[ADDRESS_SPACE];
+  int16_t reg[NUM_GENERAL_PURPOSE_REGISTERS];
+  int16_t pc;
+  int16_t ir;
+  int16_t cc;
+  int16_t psr;
+} vm_t;
+
+extern vm_t vm;
+
+void system_init(void);
+
+#endif
