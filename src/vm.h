@@ -16,7 +16,6 @@ typedef struct vm_t {
     int16_t mem[ADDRESS_SPACE];
     int16_t reg[NUM_GENERAL_PURPOSE_REGISTERS];
     int16_t pc;
-    int16_t ir;
     int16_t cc;
     int16_t psr;
 
