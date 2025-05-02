@@ -24,6 +24,7 @@ static int is_jsr(int16_t ir);
 static int is_jsrr(int16_t ir);
 
 void *id_run(void *arg) {
+    // TODO: need to set shared err, since errno is thread-local
     if (!arg) {
         fprintf(stderr, "id_run failed: arg must be non-null\n");
         errno = EINVAL;

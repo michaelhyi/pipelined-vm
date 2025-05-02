@@ -7,6 +7,7 @@
 #include "vm.h"
 
 void *if_run(void *arg) {
+    // TODO: need to set shared err, since errno is thread-local. test afterwards
     if (!arg) {
         fprintf(stderr, "if_run failed: arg must be non-null\n");
         errno = EINVAL;
