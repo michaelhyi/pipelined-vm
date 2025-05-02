@@ -6,7 +6,7 @@ SRC_FILES = $(shell find $(SRC_DIR) -name '*.c')
 SRC_OUTPUT = vm
 
 TEST_DIR = tests
-TEST_FILES = $(shell find $(TEST_DIR) -name '*.c')
+TEST_FILES = $(shell find $(SRC_DIR) $(TEST_DIR) -name '*.c' ! -name 'main.c')
 TEST_OUTPUT = vm-tests
 
 
@@ -14,9 +14,15 @@ all: $(SRC_OUTPUT)
 
 $(SRC_OUTPUT): $(SRC_FILES)
 	$(CC) $(CFLAGS) $(SRC_FILES) -o $(SRC_OUTPUT)
+	./$(SRC_OUTPUT)
 
 test: $(TEST_FILES)
 	$(CC) $(CFLAGS) $(TEST_FILES) -o $(TEST_OUTPUT)
+	./$(TEST_OUTPUT)
+
+valgrind: $(SRC_OUTPUT) $(TEST_OUTPUT)
+	valgrind --leak-check=yes ./$(SRC_OUTPUT)
+	valgrind --leak-check=yes ./$(TEST_OUTPUT)
 	
 clean:
 	rm -f $(SRC_OUTPUT) $(TEST_OUTPUT)
@@ -28,4 +34,4 @@ format:
 	find . \( -name "*.c" -o -name "*.h" \) -exec clang-format -style=file -i {} +
 
 
-.PHONY: all test clean format-setup format
+.PHONY: all test valgrind clean format-setup format
