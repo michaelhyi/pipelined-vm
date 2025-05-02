@@ -1,18 +1,15 @@
 #include "if.h"
 
 #include <errno.h>
-#include <stddef.h>
+#include <pthread.h>
 #include <stdio.h>
 
 #include "../vm.h"
 
 void *if_run(void *arg) {
-    // TODO: need to set shared err, since errno is thread-local. test
-    // afterwards
     if (!arg) {
         fprintf(stderr, "if_run failed: arg must be non-null\n");
-        errno = EINVAL;
-        return NULL;
+        pthread_exit((void *)(intptr_t)EINVAL);
     }
 
     fbuf_t *fbuf = (fbuf_t *)arg;

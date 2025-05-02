@@ -10,7 +10,7 @@
 // TODO: descriptive test cases per output line
 // TODO: no need to test for thread failure
 
-#define TOTAL_TESTS 29
+#define TOTAL_TESTS 30
 
 int main(void) {
     system_init();
