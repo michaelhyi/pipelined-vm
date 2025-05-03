@@ -7,14 +7,14 @@
 #include "../vm.h"
 #include "bitops.h"
 
+int16_t get_opcode(int16_t ir) { return bit_range(ir, 12, 15); }
+
 int is_jsr(int16_t ir) {
-    int opcode = bit_range(ir, 12, 15);
-    return opcode == OP_JSR && bit_range(ir, 11, 11);
+    return get_opcode(ir) == OP_JSR && bit_range(ir, 11, 11);
 }
 
 int is_jsrr(int16_t ir) {
-    int opcode = bit_range(ir, 12, 15);
-    return opcode == OP_JSR && !bit_range(ir, 11, 11);
+    return get_opcode(ir) == OP_JSR && !bit_range(ir, 11, 11);
 }
 
 void decode_add_and(fbuf_t fbuf, dbuf_t *dbuf) {

@@ -23,7 +23,7 @@ void *id_run(void *arg) {
     dbuf_t *dbuf = (dbuf_t *)arg;
     dbuf->ready = 1;
     dbuf->pc = fbuf.pc;
-    dbuf->opcode = bit_range(fbuf.ir, 12, 15);
+    dbuf->opcode = get_opcode(fbuf.ir);
 
     if (dbuf->opcode == OP_ADD || dbuf->opcode == OP_AND) {
         decode_add_and(fbuf, dbuf);

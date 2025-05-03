@@ -11,6 +11,11 @@
 #include "../driver.h"
 
 /**
+ * Runs unit tests on get_opcode function from "../../src/util/id_util.h".
+ */
+static void test_get_opcode(void);
+
+/**
  * Runs unit tests on is_jsr function from "../../src/util/id_util.h".
  */
 static void test_is_jsr(void);
@@ -75,6 +80,7 @@ static void test_decode_str(void);
 static void test_decode_trap(void);
 
 void test_id_util() {
+    test_get_opcode();
     test_is_jsr();
     test_is_jsrr();
     test_decode_add_and();
@@ -89,6 +95,63 @@ void test_id_util() {
     test_decode_trap();
 }
 
+static void test_get_opcode(void) {
+    int16_t ir;
+    int expected, actual;
+
+    errno = 0;
+    ir = (int16_t)0x0000;
+    expected = OP_BR;
+    actual = get_opcode(ir);
+    if (expected != actual) {
+        fprintf(stderr,
+                "test_get_opcode failed: get_opcode(0x%04X). expected: 0x%04X, "
+                "actual: 0x%04X\n",
+                ir, expected, actual);
+    } else {
+        passed_tests++;
+    }
+
+    errno = 0;
+    ir = (int16_t)0x1000;
+    expected = OP_ADD;
+    actual = get_opcode(ir);
+    if (expected != actual) {
+        fprintf(stderr,
+                "test_get_opcode failed: get_opcode(0x%04X). expected: 0x%04X, "
+                "actual: 0x%04X\n",
+                ir, expected, actual);
+    } else {
+        passed_tests++;
+    }
+
+    errno = 0;
+    ir = (int16_t)0x2000;
+    expected = OP_LD;
+    actual = get_opcode(ir);
+    if (expected != actual) {
+        fprintf(stderr,
+                "test_get_opcode failed: get_opcode(0x%04X). expected: 0x%04X, "
+                "actual: 0x%04X\n",
+                ir, expected, actual);
+    } else {
+        passed_tests++;
+    }
+
+    errno = 0;
+    ir = (int16_t)0xB000;
+    expected = OP_STI;
+    actual = get_opcode(ir);
+    if (expected != actual) {
+        fprintf(stderr,
+                "test_get_opcode failed: get_opcode(0x%04X). expected: 0x%04X, "
+                "actual: 0x%04X\n",
+                ir, expected, actual);
+    } else {
+        passed_tests++;
+    }
+}
+
 static void test_is_jsr() {
     int16_t ir;
     int expected, actual;
@@ -101,7 +164,7 @@ static void test_is_jsr() {
     if (expected != actual) {
         fprintf(
             stderr,
-            "test_is_jsr failed: is_jsr(0x%04X): expected: %d, actual: %d\n",
+            "test_is_jsr failed: is_jsr(0x%04X). expected: %d, actual: %d\n",
             ir, expected, actual);
     } else {
         passed_tests++;
@@ -115,7 +178,7 @@ static void test_is_jsr() {
     if (expected != actual) {
         fprintf(
             stderr,
-            "test_is_jsr failed: is_jsr(0x%04X): expected: %d, actual: %d\n",
+            "test_is_jsr failed: is_jsr(0x%04X). expected: %d, actual: %d\n",
             ir, expected, actual);
     } else {
         passed_tests++;
@@ -129,7 +192,7 @@ static void test_is_jsr() {
     if (expected != actual) {
         fprintf(
             stderr,
-            "test_is_jsr failed: is_jsr(0x%04X): expected: %d, actual: %d\n",
+            "test_is_jsr failed: is_jsr(0x%04X). expected: %d, actual: %d\n",
             ir, expected, actual);
     } else {
         passed_tests++;
@@ -143,7 +206,7 @@ static void test_is_jsr() {
     if (expected != actual) {
         fprintf(
             stderr,
-            "test_is_jsr failed: is_jsr(0x%04X): expected: %d, actual: %d\n",
+            "test_is_jsr failed: is_jsr(0x%04X). expected: %d, actual: %d\n",
             ir, expected, actual);
     } else {
         passed_tests++;
@@ -162,7 +225,7 @@ static void test_is_jsrr() {
     if (expected != actual) {
         fprintf(
             stderr,
-            "test_is_jsrr failed: is_jsrr(0x%04X): expected: %d, actual: %d\n",
+            "test_is_jsrr failed: is_jsrr(0x%04X). expected: %d, actual: %d\n",
             ir, expected, actual);
     } else {
         passed_tests++;
@@ -176,7 +239,7 @@ static void test_is_jsrr() {
     if (expected != actual) {
         fprintf(
             stderr,
-            "test_is_jsrr failed: is_jsrr(0x%04X): expected: %d, actual: %d\n",
+            "test_is_jsrr failed: is_jsrr(0x%04X). expected: %d, actual: %d\n",
             ir, expected, actual);
     } else {
         passed_tests++;
@@ -190,7 +253,7 @@ static void test_is_jsrr() {
     if (expected != actual) {
         fprintf(
             stderr,
-            "test_is_jsrr failed: is_jsrr(0x%04X): expected: %d, actual: %d\n",
+            "test_is_jsrr failed: is_jsrr(0x%04X). expected: %d, actual: %d\n",
             ir, expected, actual);
     } else {
         passed_tests++;
@@ -204,7 +267,7 @@ static void test_is_jsrr() {
     if (expected != actual) {
         fprintf(
             stderr,
-            "test_is_jsrr failed: is_jsrr(0x%04X): expected: %d, actual: %d\n",
+            "test_is_jsrr failed: is_jsrr(0x%04X). expected: %d, actual: %d\n",
             ir, expected, actual);
     } else {
         passed_tests++;
@@ -227,7 +290,7 @@ static void test_decode_add_and() {
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_decode_add_and failed: decode_add_and({.ready=%d}, "
-                "&dbuf): expected_errno: %d, actual_errno: %d\n",
+                "&dbuf). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;

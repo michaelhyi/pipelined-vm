@@ -7,6 +7,14 @@
 #include "../stages/if.h"
 
 /**
+ * Returns the opcode of an instruction.
+ *
+ * @param ir instruction to decode
+ * @return the opcode of `ir`
+ */
+int16_t get_opcode(int16_t ir);
+
+/**
  * Returns whether the instruction performs JSR.
  *
  * @param ir instruction to decode

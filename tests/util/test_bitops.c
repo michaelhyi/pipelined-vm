@@ -40,7 +40,7 @@ static void test_bit_range() {
     actual_errno = errno;
     if (expected != actual) {
         fprintf(stderr,
-                "test_bit_range failed: bit_range(%d, %d, %d): expected: %d, "
+                "test_bit_range failed: bit_range(%d, %d, %d). expected: %d, "
                 "actual: %d\n",
                 n, lower, upper, expected, actual);
     } else {
@@ -48,7 +48,7 @@ static void test_bit_range() {
     }
     if (expected_errno != actual_errno) {
         fprintf(stderr,
-                "test_bit_range failed: bit_range(%d, %d, %d): expected_errno: "
+                "test_bit_range failed: bit_range(%d, %d, %d). expected_errno: "
                 "%d, actual_errno: %d\n",
                 n, lower, upper, expected_errno, actual_errno);
     } else {
@@ -66,7 +66,7 @@ static void test_bit_range() {
     actual_errno = errno;
     if (expected != actual) {
         fprintf(stderr,
-                "test_bit_range failed: bit_range(%d, %d, %d): expected: %d, "
+                "test_bit_range failed: bit_range(%d, %d, %d). expected: %d, "
                 "actual: %d\n",
                 n, lower, upper, expected, actual);
     } else {
@@ -74,7 +74,7 @@ static void test_bit_range() {
     }
     if (expected_errno != actual_errno) {
         fprintf(stderr,
-                "test_bit_range failed: bit_range(%d, %d, %d): expected_errno: "
+                "test_bit_range failed: bit_range(%d, %d, %d). expected_errno: "
                 "%d, actual_errno: %d\n",
                 n, lower, upper, expected_errno, actual_errno);
     } else {
@@ -90,7 +90,7 @@ static void test_bit_range() {
     actual = bit_range(n, lower, upper);
     if (expected != actual) {
         fprintf(stderr,
-                "test_bit_range failed: bit_range(0x%04X, %d, %d): expected: "
+                "test_bit_range failed: bit_range(0x%04X, %d, %d). expected: "
                 "0x%X, actual: 0x%X\n",
                 n, lower, upper, expected, actual);
     } else {
@@ -106,7 +106,7 @@ static void test_bit_range() {
     actual = bit_range(n, lower, upper);
     if (expected != actual) {
         fprintf(stderr,
-                "test_bit_range failed: bit_range(0x%04X, %d, %d): expected: "
+                "test_bit_range failed: bit_range(0x%04X, %d, %d). expected: "
                 "0x%X, actual: 0x%X\n",
                 n, lower, upper, expected, actual);
     } else {
@@ -122,7 +122,7 @@ static void test_bit_range() {
     actual = bit_range(n, lower, upper);
     if (expected != actual) {
         fprintf(stderr,
-                "test_bit_range failed: bit_range(0x%04X, %d, %d): expected: "
+                "test_bit_range failed: bit_range(0x%04X, %d, %d). expected: "
                 "0x%X, actual: 0x%X\n",
                 n, lower, upper, expected, actual);
     } else {
@@ -138,7 +138,7 @@ static void test_bit_range() {
     actual = bit_range(n, lower, upper);
     if (expected != actual) {
         fprintf(stderr,
-                "test_bit_range failed: bit_range(0x%04X, %d, %d): expected: "
+                "test_bit_range failed: bit_range(0x%04X, %d, %d). expected: "
                 "0x%X, actual: 0x%X\n",
                 n, lower, upper, expected, actual);
     } else {
@@ -154,7 +154,7 @@ static void test_bit_range() {
     actual = bit_range(n, lower, upper);
     if (expected != actual) {
         fprintf(stderr,
-                "test_bit_range failed: bit_range(0x%04X, %d, %d): expected: "
+                "test_bit_range failed: bit_range(0x%04X, %d, %d). expected: "
                 "%d, actual: %d\n",
                 n, lower, upper, expected, actual);
     } else {
@@ -177,7 +177,7 @@ static void test_sign_extend() {
     actual_errno = errno;
     if (expected != actual) {
         fprintf(stderr,
-                "test_sign_extend failed: sign_extend(%d, %d): expected: %d, "
+                "test_sign_extend failed: sign_extend(%d, %d). expected: %d, "
                 "actual: %d\n",
                 n, bit_length, expected, actual);
     } else {
@@ -185,7 +185,7 @@ static void test_sign_extend() {
     }
     if (expected_errno != actual_errno) {
         fprintf(stderr,
-                "test_sign_extend failed: sign_extend(%d, %d): expected_errno: "
+                "test_sign_extend failed: sign_extend(%d, %d). expected_errno: "
                 "%d, actual_errno: %d\n",
                 n, bit_length, expected_errno, actual_errno);
     } else {
@@ -200,7 +200,7 @@ static void test_sign_extend() {
     actual = sign_extend(n, bit_length);
     if (expected != actual) {
         fprintf(stderr,
-                "test_sign_extend failed: sign_extend(0x%04X, %d): expected: "
+                "test_sign_extend failed: sign_extend(0x%04X, %d). expected: "
                 "0x%04X, actual: 0x%04X\n",
                 n, bit_length, expected, actual);
     } else {
@@ -215,7 +215,7 @@ static void test_sign_extend() {
     actual = sign_extend(n, bit_length);
     if (expected != actual) {
         fprintf(stderr,
-                "test_sign_extend failed: sign_extend(0x%04X, %d): expected: "
+                "test_sign_extend failed: sign_extend(0x%04X, %d). expected: "
                 "%d, actual: %d\n",
                 n, bit_length, expected, actual);
     } else {
@@ -230,7 +230,7 @@ static void test_sign_extend() {
     actual = sign_extend(n, bit_length);
     if (expected != actual) {
         fprintf(stderr,
-                "test_sign_extend failed: sign_extend(0x%04X, %d): expected: "
+                "test_sign_extend failed: sign_extend(0x%04X, %d). expected: "
                 "%d, actual: %d\n",
                 n, bit_length, expected, actual);
     } else {
