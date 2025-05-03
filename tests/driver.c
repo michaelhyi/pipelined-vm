@@ -1,3 +1,5 @@
+#include "driver.h"
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,40 +11,36 @@
 #include "util/test_id_util.h"
 
 // TODO: descriptive test cases per output line
+// TODO: standardize error messages
 // TODO: no need to test for thread failure
 
-#define TOTAL_TESTS 56
+int passed_tests;
+
+/**
+ * Helper function that initializes the VM and test parameters.
+ */
+static void test_setup(void);
+
+/**
+ * Helper function that tears down tests.
+ */
+static void test_teardown(void);
 
 int main(void) {
-    system_init();
-
-    int *passed_tests = malloc(sizeof(int));
-    if (!passed_tests) {
-        fprintf(stderr, "failed to initialize tests\n");
-        return 1;
-    }
+    test_setup();
 
     errno = 0;
-    test_if_run(passed_tests);
+    test_if_run();
     if (errno) {
-        fprintf(stderr, "error while running test_if_exec_cycle; errno: %d\n",
-                errno);
-        // TODO: total tests wont be fully counted here
-        printf("test results: %d/%d passed\n", *passed_tests, TOTAL_TESTS);
-
-        free(passed_tests);
-        return 1;
+        fprintf(stderr, "test_if_run failed: errno: %d\n", errno);
+        test_teardown();
     }
 
     errno = 0;
-    test_id_util(passed_tests);
+    test_id_util();
     if (errno) {
         fprintf(stderr, "test_id_util failed: errno: %d\n", errno);
-        // TODO: total tests wont be fully counted here
-        printf("test results: %d/%d passed\n", *passed_tests, TOTAL_TESTS);
-
-        free(passed_tests);
-        return 1;
+        test_teardown();
     }
 
     errno = 0;
@@ -50,28 +48,25 @@ int main(void) {
     if (errno) {
         fprintf(stderr, "error while running test_id_exec_cycle; errno: %d\n",
                 errno);
-        printf("test results: %d/%d passed\n", *passed_tests, TOTAL_TESTS);
-
-        free(passed_tests);
-        return 1;
+        test_teardown();
     }
 
     errno = 0;
-    test_bitops(passed_tests);
+    test_bitops();
     if (errno) {
-        // TODO: this runs every time
         fprintf(stderr, "error while running test_util; errno: %d\n", errno);
-        printf("test results: %d/%d passed\n", *passed_tests, TOTAL_TESTS);
-        free(passed_tests);
-        return 1;
+        test_teardown();
     }
 
-    printf("test results: %d/%d passed\n", *passed_tests, TOTAL_TESTS);
-    if (*passed_tests != TOTAL_TESTS) {
-        free(passed_tests);
-        return 1;
-    }
+    test_teardown();
+}
 
-    free(passed_tests);
-    return 0;
+static void test_setup() {
+    system_init();
+    passed_tests = 0;
+}
+
+static void test_teardown() {
+    printf("test results: %d/%d passed\n", passed_tests, TOTAL_TESTS);
+    exit(passed_tests != TOTAL_TESTS);
 }

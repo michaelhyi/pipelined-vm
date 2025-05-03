@@ -4,32 +4,21 @@
 #include <stdio.h>
 
 #include "../../src/util/bitops.h"
+#include "../driver.h"
 
-static void test_bit_range(int *passed_tests);
-static void test_sign_extend(int *passed_tests);
+// TODO: need comments
+static void test_bit_range(void);
+static void test_sign_extend(void);
 
-void test_bitops(int *passed_tests) {
-    if (!passed_tests) {
-        fprintf(stderr, "test_bitops failed: passed_tests must be non-null\n");
-        errno = EINVAL;
-        return;
-    }
+void test_bitops() {
+    errno = 0;
+    test_bit_range();
 
     errno = 0;
-    test_bit_range(passed_tests);
-
-    errno = 0;
-    test_sign_extend(passed_tests);
+    test_sign_extend();
 }
 
-static void test_bit_range(int *passed_tests) {
-    if (!passed_tests) {
-        fprintf(stderr, "test_bit_range failed: passed_tests"
-                        " must be non-null\n");
-        errno = EINVAL;
-        return;
-    }
-
+static void test_bit_range() {
     int16_t n = 0;
     int16_t expected = 0;
     int16_t actual = bit_range(n, 15, 12);
@@ -41,7 +30,7 @@ static void test_bit_range(int *passed_tests) {
                 "actual: %d\n",
                 actual);
     } else {
-        (*passed_tests)++;
+        passed_tests++;
     }
     if (expected_errno != actual_errno) {
         fprintf(stderr,
@@ -49,7 +38,7 @@ static void test_bit_range(int *passed_tests) {
                 "actual errno: %d\n",
                 actual_errno);
     } else {
-        (*passed_tests)++;
+        passed_tests++;
     }
     errno = 0;
 
@@ -61,14 +50,14 @@ static void test_bit_range(int *passed_tests) {
                 "test_bit_range: bit_range(0, 0, 16). expected 0, actual: %d\n",
                 actual);
     } else {
-        (*passed_tests)++;
+        passed_tests++;
     }
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_bit_range: bit_range(0, 0, 16). expected 0, actual: %d\n",
                 actual);
     } else {
-        (*passed_tests)++;
+        passed_tests++;
     }
     errno = 0;
 
@@ -81,7 +70,7 @@ static void test_bit_range(int *passed_tests) {
                 "actual: %d\n",
                 actual);
     } else {
-        (*passed_tests)++;
+        passed_tests++;
     }
 
     n = (int16_t)0x0F00;
@@ -93,7 +82,7 @@ static void test_bit_range(int *passed_tests) {
             "test_bit_range: bit_range(0x0F00, 8, 11) expected 0xF, got %d\n",
             actual);
     } else {
-        (*passed_tests)++;
+        passed_tests++;
     }
 
     n = (int16_t)0x000F;
@@ -105,7 +94,7 @@ static void test_bit_range(int *passed_tests) {
             "test_bit_range: bit_range(0x000F, 0, 3) expected 0xF, got %d\n",
             actual);
     } else {
-        (*passed_tests)++;
+        passed_tests++;
     }
 
     n = (int16_t)0x00F8;
@@ -117,7 +106,7 @@ static void test_bit_range(int *passed_tests) {
             "test_bit_range: bit_range(0x00F8, 3, 6) expected 0b1111, got %d\n",
             actual);
     } else {
-        (*passed_tests)++;
+        passed_tests++;
     }
 
     n = (int16_t)0x0010;
@@ -128,11 +117,11 @@ static void test_bit_range(int *passed_tests) {
                 "test_bit_range: bit_range(0x0010, 4, 4) expected 1, got %d\n",
                 actual);
     } else {
-        (*passed_tests)++;
+        passed_tests++;
     }
 }
 
-static void test_sign_extend(int *passed_tests) {
+static void test_sign_extend() {
     if (!passed_tests) {
         fprintf(stderr, "test_sign_extend failed: passed_tests "
                         "must be non-null\n");
@@ -151,7 +140,7 @@ static void test_sign_extend(int *passed_tests) {
             "test_sign_extend: sign_extend(0, 16). expected 0, actual: %d\n",
             actual);
     } else {
-        (*passed_tests)++;
+        passed_tests++;
     }
     if (expected_errno != actual_errno) {
         fprintf(stderr,
@@ -159,7 +148,7 @@ static void test_sign_extend(int *passed_tests) {
                 "actual errno: %d\n",
                 actual_errno);
     } else {
-        (*passed_tests)++;
+        passed_tests++;
     }
     errno = 0;
 
@@ -172,7 +161,7 @@ static void test_sign_extend(int *passed_tests) {
                 "actual: %d\n",
                 actual);
     } else {
-        (*passed_tests)++;
+        passed_tests++;
     }
 
     n = (int16_t)0x00F2; // 11110010 => -14 if sign-extended from 8 bits
@@ -184,7 +173,7 @@ static void test_sign_extend(int *passed_tests) {
                 "actual: %d\n",
                 actual);
     } else {
-        (*passed_tests)++;
+        passed_tests++;
     }
 
     n = (int16_t)0x003E; // 00111110 => still 62 if sign-extended from 8 bits
@@ -196,6 +185,6 @@ static void test_sign_extend(int *passed_tests) {
                 "actual: %d\n",
                 actual);
     } else {
-        (*passed_tests)++;
+        passed_tests++;
     }
 }

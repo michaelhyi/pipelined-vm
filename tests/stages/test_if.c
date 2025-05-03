@@ -6,15 +6,9 @@
 
 #include "../../src/stages/if.h"
 #include "../../src/vm.h"
+#include "../driver.h"
 
-void test_if_run(int *passed_tests) {
-    if (!passed_tests) {
-        fprintf(stderr, "test_if_run failed: passed_tests must "
-                        "be non-null\n");
-        errno = EINVAL;
-        return;
-    }
-
+void test_if_run() {
     pthread_t tid;
     fbuf_t fbuf;
 
@@ -42,7 +36,7 @@ void test_if_run(int *passed_tests) {
                 "actual_thread_errno: %d\n",
                 actual_thread_errno);
     } else {
-        (*passed_tests)++;
+        passed_tests++;
     }
 
     vm.mem[0x3000] = 0x0000;
@@ -68,15 +62,27 @@ void test_if_run(int *passed_tests) {
             return;
         }
 
+        int expected_fbuf_ready = 1;
+        int actual_fbuf_ready = fbuf.ready;
+        if (expected_fbuf_ready != actual_fbuf_ready) {
+            fprintf(stderr,
+                    "test_if_run failed: expected_fbuf_ready: %d, "
+                    "actual_fbuf_ready: "
+                    "%d\n",
+                    expected_fbuf_ready, actual_fbuf_ready);
+        } else {
+            passed_tests++;
+        }
+
         int expected_fbuf_pc = 0x3000 + i;
         int actual_fbuf_pc = fbuf.pc;
         if (expected_fbuf_pc != actual_fbuf_pc) {
             fprintf(stderr,
-                    "test_if_run failed: expected fbuf.pc: %x, actual fbuf.pc: "
+                    "test_if_run failed: expected_fbuf_pc: %x, actual_fbuf_pc: "
                     "%x\n",
-                    0x3000 + i, fbuf.pc);
+                    expected_fbuf_pc, actual_fbuf_pc);
         } else {
-            (*passed_tests)++;
+            passed_tests++;
         }
 
         int expected_fbuf_ir = 0x0000 + i;
@@ -85,9 +91,9 @@ void test_if_run(int *passed_tests) {
             fprintf(stderr,
                     "test_if_run failed: expected_fbuf_ir: %x, actual_fbuf_ir: "
                     "%x\n",
-                    0x0000 + i, fbuf.ir);
+                    expected_fbuf_ir, actual_fbuf_ir);
         } else {
-            (*passed_tests)++;
+            passed_tests++;
         }
 
         int expected_vm_pc = 0x3000 + i + 1;
@@ -96,9 +102,9 @@ void test_if_run(int *passed_tests) {
             fprintf(
                 stderr,
                 "test_if_run failed: expected_vm_pc: %x, actual_vm_pc: %x\n",
-                0x3000 + i + 1, fbuf.pc);
+                expected_vm_pc, actual_vm_pc);
         } else {
-            (*passed_tests)++;
+            passed_tests++;
         }
     }
 }
