@@ -167,6 +167,31 @@ static void test_sign_extend() {
     uint16_t bit_length;
     int expected_errno, actual_errno;
 
+    // invalid: bit_length == 0
+    errno = 0;
+    n = 0;
+    bit_length = 0;
+    expected = 0;
+    expected_errno = EINVAL;
+    actual = sign_extend(n, bit_length);
+    actual_errno = errno;
+    if (expected != actual) {
+        fprintf(stderr,
+                "test_sign_extend failed: sign_extend(%d, %d). expected: %d, "
+                "actual: %d\n",
+                n, bit_length, expected, actual);
+    } else {
+        passed_tests++;
+    }
+    if (expected_errno != actual_errno) {
+        fprintf(stderr,
+                "test_sign_extend failed: sign_extend(%d, %d). expected_errno: "
+                "%d, actual_errno: %d\n",
+                n, bit_length, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
     // invalid: bit_length >= 16
     errno = 0;
     n = 0;

@@ -9,7 +9,7 @@
  * @param n number to mask
  * @param lower inclusive lower bound of range
  * @param upper inclusive upper bound of range
- * @return n[upper:lower]
+ * @return 0 if arguments are invalid, n[upper:lower] otherwise
  */
 int16_t bit_range(int16_t n, uint16_t lower, uint16_t upper);
 
@@ -18,7 +18,7 @@ int16_t bit_range(int16_t n, uint16_t lower, uint16_t upper);
  *
  * @param n number to sign extend
  * @param bit_length length of n in bits
- * @return sign extended value of n
+ * @return 0 if arguments are invalid, sign extended value of n otherwise
  */
 int16_t sign_extend(int16_t n, uint16_t bit_length);
 

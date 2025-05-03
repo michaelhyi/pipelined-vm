@@ -2,7 +2,7 @@
 #define DRIVER_H
 
 // TODO: is there a better way than to hardcode it
-#define TOTAL_TESTS 117
+#define TOTAL_TESTS 119
 
 extern int passed_tests;
 
