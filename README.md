@@ -11,9 +11,15 @@ handling.
 
 ## Quick Start
 
-Requirements:
-- Docker
+Tools:
+- C
+- Make
 - Bash
+- Docker 
+
+Requirements:
+- Bash
+- Docker
 
 Run the Docker container:
 ```bash
