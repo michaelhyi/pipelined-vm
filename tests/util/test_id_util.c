@@ -311,6 +311,22 @@ static void test_decode_add_and() {
         passed_tests++;
     }
 
+    // error case: incorrect opcode
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)(OP_NOT << 12)};
+    decode_add_and(fbuf, &dbuf);
+    expected_errno = EINVAL;
+    actual_errno = errno;
+    if (expected_errno != actual_errno) {
+        fprintf(stderr,
+                "test_decode_add_and failed: decode_add_and({.ready=%d, "
+                ".ir=0x%04X}, "
+                "&dbuf). expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, fbuf.ir, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
     // add r2, r0, r1
     errno = 0;
     fbuf = (fbuf_t){.ready = 1,
@@ -538,6 +554,21 @@ static void test_decode_not() {
         passed_tests++;
     }
 
+    // error case: incorrect opcode
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)(OP_AND << 12)};
+    decode_not(fbuf, &dbuf);
+    expected_errno = EINVAL;
+    actual_errno = errno;
+    if (expected_errno != actual_errno) {
+        fprintf(stderr,
+                "test_decode_not failed: decode_not({.ready=%d, .ir=0x%04X}, "
+                "&dbuf). expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, fbuf.ir, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
     // not r1, r2
     errno = 0;
     fbuf = (fbuf_t){.ready = 1,
@@ -606,6 +637,21 @@ static void test_decode_br() {
                 "test_decode_br failed: decode_br({.ready=%d}, "
                 "NULL). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
+    // error case: incorrect opcode
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)(OP_AND << 12)};
+    decode_br(fbuf, &dbuf);
+    expected_errno = EINVAL;
+    actual_errno = errno;
+    if (expected_errno != actual_errno) {
+        fprintf(stderr,
+                "test_decode_br failed: decode_br({.ready=%d, .ir=0x%04X}, "
+                "&dbuf). expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, fbuf.ir, expected_errno, actual_errno);
     } else {
         passed_tests++;
     }
@@ -743,6 +789,22 @@ static void test_decode_jmp_jsrr() {
         passed_tests++;
     }
 
+    // error case: incorrect opcode
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)(OP_AND << 12)};
+    decode_jmp_jsrr(fbuf, &dbuf);
+    expected_errno = EINVAL;
+    actual_errno = errno;
+    if (expected_errno != actual_errno) {
+        fprintf(stderr,
+                "test_decode_jmp_jsrr failed: decode_jmp_jsrr({.ready=%d, "
+                ".ir=0x%04X}, "
+                "&dbuf). expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, fbuf.ir, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
     // jmp r7 (ret)
     errno = 0;
     fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)((OP_JMP << 12) | (7 << 6))};
@@ -822,6 +884,21 @@ static void test_decode_jsr() {
         passed_tests++;
     }
 
+    // error case: incorrect opcode
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)(OP_AND << 12)};
+    decode_jsr(fbuf, &dbuf);
+    expected_errno = EINVAL;
+    actual_errno = errno;
+    if (expected_errno != actual_errno) {
+        fprintf(stderr,
+                "test_decode_jsr failed: decode_jsr({.ready=%d, .ir=0x%04X}, "
+                "&dbuf). expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, fbuf.ir, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
     // jsr -12
     errno = 0;
     fbuf = (fbuf_t){
@@ -877,6 +954,22 @@ static void test_decode_ld_ldi_lea() {
                 "test_decode_ld_ldi_lea failed: decode_ld_ldi_lea({.ready=%d}, "
                 "NULL). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
+    // error case: incorrect opcode
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)(OP_AND << 12)};
+    decode_ld_ldi_lea(fbuf, &dbuf);
+    expected_errno = EINVAL;
+    actual_errno = errno;
+    if (expected_errno != actual_errno) {
+        fprintf(stderr,
+                "test_decode_ld_ldi_lea failed: decode_ld_ldi_lea({.ready=%d, "
+                ".ir=0x%04X}, "
+                "&dbuf). expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, fbuf.ir, expected_errno, actual_errno);
     } else {
         passed_tests++;
     }
@@ -1017,6 +1110,22 @@ static void test_decode_st_sti() {
         passed_tests++;
     }
 
+    // error case: incorrect opcode
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)(OP_AND << 12)};
+    decode_st_sti(fbuf, &dbuf);
+    expected_errno = EINVAL;
+    actual_errno = errno;
+    if (expected_errno != actual_errno) {
+        fprintf(
+            stderr,
+            "test_decode_st_sti failed: decode_st_sti({.ready=%d, .ir=0x%04X}, "
+            "&dbuf). expected_errno: %d, actual_errno: %d\n",
+            fbuf.ready, fbuf.ir, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
     // st r0, 54
     errno = 0;
     fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)((OP_ST << 12) | (0 << 9) | 54)};
@@ -1121,6 +1230,21 @@ static void test_decode_ldr() {
         passed_tests++;
     }
 
+    // error case: incorrect opcode
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)(OP_AND << 12)};
+    decode_ldr(fbuf, &dbuf);
+    expected_errno = EINVAL;
+    actual_errno = errno;
+    if (expected_errno != actual_errno) {
+        fprintf(stderr,
+                "test_decode_ldr failed: decode_ldr({.ready=%d, .ir=0x%04X}, "
+                "&dbuf). expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, fbuf.ir, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
     // ldr r0, r5, -2
     errno = 0;
     fbuf = (fbuf_t){.ready = 1,
@@ -1203,6 +1327,21 @@ static void test_decode_str() {
         passed_tests++;
     }
 
+    // error case: incorrect opcode
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)(OP_AND << 12)};
+    decode_str(fbuf, &dbuf);
+    expected_errno = EINVAL;
+    actual_errno = errno;
+    if (expected_errno != actual_errno) {
+        fprintf(stderr,
+                "test_decode_str failed: decode_str({.ready=%d, .ir=0x%04X}, "
+                "&dbuf). expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, fbuf.ir, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
     // str r0, r5, 3
     errno = 0;
     fbuf = (fbuf_t){.ready = 1,
@@ -1280,6 +1419,21 @@ static void test_decode_trap() {
                 "test_decode_trap failed: decode_trap({.ready=%d}, "
                 "NULL). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
+    // error case: incorrect opcode
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)(OP_AND << 12)};
+    decode_trap(fbuf, &dbuf);
+    expected_errno = EINVAL;
+    actual_errno = errno;
+    if (expected_errno != actual_errno) {
+        fprintf(stderr,
+                "test_decode_trap failed: decode_trap({.ready=%d, .ir=0x%04X}, "
+                "&dbuf). expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, fbuf.ir, expected_errno, actual_errno);
     } else {
         passed_tests++;
     }
