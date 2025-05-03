@@ -81,7 +81,7 @@ static void test_bit_range() {
         passed_tests++;
     }
 
-    // valid: bit_length 12–15 of 0xF000
+    // valid: bits 12–15 of 0xF000
     errno = 0;
     n = (int16_t)0xF000;
     lower = 12;
@@ -97,7 +97,7 @@ static void test_bit_range() {
         passed_tests++;
     }
 
-    // valid: bit_length 8–11 of 0x0F00
+    // valid: bits 8–11 of 0x0F00
     errno = 0;
     n = (int16_t)0x0F00;
     lower = 8;
@@ -113,7 +113,7 @@ static void test_bit_range() {
         passed_tests++;
     }
 
-    // valid: bit_length 0–3 of 0x000F
+    // valid: bits 0–3 of 0x000F
     errno = 0;
     n = (int16_t)0x000F;
     lower = 0;
@@ -129,7 +129,7 @@ static void test_bit_range() {
         passed_tests++;
     }
 
-    // valid: bit_length 3–6 of 0x00F8
+    // valid: bits 3–6 of 0x00F8
     errno = 0;
     n = (int16_t)0x00F8;
     lower = 3;
@@ -192,7 +192,7 @@ static void test_sign_extend() {
         passed_tests++;
     }
 
-    // valid: sign-extend 12 bit_length of 0x0FF2
+    // valid: sign-extend 0x0FF2 w/bit_length of 12
     errno = 0;
     n = (int16_t)0x0FF2;
     bit_length = 12;
@@ -207,7 +207,7 @@ static void test_sign_extend() {
         passed_tests++;
     }
 
-    // valid: sign-extend 8 bit_length of 0x00F2 => -14
+    // valid: sign-extend 0x00F2 => -14 w/bit_length of 8
     errno = 0;
     n = (int16_t)0x00F2;
     bit_length = 8;
@@ -222,7 +222,7 @@ static void test_sign_extend() {
         passed_tests++;
     }
 
-    // valid: sign-extend 8 bit_length of 0x003E => 62
+    // valid: sign-extend 0x003E => 62 w/bit_length of 8
     errno = 0;
     n = (int16_t)0x003E;
     bit_length = 8;
