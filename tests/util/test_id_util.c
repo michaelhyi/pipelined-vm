@@ -305,7 +305,7 @@ static void test_decode_add_and() {
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_decode_add_and failed: decode_add_and({.ready=%d}, "
-                "NULL): expected_errno: %d, actual_errno: %d\n",
+                "NULL). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
@@ -517,7 +517,7 @@ static void test_decode_not() {
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_decode_not failed: decode_not({.ready=%d}, "
-                "&dbuf): expected_errno: %d, actual_errno: %d\n",
+                "&dbuf). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
@@ -532,7 +532,7 @@ static void test_decode_not() {
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_decode_not failed: decode_not({.ready=%d}, "
-                "NULL): expected_errno: %d, actual_errno: %d\n",
+                "NULL). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
@@ -589,7 +589,7 @@ static void test_decode_br() {
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_decode_br failed: decode_br({.ready=%d}, "
-                "&dbuf): expected_errno: %d, actual_errno: %d\n",
+                "&dbuf). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
@@ -604,7 +604,7 @@ static void test_decode_br() {
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_decode_br failed: decode_br({.ready=%d}, "
-                "NULL): expected_errno: %d, actual_errno: %d\n",
+                "NULL). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
@@ -722,7 +722,7 @@ static void test_decode_jmp_jsrr() {
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_decode_jmp_jsrr failed: decode_jmp_jsrr({.ready=%d}, "
-                "&dbuf): expected_errno: %d, actual_errno: %d\n",
+                "&dbuf). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
@@ -737,7 +737,7 @@ static void test_decode_jmp_jsrr() {
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_decode_jmp_jsrr failed: decode_jmp_jsrr({.ready=%d}, "
-                "NULL): expected_errno: %d, actual_errno: %d\n",
+                "NULL). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
@@ -801,7 +801,7 @@ static void test_decode_jsr() {
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_decode_jsr failed: decode_jsr({.ready=%d}, "
-                "&dbuf): expected_errno: %d, actual_errno: %d\n",
+                "&dbuf). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
@@ -816,7 +816,7 @@ static void test_decode_jsr() {
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_decode_jsr failed: decode_jsr({.ready=%d}, "
-                "NULL): expected_errno: %d, actual_errno: %d\n",
+                "NULL). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
@@ -860,7 +860,7 @@ static void test_decode_ld_ldi_lea() {
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_decode_ld_ldi_lea failed: decode_ld_ldi_lea({.ready=%d}, "
-                "&dbuf): expected_errno: %d, actual_errno: %d\n",
+                "&dbuf). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
@@ -875,7 +875,7 @@ static void test_decode_ld_ldi_lea() {
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_decode_ld_ldi_lea failed: decode_ld_ldi_lea({.ready=%d}, "
-                "NULL): expected_errno: %d, actual_errno: %d\n",
+                "NULL). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
@@ -996,7 +996,7 @@ static void test_decode_st_sti() {
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_decode_st_sti failed: decode_st_sti({.ready=%d}, "
-                "&dbuf): expected_errno: %d, actual_errno: %d\n",
+                "&dbuf). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
@@ -1011,7 +1011,7 @@ static void test_decode_st_sti() {
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_decode_st_sti failed: decode_st_sti({.ready=%d}, "
-                "NULL): expected_errno: %d, actual_errno: %d\n",
+                "NULL). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
@@ -1034,7 +1034,7 @@ static void test_decode_st_sti() {
         fprintf(
             stderr,
             "test_decode_st_sti failed: decode_st_sti({.ready=%d, .ir=0x%04X}, "
-            "&dbuf): expected_reg: 0x%04X, actual_reg: 0x%04X\n",
+            "&dbuf). expected_reg: 0x%04X, actual_reg: 0x%04X\n",
             fbuf.ready, fbuf.ir, expected_reg, actual_reg);
     } else {
         passed_tests++;
@@ -1044,7 +1044,7 @@ static void test_decode_st_sti() {
         fprintf(
             stderr,
             "test_decode_st_sti failed: decode_st_sti({.ready=%d, .ir=0x%04X}, "
-            "&dbuf): expected_operand1: %d, actual_operand1: %d\n",
+            "&dbuf). expected_operand1: %d, actual_operand1: %d\n",
             fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
     } else {
         passed_tests++;
@@ -1067,7 +1067,7 @@ static void test_decode_st_sti() {
         fprintf(
             stderr,
             "test_decode_st_sti failed: decode_st_sti({.ready=%d, .ir=0x%04X}, "
-            "&dbuf): expected_reg: 0x%04X, actual_reg: 0x%04X\n",
+            "&dbuf). expected_reg: 0x%04X, actual_reg: 0x%04X\n",
             fbuf.ready, fbuf.ir, expected_reg, actual_reg);
     } else {
         passed_tests++;
@@ -1077,7 +1077,7 @@ static void test_decode_st_sti() {
         fprintf(
             stderr,
             "test_decode_st_sti failed: decode_st_sti({.ready=%d, .ir=0x%04X}, "
-            "&dbuf): expected_operand1: %d, actual_operand1: %d\n",
+            "&dbuf). expected_operand1: %d, actual_operand1: %d\n",
             fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
     } else {
         passed_tests++;
@@ -1100,7 +1100,7 @@ static void test_decode_ldr() {
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_decode_ldr failed: decode_ldr({.ready=%d}, "
-                "&dbuf): expected_errno: %d, actual_errno: %d\n",
+                "&dbuf). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
@@ -1115,7 +1115,7 @@ static void test_decode_ldr() {
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_decode_ldr failed: decode_ldr({.ready=%d}, "
-                "NULL): expected_errno: %d, actual_errno: %d\n",
+                "NULL). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
@@ -1141,7 +1141,7 @@ static void test_decode_ldr() {
     if (expected_reg != actual_reg) {
         fprintf(stderr,
                 "test_decode_ldr failed: decode_ldr({.ready=%d, .ir=0x%04X}, "
-                "&dbuf): expected_reg: r%d, actual_reg: r%d\n",
+                "&dbuf). expected_reg: r%d, actual_reg: r%d\n",
                 fbuf.ready, fbuf.ir, expected_reg, actual_reg);
     } else {
         passed_tests++;
@@ -1150,7 +1150,7 @@ static void test_decode_ldr() {
     if (expected_operand1 != actual_operand1) {
         fprintf(stderr,
                 "test_decode_ldr failed: decode_ldr({.ready=%d, .ir=0x%04X}, "
-                "&dbuf): expected_operand1: 0x%04X, actual_operand1: 0x%04X\n",
+                "&dbuf). expected_operand1: 0x%04X, actual_operand1: 0x%04X\n",
                 fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
     } else {
         passed_tests++;
@@ -1159,7 +1159,7 @@ static void test_decode_ldr() {
     if (expected_operand2 != actual_operand2) {
         fprintf(stderr,
                 "test_decode_ldr failed: decode_ldr({.ready=%d, .ir=0x%04X}, "
-                "&dbuf): expected_operand2: %d, actual_operand2: %d\n",
+                "&dbuf). expected_operand2: %d, actual_operand2: %d\n",
                 fbuf.ready, fbuf.ir, expected_operand2, actual_operand2);
     } else {
         passed_tests++;
@@ -1182,7 +1182,7 @@ static void test_decode_str() {
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_decode_str failed: decode_str({.ready=%d}, "
-                "&dbuf): expected_errno: %d, actual_errno: %d\n",
+                "&dbuf). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
@@ -1197,7 +1197,7 @@ static void test_decode_str() {
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_decode_str failed: decode_str({.ready=%d}, "
-                "NULL): expected_errno: %d, actual_errno: %d\n",
+                "NULL). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
@@ -1223,7 +1223,7 @@ static void test_decode_str() {
     if (expected_reg != actual_reg) {
         fprintf(stderr,
                 "test_decode_str failed: decode_str({.ready=%d, .ir=0x%04X}, "
-                "&dbuf): expected_reg: 0x%04X, actual_reg: 0x%04X\n",
+                "&dbuf). expected_reg: 0x%04X, actual_reg: 0x%04X\n",
                 fbuf.ready, fbuf.ir, expected_reg, actual_reg);
     } else {
         passed_tests++;
@@ -1232,7 +1232,7 @@ static void test_decode_str() {
     if (expected_operand1 != actual_operand1) {
         fprintf(stderr,
                 "test_decode_str failed: decode_str({.ready=%d, .ir=0x%04X}, "
-                "&dbuf): expected_operand1: 0x%04X, actual_operand1: 0x%04X\n",
+                "&dbuf). expected_operand1: 0x%04X, actual_operand1: 0x%04X\n",
                 fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
     } else {
         passed_tests++;
@@ -1241,7 +1241,7 @@ static void test_decode_str() {
     if (expected_operand2 != actual_operand2) {
         fprintf(stderr,
                 "test_decode_str failed: decode_str({.ready=%d, .ir=0x%04X}, "
-                "&dbuf): expected_operand2: %d, actual_operand2: %d\n",
+                "&dbuf). expected_operand2: %d, actual_operand2: %d\n",
                 fbuf.ready, fbuf.ir, expected_operand2, actual_operand2);
     } else {
         passed_tests++;
@@ -1263,7 +1263,7 @@ static void test_decode_trap() {
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_decode_trap failed: decode_trap({.ready=%d}, "
-                "&dbuf): expected_errno: %d, actual_errno: %d\n",
+                "&dbuf). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
@@ -1278,7 +1278,7 @@ static void test_decode_trap() {
     if (expected_errno != actual_errno) {
         fprintf(stderr,
                 "test_decode_trap failed: decode_trap({.ready=%d}, "
-                "NULL): expected_errno: %d, actual_errno: %d\n",
+                "NULL). expected_errno: %d, actual_errno: %d\n",
                 fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
@@ -1297,7 +1297,7 @@ static void test_decode_trap() {
     if (expected_operand1 != actual_operand1) {
         fprintf(stderr,
                 "test_decode_trap failed: decode_trap({.ready=%d, .ir=0x%04X}, "
-                "&dbuf): expected_operand1: 0x%04X, actual_operand1: 0x%04X\n",
+                "&dbuf). expected_operand1: 0x%04X, actual_operand1: 0x%04X\n",
                 fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
     } else {
         passed_tests++;
