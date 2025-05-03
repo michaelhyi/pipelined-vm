@@ -30,10 +30,10 @@ static void test_bit_range() {
     int expected_errno, actual_errno;
 
     // invalid: lower > upper
+    errno = 0;
     n = 0;
     lower = 15;
     upper = 12;
-    errno = 0;
     expected = 0;
     expected_errno = EINVAL;
     actual = bit_range(n, lower, upper);
@@ -56,10 +56,10 @@ static void test_bit_range() {
     }
 
     // invalid: upper out of range
+    errno = 0;
     n = 0;
     lower = 0;
     upper = 16;
-    errno = 0;
     expected = 0;
     expected_errno = EINVAL;
     actual = bit_range(n, lower, upper);
@@ -82,6 +82,7 @@ static void test_bit_range() {
     }
 
     // valid: bit_length 12–15 of 0xF000
+    errno = 0;
     n = (int16_t)0xF000;
     lower = 12;
     upper = 15;
@@ -97,6 +98,7 @@ static void test_bit_range() {
     }
 
     // valid: bit_length 8–11 of 0x0F00
+    errno = 0;
     n = (int16_t)0x0F00;
     lower = 8;
     upper = 11;
@@ -112,6 +114,7 @@ static void test_bit_range() {
     }
 
     // valid: bit_length 0–3 of 0x000F
+    errno = 0;
     n = (int16_t)0x000F;
     lower = 0;
     upper = 3;
@@ -127,6 +130,7 @@ static void test_bit_range() {
     }
 
     // valid: bit_length 3–6 of 0x00F8
+    errno = 0;
     n = (int16_t)0x00F8;
     lower = 3;
     upper = 6;
@@ -142,6 +146,7 @@ static void test_bit_range() {
     }
 
     // valid: bit 4 of 0x0010
+    errno = 0;
     n = (int16_t)0x0010;
     lower = 4;
     upper = 4;
@@ -163,9 +168,9 @@ static void test_sign_extend() {
     int expected_errno, actual_errno;
 
     // invalid: bit_length >= 16
+    errno = 0;
     n = 0;
     bit_length = 16;
-    errno = 0;
     expected = 0;
     expected_errno = EINVAL;
     actual = sign_extend(n, bit_length);
@@ -188,6 +193,7 @@ static void test_sign_extend() {
     }
 
     // valid: sign-extend 12 bit_length of 0x0FF2
+    errno = 0;
     n = (int16_t)0x0FF2;
     bit_length = 12;
     expected = (int16_t)0xFFF2;
@@ -202,6 +208,7 @@ static void test_sign_extend() {
     }
 
     // valid: sign-extend 8 bit_length of 0x00F2 => -14
+    errno = 0;
     n = (int16_t)0x00F2;
     bit_length = 8;
     expected = -14;
@@ -216,6 +223,7 @@ static void test_sign_extend() {
     }
 
     // valid: sign-extend 8 bit_length of 0x003E => 62
+    errno = 0;
     n = (int16_t)0x003E;
     bit_length = 8;
     expected = 62;

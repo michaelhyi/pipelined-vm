@@ -62,6 +62,9 @@ static void test_setup() {
 }
 
 static void test_teardown() {
+    printf("\n");
+    printf("\n");
+    printf("\n");
     printf("test results: %d/%d passed\n", passed_tests, TOTAL_TESTS);
     exit(passed_tests != TOTAL_TESTS);
 }
