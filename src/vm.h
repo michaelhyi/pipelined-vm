@@ -9,7 +9,7 @@
 #include "./stages/mem.h"
 
 #define ADDRESS_SPACE (1 << 16)
-#define NUM_REGISTERS (8)
+#define NUM_REGISTERS 8
 
 // TODO: add mutex locks
 typedef struct vm_t {

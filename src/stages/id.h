@@ -7,7 +7,8 @@
 #define OP_ADD 0x1      // Add
 #define OP_LD 0x2       // Load
 #define OP_ST 0x3       // Store
-#define OP_JSR 0x4      // JSR / JSRR
+#define OP_JSR 0x4      // JSR
+#define OP_JSRR 0x4     // JSRR
 #define OP_AND 0x5      // And
 #define OP_LDR 0x6      // Load Base+offset
 #define OP_STR 0x7      // Store Base+offset

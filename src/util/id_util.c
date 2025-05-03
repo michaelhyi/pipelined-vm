@@ -14,7 +14,7 @@ int is_jsr(int16_t ir) {
 }
 
 int is_jsrr(int16_t ir) {
-    return get_opcode(ir) == OP_JSR && !bit_range(ir, 11, 11);
+    return get_opcode(ir) == OP_JSRR && !bit_range(ir, 11, 11);
 }
 
 void decode_add_and(fbuf_t fbuf, dbuf_t *dbuf) {
@@ -91,9 +91,9 @@ void decode_jmp_jsrr(fbuf_t fbuf, dbuf_t *dbuf) {
     }
 
     int opcode = get_opcode(fbuf.ir);
-    if (opcode != OP_JMP && opcode != OP_JSR) {
+    if (opcode != OP_JMP && opcode != OP_JSRR) {
         fprintf(stderr, "decode_jmp_jsrr failed: fbuf.ir must have opcode "
-                        "OP_JMP or OP_JSR\n");
+                        "OP_JMP or OP_JSRR\n");
         errno = EINVAL;
         return;
     }

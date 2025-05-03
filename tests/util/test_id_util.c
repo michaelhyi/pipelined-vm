@@ -233,7 +233,7 @@ static void test_is_jsrr() {
 
     // JSRR (bit11 = 0)
     errno = 0;
-    ir = (OP_JSR << 12) | (0 << 11) | 0x045;
+    ir = (OP_JSRR << 12) | (0 << 11) | 0x045;
     expected = 1;
     actual = is_jsrr(ir);
     if (expected != actual) {
@@ -828,7 +828,7 @@ static void test_decode_jmp_jsrr() {
 
     // jsrr r4
     errno = 0;
-    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)((OP_JSR << 12) | (4 << 6))};
+    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)((OP_JSRR << 12) | (4 << 6))};
     memset(&dbuf, 0, sizeof(dbuf_t));
     vm.reg[4] = 0x300A;
     expected_operand1 = 0x300A;
