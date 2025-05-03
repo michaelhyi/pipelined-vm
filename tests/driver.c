@@ -5,7 +5,6 @@
 #include <stdlib.h>
 
 #include "../src/vm.h"
-#include "stages/test_id.h"
 #include "stages/test_if.h"
 #include "util/test_bitops.h"
 #include "util/test_id_util.h"
@@ -33,23 +32,16 @@ int main(void) {
     }
 
     errno = 0;
-    test_id_util();
-    if (errno) {
-        fprintf(stderr, "test_id_util failed: errno: %d\n", errno);
-        test_teardown();
-    }
-
-    errno = 0;
-    // test_id_exec_cycle(passed_tests, total_tests);
-    if (errno) {
-        fprintf(stderr, "test_id failed: errno: %d\n", errno);
-        test_teardown();
-    }
-
-    errno = 0;
     test_bitops();
     if (errno) {
         fprintf(stderr, "test_bitops failed: errno: %d\n", errno);
+        test_teardown();
+    }
+
+    errno = 0;
+    test_id_util();
+    if (errno) {
+        fprintf(stderr, "test_id_util failed: errno: %d\n", errno);
         test_teardown();
     }
 
