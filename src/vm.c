@@ -10,5 +10,5 @@ void system_init() {
     vm.ebuf.ready = 0;
     vm.mbuf.ready = 0;
 
-    vm.psr = 1 << 15;
+    vm.psr = (int16_t)(1 << 15);
 }

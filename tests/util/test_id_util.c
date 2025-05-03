@@ -2,6 +2,7 @@
 
 #include <errno.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "../../src/stages/id.h"
 #include "../../src/util/bitops.h"
@@ -93,6 +94,7 @@ static void test_is_jsr() {
     int expected, actual;
 
     // opcode != JSR
+    errno = 0;
     ir = 0x0000;
     expected = 0;
     actual = is_jsr(ir);
@@ -106,6 +108,7 @@ static void test_is_jsr() {
     }
 
     // JSRR (bit11 = 0)
+    errno = 0;
     ir = 0x4000;
     expected = 0;
     actual = is_jsr(ir);
@@ -119,6 +122,7 @@ static void test_is_jsr() {
     }
 
     // JSR with bit11 = 1
+    errno = 0;
     ir = (OP_JSR << 12) | (1 << 11);
     expected = 1;
     actual = is_jsr(ir);
@@ -132,6 +136,7 @@ static void test_is_jsr() {
     }
 
     // some other opcode with bit11 = 1
+    errno = 0;
     ir = (OP_ADD << 12) | (1 << 11);
     expected = 0;
     actual = is_jsr(ir);
@@ -150,6 +155,7 @@ static void test_is_jsrr() {
     int expected, actual;
 
     // opcode != JSR
+    errno = 0;
     ir = 0x0000;
     expected = 0;
     actual = is_jsrr(ir);
@@ -163,6 +169,7 @@ static void test_is_jsrr() {
     }
 
     // JSRR (bit11 = 0)
+    errno = 0;
     ir = (OP_JSR << 12) | (0 << 11) | 0x045;
     expected = 1;
     actual = is_jsrr(ir);
@@ -176,6 +183,7 @@ static void test_is_jsrr() {
     }
 
     // JSR immediate (bit11 = 1)
+    errno = 0;
     ir = (OP_JSR << 12) | (1 << 11);
     expected = 0;
     actual = is_jsrr(ir);
@@ -189,6 +197,7 @@ static void test_is_jsrr() {
     }
 
     // other opcode with bit11 = 0
+    errno = 0;
     ir = (OP_AND << 12) | (0 << 11);
     expected = 0;
     actual = is_jsrr(ir);
@@ -203,358 +212,1030 @@ static void test_is_jsrr() {
 }
 
 static void test_decode_add_and() {
-    fbuf_t fbad, fg;
-    dbuf_t dg;
+    fbuf_t fbuf;
+    dbuf_t dbuf;
     int expected_errno, actual_errno;
+    int16_t expected_reg, expected_operand1, expected_operand2;
+    int16_t actual_reg, actual_operand1, actual_operand2;
 
-    // error case: !ready
-    fbad = (fbuf_t){.ready = 0};
-    decode_add_and(fbad, NULL);
+    // error case: !fbuf.ready
+    errno = 0;
+    fbuf.ready = 0;
+    decode_add_and(fbuf, &dbuf);
     expected_errno = EINVAL;
     actual_errno = errno;
     if (expected_errno != actual_errno) {
         fprintf(stderr,
-                "test_decode_add_and failed: decode_add_and(fbuf.ready=0, "
-                "dbuf=NULL): expected_errno: %d, actual_errno: %d\n",
-                expected_errno, actual_errno);
+                "test_decode_add_and failed: decode_add_and({.ready=%d}, "
+                "&dbuf): expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
     }
 
-    // valid ADD (register)
+    // error case: dbuf = NULL
     errno = 0;
-    fg = (fbuf_t){.ready = 1,
-                  .ir = (OP_ADD << 12) | (3 << 9) | (2 << 6) | (0 << 5) |
-                        (1 << 0)};
-    vm.reg[2] = 0x10;
-    vm.reg[1] = 0x20;
-    dg = (dbuf_t){0};
-    decode_add_and(fg, &dg);
-    if (dg.reg != 3 || dg.operand1 != 0x10 || dg.operand2 != 0x20) {
+    fbuf.ready = 1;
+    decode_add_and(fbuf, NULL);
+    expected_errno = EINVAL;
+    actual_errno = errno;
+    if (expected_errno != actual_errno) {
         fprintf(stderr,
-                "test_decode_add_and failed: decode_add_and(ir=0x%04X): "
-                "expected: reg=3, operand1=0x10, operand2=0x20; actual: "
-                "reg=%d, operand1=0x%X, operand2=0x%X\n",
-                fg.ir, dg.reg, dg.operand1, dg.operand2);
+                "test_decode_add_and failed: decode_add_and({.ready=%d}, "
+                "NULL): expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
+    // add r2, r0, r1
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1,
+                    .ir = (int16_t)((OP_ADD << 12) | (2 << 9) | (0 << 6) | 1)};
+    memset(&dbuf, 0, sizeof(dbuf_t));
+    vm.reg[0] = 0x10;
+    vm.reg[1] = 0x20;
+    expected_reg = 2;
+    expected_operand1 = 0x10;
+    expected_operand2 = 0x20;
+
+    decode_add_and(fbuf, &dbuf);
+
+    actual_reg = dbuf.reg;
+    actual_operand1 = dbuf.operand1;
+    actual_operand2 = dbuf.operand2;
+
+    if (expected_reg != actual_reg) {
+        fprintf(stderr,
+                "test_decode_add_and failed: "
+                "decode_add_and({.ready=%d,.ir=0x%04X}). "
+                "expected_reg: r%d, actual_reg: r%d\n",
+                fbuf.ready, fbuf.ir, expected_reg, actual_reg);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand1 != actual_operand1) {
+        fprintf(stderr,
+                "test_decode_add_and failed: "
+                "decode_add_and({.ready=%d,.ir=0x%04X}). expected_operand1: "
+                "0x%04X, actual_operand1: 0x%04X\n",
+                fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand2 != actual_operand2) {
+        fprintf(stderr,
+                "test_decode_add_and failed: "
+                "decode_add_and({.ready=%d,.ir=0x%04X}). expected_operand2: "
+                "0x%04X, actual_operand2: 0x%04X\n",
+                fbuf.ready, fbuf.ir, expected_operand2, actual_operand2);
+    } else {
+        passed_tests++;
+    }
+
+    // add r6, r6, -1
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1,
+                    .ir = (int16_t)((OP_ADD << 12) | (6 << 9) | (6 << 6) |
+                                    (1 << 5) | bit_range(-1, 0, 4))};
+    memset(&dbuf, 0, sizeof(dbuf_t));
+    vm.reg[6] = (int16_t)0xF000;
+    expected_reg = 6;
+    expected_operand1 = (int16_t)0xF000;
+    expected_operand2 = -1;
+
+    decode_add_and(fbuf, &dbuf);
+
+    actual_reg = dbuf.reg;
+    actual_operand1 = dbuf.operand1;
+    actual_operand2 = dbuf.operand2;
+
+    if (expected_reg != actual_reg) {
+        fprintf(stderr,
+                "test_decode_add_and failed: "
+                "decode_add_and({.ready=%d,.ir=0x%04X}). "
+                "expected_reg: r%d, actual_reg: r%d\n",
+                fbuf.ready, fbuf.ir, expected_reg, actual_reg);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand1 != actual_operand1) {
+        fprintf(stderr,
+                "test_decode_add_and failed: "
+                "decode_add_and({.ready=%d,.ir=0x%04X}). expected_operand1: "
+                "0x%04X, actual_operand1: 0x%04X\n",
+                fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand2 != actual_operand2) {
+        fprintf(stderr,
+                "test_decode_add_and failed: "
+                "decode_add_and({.ready=%d,.ir=0x%04X}). expected_operand2: "
+                "%d, actual_operand2: %d\n",
+                fbuf.ready, fbuf.ir, expected_operand2, actual_operand2);
+    } else {
+        passed_tests++;
+    }
+
+    // and r0, r1, r2
+    errno = 0;
+    fbuf = (fbuf_t){
+        .ready = 1,
+        .ir = (int16_t)((OP_AND << 12) | (0 << 9) | (1 << 6) | (0 << 5) | 2)};
+    memset(&dbuf, 0, sizeof(dbuf_t));
+    vm.reg[1] = 0x1234;
+    vm.reg[2] = 0x0FA2;
+    expected_reg = 0;
+    expected_operand1 = 0x1234;
+    expected_operand2 = 0x0FA2;
+
+    decode_add_and(fbuf, &dbuf);
+
+    actual_reg = dbuf.reg;
+    actual_operand1 = dbuf.operand1;
+    actual_operand2 = dbuf.operand2;
+
+    if (expected_reg != actual_reg) {
+        fprintf(stderr,
+                "test_decode_add_and failed: "
+                "decode_add_and({.ready=%d,.ir=0x%04X}). "
+                "expected_reg: r%d, actual_reg: r%d\n",
+                fbuf.ready, fbuf.ir, expected_reg, actual_reg);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand1 != actual_operand1) {
+        fprintf(stderr,
+                "test_decode_add_and failed: "
+                "decode_add_and({.ready=%d,.ir=0x%04X}). expected_operand1: "
+                "0x%04X, actual_operand1: 0x%04X\n",
+                fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand2 != actual_operand2) {
+        fprintf(stderr,
+                "test_decode_add_and failed: "
+                "decode_add_and({.ready=%d,.ir=0x%04X}). expected_operand2: "
+                "0x%04X, actual_operand2: 0x%04X\n",
+                fbuf.ready, fbuf.ir, expected_operand2, actual_operand2);
+    } else {
+        passed_tests++;
+    }
+
+    // and r4, r4, 0
+    errno = 0;
+    fbuf = (fbuf_t){
+        .ready = 1,
+        .ir = (int16_t)((OP_AND << 12) | (4 << 9) | (4 << 6) | (1 << 5) | 0)};
+    memset(&dbuf, 0, sizeof(dbuf_t));
+    vm.reg[4] = (int16_t)0xAAAA;
+    expected_reg = 4;
+    expected_operand1 = (int16_t)0xAAAA;
+    expected_operand2 = 0;
+
+    decode_add_and(fbuf, &dbuf);
+
+    actual_reg = dbuf.reg;
+    actual_operand1 = dbuf.operand1;
+    actual_operand2 = dbuf.operand2;
+
+    if (expected_reg != actual_reg) {
+        fprintf(stderr,
+                "test_decode_add_and failed: "
+                "decode_add_and({.ready=%d,.ir=0x%04X}). "
+                "expected_reg: r%d, actual_reg: r%d\n",
+                fbuf.ready, fbuf.ir, expected_reg, actual_reg);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand1 != actual_operand1) {
+        fprintf(stderr,
+                "test_decode_add_and failed: "
+                "decode_add_and({.ready=%d,.ir=0x%04X}). expected_operand1: "
+                "0x%04X, actual_operand1: 0x%04X\n",
+                fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand2 != actual_operand2) {
+        fprintf(stderr,
+                "test_decode_add_and failed: "
+                "decode_add_and({.ready=%d,.ir=0x%04X}). expected_operand2: "
+                "%d, actual_operand2: %d\n",
+                fbuf.ready, fbuf.ir, expected_operand2, actual_operand2);
     } else {
         passed_tests++;
     }
 }
 
 static void test_decode_not() {
-    fbuf_t fbad, fg;
-    dbuf_t dg;
+    fbuf_t fbuf;
+    dbuf_t dbuf;
     int expected_errno, actual_errno;
+    int16_t expected_reg, expected_operand1;
+    int16_t actual_reg, actual_operand1;
 
-    // error case: !ready
-    fbad = (fbuf_t){.ready = 0};
-    decode_not(fbad, NULL);
+    // error case: !fbuf.ready
+    errno = 0;
+    fbuf.ready = 0;
+    decode_not(fbuf, &dbuf);
     expected_errno = EINVAL;
     actual_errno = errno;
     if (expected_errno != actual_errno) {
         fprintf(stderr,
-                "test_decode_not failed: decode_not(fbuf.ready=0, dbuf=NULL): "
-                "expected_errno: %d, actual_errno: %d\n",
-                expected_errno, actual_errno);
+                "test_decode_not failed: decode_not({.ready=%d}, "
+                "&dbuf): expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
     }
 
-    // valid NOT
+    // error case: dbuf = NULL
     errno = 0;
-    fg = (fbuf_t){.ready = 1, .ir = (OP_NOT << 12) | (4 << 9) | (5 << 6)};
-    vm.reg[5] = 0x33;
-    dg = (dbuf_t){0};
-    decode_not(fg, &dg);
-    if (dg.reg != 4 || dg.operand1 != 0x33) {
+    fbuf.ready = 1;
+    decode_not(fbuf, NULL);
+    expected_errno = EINVAL;
+    actual_errno = errno;
+    if (expected_errno != actual_errno) {
         fprintf(stderr,
-                "test_decode_not failed: decode_not(ir=0x%04X): expected: "
-                "reg=4, operand1=0x33; actual: reg=%d, operand1=0x%X\n",
-                fg.ir, dg.reg, dg.operand1);
+                "test_decode_not failed: decode_not({.ready=%d}, "
+                "NULL): expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
+    // not r1, r2
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1,
+                    .ir = (int16_t)((OP_NOT << 12) | (1 << 9) | (2 << 6))};
+    memset(&dbuf, 0, sizeof(dbuf_t));
+    vm.reg[2] = 0x20;
+    expected_reg = 1;
+    expected_operand1 = 0x20;
+
+    decode_not(fbuf, &dbuf);
+
+    actual_reg = dbuf.reg;
+    actual_operand1 = dbuf.operand1;
+
+    if (expected_reg != actual_reg) {
+        fprintf(stderr,
+                "test_decode_not failed: "
+                "decode_not({.ready=%d,.ir=0x%04X}). "
+                "expected_reg: r%d, actual_reg: r%d\n",
+                fbuf.ready, fbuf.ir, expected_reg, actual_reg);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand1 != actual_operand1) {
+        fprintf(stderr,
+                "test_decode_not failed: "
+                "decode_not({.ready=%d,.ir=0x%04X}). expected_operand1: "
+                "0x%04X, actual_operand1: 0x%04X\n",
+                fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
     } else {
         passed_tests++;
     }
 }
 
 static void test_decode_br() {
-    fbuf_t fbad, fg;
-    dbuf_t dg;
+    fbuf_t fbuf;
+    dbuf_t dbuf;
     int expected_errno, actual_errno;
+    int16_t expected_cc, expected_operand1;
+    int16_t actual_cc, actual_operand1;
 
-    // error case: !ready
-    fbad = (fbuf_t){.ready = 0};
-    decode_br(fbad, NULL);
+    // error case: !fbuf.ready
+    errno = 0;
+    fbuf.ready = 0;
+    decode_br(fbuf, &dbuf);
     expected_errno = EINVAL;
     actual_errno = errno;
     if (expected_errno != actual_errno) {
         fprintf(stderr,
-                "test_decode_br failed: decode_br(fbuf.ready=0, dbuf=NULL): "
-                "expected_errno: %d, actual_errno: %d\n",
-                expected_errno, actual_errno);
+                "test_decode_br failed: decode_br({.ready=%d}, "
+                "&dbuf): expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
     }
 
-    // valid BR: cc=5, offset=-4 (0x1FC)
+    // error case: dbuf = NULL
     errno = 0;
-    fg = (fbuf_t){.ready = 1, .ir = (OP_BR << 12) | (5 << 9) | 0x1FC};
-    dg = (dbuf_t){0};
-    decode_br(fg, &dg);
-    if (dg.cc != 5 || dg.operand1 != (int16_t)-4) {
+    fbuf.ready = 1;
+    decode_br(fbuf, NULL);
+    expected_errno = EINVAL;
+    actual_errno = errno;
+    if (expected_errno != actual_errno) {
         fprintf(stderr,
-                "test_decode_br failed: decode_br(ir=0x%04X): expected: cc=5, "
-                "operand1=-4; actual: cc=%d, operand1=%d\n",
-                fg.ir, dg.cc, dg.operand1);
+                "test_decode_br failed: decode_br({.ready=%d}, "
+                "NULL): expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
+    // brnzp 24
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)((OP_BR << 12) | (7 << 9) | 24)};
+    memset(&dbuf, 0, sizeof(dbuf_t));
+    expected_cc = 7;
+    expected_operand1 = 24;
+
+    decode_br(fbuf, &dbuf);
+
+    actual_cc = dbuf.cc;
+    actual_operand1 = dbuf.operand1;
+
+    if (expected_cc != actual_cc) {
+        fprintf(stderr,
+                "test_decode_br failed: "
+                "decode_br({.ready=%d,.ir=0x%04X}). "
+                "expected_cc: %d, actual_cc: %d\n",
+                fbuf.ready, fbuf.ir, expected_cc, actual_cc);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand1 != actual_operand1) {
+        fprintf(stderr,
+                "test_decode_br failed: "
+                "decode_br({.ready=%d,.ir=0x%04X}). expected_operand1: "
+                "%d, actual_operand1: %d\n",
+                fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
+    } else {
+        passed_tests++;
+    }
+
+    // brnp 4
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)((OP_BR << 12) | (5 << 9) | 4)};
+    memset(&dbuf, 0, sizeof(dbuf_t));
+    expected_cc = 5;
+    expected_operand1 = 4;
+
+    decode_br(fbuf, &dbuf);
+
+    actual_cc = dbuf.cc;
+    actual_operand1 = dbuf.operand1;
+
+    if (expected_cc != actual_cc) {
+        fprintf(stderr,
+                "test_decode_br failed: "
+                "decode_br({.ready=%d,.ir=0x%04X}). "
+                "expected_cc: %d, actual_cc: %d\n",
+                fbuf.ready, fbuf.ir, expected_cc, actual_cc);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand1 != actual_operand1) {
+        fprintf(stderr,
+                "test_decode_br failed: "
+                "decode_br({.ready=%d,.ir=0x%04X}). expected_operand1: "
+                "%d, actual_operand1: %d\n",
+                fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
+    } else {
+        passed_tests++;
+    }
+
+    // brn 1
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)((OP_BR << 12) | (4 << 9) | 1)};
+    memset(&dbuf, 0, sizeof(dbuf_t));
+    expected_cc = 4;
+    expected_operand1 = 1;
+
+    decode_br(fbuf, &dbuf);
+
+    actual_cc = dbuf.cc;
+    actual_operand1 = dbuf.operand1;
+
+    if (expected_cc != actual_cc) {
+        fprintf(stderr,
+                "test_decode_br failed: "
+                "decode_br({.ready=%d,.ir=0x%04X}). "
+                "expected_cc: %d, actual_cc: %d\n",
+                fbuf.ready, fbuf.ir, expected_cc, actual_cc);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand1 != actual_operand1) {
+        fprintf(stderr,
+                "test_decode_br failed: "
+                "decode_br({.ready=%d,.ir=0x%04X}). expected_operand1: "
+                "%d, actual_operand1: %d\n",
+                fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
     } else {
         passed_tests++;
     }
 }
 
 static void test_decode_jmp_jsrr() {
-    fbuf_t fbad, fg;
-    dbuf_t dg;
+    fbuf_t fbuf;
+    dbuf_t dbuf;
     int expected_errno, actual_errno;
+    int16_t expected_operand1, actual_operand1;
 
-    // error case: !ready
-    fbad = (fbuf_t){.ready = 0};
-    decode_jmp_jsrr(fbad, NULL);
+    // error case: !fbuf.ready
+    errno = 0;
+    fbuf.ready = 0;
+    decode_jmp_jsrr(fbuf, &dbuf);
     expected_errno = EINVAL;
     actual_errno = errno;
     if (expected_errno != actual_errno) {
         fprintf(stderr,
-                "test_decode_jmp_jsrr failed: decode_jmp_jsrr(fbuf.ready=0, "
-                "dbuf=NULL): expected_errno: %d, actual_errno: %d\n",
-                expected_errno, actual_errno);
+                "test_decode_jmp_jsrr failed: decode_jmp_jsrr({.ready=%d}, "
+                "&dbuf): expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
     }
 
-    // valid JMP/JSRR
+    // error case: dbuf = NULL
     errno = 0;
-    fg = (fbuf_t){.ready = 1, .ir = (OP_JMP << 12) | (6 << 6)};
-    vm.reg[6] = 0x77;
-    dg = (dbuf_t){0};
-    decode_jmp_jsrr(fg, &dg);
-    if (dg.operand1 != 0x77) {
+    fbuf.ready = 1;
+    decode_jmp_jsrr(fbuf, NULL);
+    expected_errno = EINVAL;
+    actual_errno = errno;
+    if (expected_errno != actual_errno) {
         fprintf(stderr,
-                "test_decode_jmp_jsrr failed: decode_jmp_jsrr(ir=0x%04X): "
-                "expected: operand1=0x77; actual: operand1=0x%X\n",
-                fg.ir, dg.operand1);
+                "test_decode_jmp_jsrr failed: decode_jmp_jsrr({.ready=%d}, "
+                "NULL): expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
+    // jmp r7 (ret)
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)((OP_JMP << 12) | (7 << 6))};
+    memset(&dbuf, 0, sizeof(dbuf_t));
+    vm.reg[7] = 0x3001;
+    expected_operand1 = 0x3001;
+
+    decode_jmp_jsrr(fbuf, &dbuf);
+
+    actual_operand1 = dbuf.operand1;
+
+    if (expected_operand1 != actual_operand1) {
+        fprintf(stderr,
+                "test_decode_jmp_jsrr failed: "
+                "decode_jmp_jsrr({.ready=%d,.ir=0x%04X}). expected_operand1: "
+                "0x%04X, actual_operand1: 0x%04X\n",
+                fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
+    } else {
+        passed_tests++;
+    }
+
+    // jsrr r4
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)((OP_JSR << 12) | (4 << 6))};
+    memset(&dbuf, 0, sizeof(dbuf_t));
+    vm.reg[4] = 0x300A;
+    expected_operand1 = 0x300A;
+
+    decode_jmp_jsrr(fbuf, &dbuf);
+
+    actual_operand1 = dbuf.operand1;
+
+    if (expected_operand1 != actual_operand1) {
+        fprintf(stderr,
+                "test_decode_jmp_jsrr failed: "
+                "decode_jmp_jsrr({.ready=%d,.ir=0x%04X}). expected_operand1: "
+                "0x%04X, actual_operand1: 0x%04X\n",
+                fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
     } else {
         passed_tests++;
     }
 }
 
 static void test_decode_jsr() {
-    fbuf_t fbad, fg;
-    dbuf_t dg;
+    fbuf_t fbuf;
+    dbuf_t dbuf;
     int expected_errno, actual_errno;
+    int16_t expected_operand1, actual_operand1;
 
-    // error case: !ready
-    fbad = (fbuf_t){.ready = 0};
-    decode_jsr(fbad, NULL);
+    // error case: !fbuf.ready
+    errno = 0;
+    fbuf.ready = 0;
+    decode_jsr(fbuf, &dbuf);
     expected_errno = EINVAL;
     actual_errno = errno;
     if (expected_errno != actual_errno) {
         fprintf(stderr,
-                "test_decode_jsr failed: decode_jsr(fbuf.ready=0, dbuf=NULL): "
-                "expected_errno: %d, actual_errno: %d\n",
-                expected_errno, actual_errno);
+                "test_decode_jsr failed: decode_jsr({.ready=%d}, "
+                "&dbuf): expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
     }
 
-    // valid JSR: offset = -2 (0x7FE)
+    // error case: dbuf = NULL
     errno = 0;
-    fg = (fbuf_t){.ready = 1, .ir = (OP_JSR << 12) | (1 << 11) | 0x7FE};
-    dg = (dbuf_t){0};
-    decode_jsr(fg, &dg);
-    if (dg.operand1 != (int16_t)-2) {
+    fbuf.ready = 1;
+    decode_jsr(fbuf, NULL);
+    expected_errno = EINVAL;
+    actual_errno = errno;
+    if (expected_errno != actual_errno) {
         fprintf(stderr,
-                "test_decode_jsr failed: decode_jsr(ir=0x%04X): expected: "
-                "operand1=-2; actual: operand1=%d\n",
-                fg.ir, dg.operand1);
+                "test_decode_jsr failed: decode_jsr({.ready=%d}, "
+                "NULL): expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
+    // jsr -12
+    errno = 0;
+    fbuf = (fbuf_t){
+        .ready = 1,
+        .ir = (int16_t)((OP_JSR << 12) | (1 << 11) | bit_range(-12, 0, 11))};
+    memset(&dbuf, 0, sizeof(dbuf_t));
+    expected_operand1 = -12;
+
+    decode_jsr(fbuf, &dbuf);
+
+    actual_operand1 = dbuf.operand1;
+
+    if (expected_operand1 != actual_operand1) {
+        fprintf(stderr,
+                "test_decode_jsr failed: "
+                "decode_jsr({.ready=%d,.ir=0x%04X}). expected_operand1: "
+                "%d, actual_operand1: %d\n",
+                fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
     } else {
         passed_tests++;
     }
 }
 
 static void test_decode_ld_ldi_lea() {
-    fbuf_t fbad, fg;
-    dbuf_t dg;
+    fbuf_t fbuf;
+    dbuf_t dbuf;
     int expected_errno, actual_errno;
+    int16_t expected_reg, expected_operand1, actual_reg, actual_operand1;
 
-    // error case: !ready
-    fbad = (fbuf_t){.ready = 0};
-    decode_ld_ldi_lea(fbad, NULL);
+    // error case: !fbuf.ready
+    errno = 0;
+    fbuf.ready = 0;
+    decode_ld_ldi_lea(fbuf, &dbuf);
     expected_errno = EINVAL;
     actual_errno = errno;
     if (expected_errno != actual_errno) {
-        fprintf(
-            stderr,
-            "test_decode_ld_ldi_lea failed: decode_ld_ldi_lea(fbuf.ready=0, "
-            "dbuf=NULL): expected_errno: %d, actual_errno: %d\n",
-            expected_errno, actual_errno);
+        fprintf(stderr,
+                "test_decode_ld_ldi_lea failed: decode_ld_ldi_lea({.ready=%d}, "
+                "&dbuf): expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
     }
 
-    // valid LD/LDI/LEA
+    // error case: dbuf = NULL
     errno = 0;
-    fg = (fbuf_t){.ready = 1, .ir = (OP_LD << 12) | (7 << 9) | 0x0A};
-    dg = (dbuf_t){0};
-    decode_ld_ldi_lea(fg, &dg);
-    if (dg.reg != 7 || dg.operand1 != 0x0A) {
-        fprintf(
-            stderr,
-            "test_decode_ld_ldi_lea failed: decode_ld_ldi_lea(ir=0x%04X): "
-            "expected: reg=7, operand1=0x0A; actual: reg=%d, operand1=0x%X\n",
-            fg.ir, dg.reg, dg.operand1);
+    fbuf.ready = 1;
+    decode_ld_ldi_lea(fbuf, NULL);
+    expected_errno = EINVAL;
+    actual_errno = errno;
+    if (expected_errno != actual_errno) {
+        fprintf(stderr,
+                "test_decode_ld_ldi_lea failed: decode_ld_ldi_lea({.ready=%d}, "
+                "NULL): expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
+    // ld r0, 54
+    errno = 0;
+    fbuf = (fbuf_t){
+        .ready = 1,
+        .ir = (int16_t)((OP_LD << 12) | (0 << 9) | bit_range(-54, 0, 8))};
+    memset(&dbuf, 0, sizeof(dbuf_t));
+    expected_reg = 0;
+    expected_operand1 = -54;
+
+    decode_ld_ldi_lea(fbuf, &dbuf);
+
+    actual_reg = dbuf.reg;
+    actual_operand1 = dbuf.operand1;
+
+    if (expected_reg != actual_reg) {
+        fprintf(stderr,
+                "test_decode_ld_ldi_lea failed: "
+                "decode_ld_ldi_lea({.ready=%d,.ir=0x%04X}). expected_reg: "
+                "r%d, actual_reg: r%d\n",
+                fbuf.ready, fbuf.ir, expected_reg, actual_reg);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand1 != actual_operand1) {
+        fprintf(stderr,
+                "test_decode_ld_ldi_lea failed: "
+                "decode_ld_ldi_lea({.ready=%d,.ir=0x%04X}). expected_operand1: "
+                "%d, actual_operand1: %d\n",
+                fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
+    } else {
+        passed_tests++;
+    }
+
+    // ldi r3, 2
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)((OP_LDI << 12) | (3 << 9) | 2)};
+    memset(&dbuf, 0, sizeof(dbuf_t));
+    expected_reg = 3;
+    expected_operand1 = 2;
+
+    decode_ld_ldi_lea(fbuf, &dbuf);
+
+    actual_reg = dbuf.reg;
+    actual_operand1 = dbuf.operand1;
+
+    if (expected_reg != actual_reg) {
+        fprintf(stderr,
+                "test_decode_ld_ldi_lea failed: "
+                "decode_ld_ldi_lea({.ready=%d,.ir=0x%04X}). expected_reg: "
+                "r%d, actual_reg: r%d\n",
+                fbuf.ready, fbuf.ir, expected_reg, actual_reg);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand1 != actual_operand1) {
+        fprintf(stderr,
+                "test_decode_ld_ldi_lea failed: "
+                "decode_ld_ldi_lea({.ready=%d,.ir=0x%04X}). expected_operand1: "
+                "%d, actual_operand1: %d\n",
+                fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
+    } else {
+        passed_tests++;
+    }
+
+    // lea r4, 10
+    errno = 0;
+    fbuf =
+        (fbuf_t){.ready = 1, .ir = (int16_t)((OP_LEA << 12) | (4 << 9) | 10)};
+    memset(&dbuf, 0, sizeof(dbuf_t));
+    expected_reg = 4;
+    expected_operand1 = 10;
+
+    decode_ld_ldi_lea(fbuf, &dbuf);
+
+    actual_reg = dbuf.reg;
+    actual_operand1 = dbuf.operand1;
+
+    if (expected_reg != actual_reg) {
+        fprintf(stderr,
+                "test_decode_ld_ldi_lea failed: "
+                "decode_ld_ldi_lea({.ready=%d,.ir=0x%04X}). expected_reg: "
+                "r%d, actual_reg: r%d\n",
+                fbuf.ready, fbuf.ir, expected_reg, actual_reg);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand1 != actual_operand1) {
+        fprintf(stderr,
+                "test_decode_ld_ldi_lea failed: "
+                "decode_ld_ldi_lea({.ready=%d,.ir=0x%04X}). expected_operand1: "
+                "%d, actual_operand1: %d\n",
+                fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
     } else {
         passed_tests++;
     }
 }
 
 static void test_decode_st_sti() {
-    fbuf_t fbad, fg;
-    dbuf_t dg;
+    fbuf_t fbuf;
+    dbuf_t dbuf;
     int expected_errno, actual_errno;
+    int16_t expected_reg, expected_operand1, actual_reg, actual_operand1;
 
-    // error case: !ready
-    fbad = (fbuf_t){.ready = 0};
-    decode_st_sti(fbad, NULL);
+    // error case: !fbuf.ready
+    errno = 0;
+    fbuf.ready = 0;
+    decode_st_sti(fbuf, &dbuf);
     expected_errno = EINVAL;
     actual_errno = errno;
     if (expected_errno != actual_errno) {
         fprintf(stderr,
-                "test_decode_st_sti failed: decode_st_sti(fbuf.ready=0, "
-                "dbuf=NULL): expected_errno: %d, actual_errno: %d\n",
-                expected_errno, actual_errno);
+                "test_decode_st_sti failed: decode_st_sti({.ready=%d}, "
+                "&dbuf): expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
     }
 
-    // valid ST/STI
+    // error case: dbuf = NULL
     errno = 0;
-    fg = (fbuf_t){.ready = 1, .ir = (OP_ST << 12) | (7 << 9) | 0x0B};
-    vm.reg[7] = 0x56;
-    dg = (dbuf_t){0};
-    decode_st_sti(fg, &dg);
-    if (dg.reg != 0x56 || dg.operand1 != 0x0B) {
+    fbuf.ready = 1;
+    decode_st_sti(fbuf, NULL);
+    expected_errno = EINVAL;
+    actual_errno = errno;
+    if (expected_errno != actual_errno) {
+        fprintf(stderr,
+                "test_decode_st_sti failed: decode_st_sti({.ready=%d}, "
+                "NULL): expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
+    // st r0, 54
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)((OP_ST << 12) | (0 << 9) | 54)};
+    memset(&dbuf, 0, sizeof(dbuf_t));
+    vm.reg[0] = 0x10;
+    expected_reg = 0x10;
+    expected_operand1 = 54;
+
+    decode_st_sti(fbuf, &dbuf);
+
+    actual_reg = dbuf.reg;
+    actual_operand1 = dbuf.operand1;
+
+    if (expected_reg != actual_reg) {
         fprintf(
             stderr,
-            "test_decode_st_sti failed: decode_st_sti(ir=0x%04X): expected: "
-            "reg=0x56, operand1=0x0B; actual: reg=0x%X, operand1=0x%X\n",
-            fg.ir, dg.reg, dg.operand1);
+            "test_decode_st_sti failed: decode_st_sti({.ready=%d, .ir=0x%04X}, "
+            "&dbuf): expected_reg: 0x%04X, actual_reg: 0x%04X\n",
+            fbuf.ready, fbuf.ir, expected_reg, actual_reg);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand1 != actual_operand1) {
+        fprintf(
+            stderr,
+            "test_decode_st_sti failed: decode_st_sti({.ready=%d, .ir=0x%04X}, "
+            "&dbuf): expected_operand1: %d, actual_operand1: %d\n",
+            fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
+    } else {
+        passed_tests++;
+    }
+
+    // sti r2, 5
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)((OP_STI << 12) | (2 << 9) | 5)};
+    memset(&dbuf, 0, sizeof(dbuf_t));
+    vm.reg[2] = 0x5000;
+    expected_reg = 0x5000;
+    expected_operand1 = 5;
+
+    decode_st_sti(fbuf, &dbuf);
+
+    actual_reg = dbuf.reg;
+    actual_operand1 = dbuf.operand1;
+
+    if (expected_reg != actual_reg) {
+        fprintf(
+            stderr,
+            "test_decode_st_sti failed: decode_st_sti({.ready=%d, .ir=0x%04X}, "
+            "&dbuf): expected_reg: 0x%04X, actual_reg: 0x%04X\n",
+            fbuf.ready, fbuf.ir, expected_reg, actual_reg);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand1 != actual_operand1) {
+        fprintf(
+            stderr,
+            "test_decode_st_sti failed: decode_st_sti({.ready=%d, .ir=0x%04X}, "
+            "&dbuf): expected_operand1: %d, actual_operand1: %d\n",
+            fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
     } else {
         passed_tests++;
     }
 }
 
 static void test_decode_ldr() {
-    fbuf_t fbad, fg;
-    dbuf_t dg;
+    fbuf_t fbuf;
+    dbuf_t dbuf;
     int expected_errno, actual_errno;
+    int16_t expected_reg, expected_operand1, expected_operand2;
+    int16_t actual_reg, actual_operand1, actual_operand2;
 
-    // error case: !ready
-    fbad = (fbuf_t){.ready = 0};
-    decode_ldr(fbad, NULL);
+    // error case: !fbuf.ready
+    errno = 0;
+    fbuf.ready = 0;
+    decode_ldr(fbuf, &dbuf);
     expected_errno = EINVAL;
     actual_errno = errno;
     if (expected_errno != actual_errno) {
         fprintf(stderr,
-                "test_decode_ldr failed: decode_ldr(fbuf.ready=0, dbuf=NULL): "
-                "expected_errno: %d, actual_errno: %d\n",
-                expected_errno, actual_errno);
+                "test_decode_ldr failed: decode_ldr({.ready=%d}, "
+                "&dbuf): expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
     }
 
-    // valid LDR
+    // error case: dbuf = NULL
     errno = 0;
-    fg =
-        (fbuf_t){.ready = 1, .ir = (OP_LDR << 12) | (9 << 9) | (1 << 6) | 0x03};
-    vm.reg[1] = 0x9A;
-    dg = (dbuf_t){0};
-    decode_ldr(fg, &dg);
-    if (dg.reg != 9 || dg.operand1 != 0x9A || dg.operand2 != 3) {
+    fbuf.ready = 1;
+    decode_ldr(fbuf, NULL);
+    expected_errno = EINVAL;
+    actual_errno = errno;
+    if (expected_errno != actual_errno) {
         fprintf(stderr,
-                "test_decode_ldr failed: decode_ldr(ir=0x%04X): expected: "
-                "reg=9, operand1=0x9A, operand2=3; actual: reg=%d, "
-                "operand1=0x%X, operand2=%d\n",
-                fg.ir, dg.reg, dg.operand1, dg.operand2);
+                "test_decode_ldr failed: decode_ldr({.ready=%d}, "
+                "NULL): expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
+    // ldr r0, r5, -2
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1,
+                    .ir = (int16_t)((OP_LDR << 12) | (0 << 9) | (5 << 6) |
+                                    bit_range(-2, 0, 5))};
+    memset(&dbuf, 0, sizeof(dbuf_t));
+    vm.reg[5] = (int16_t)0xEFFE;
+    expected_reg = 0;
+    expected_operand1 = (int16_t)0xEFFE;
+    expected_operand2 = -2;
+
+    decode_ldr(fbuf, &dbuf);
+
+    actual_reg = dbuf.reg;
+    actual_operand1 = dbuf.operand1;
+    actual_operand2 = dbuf.operand2;
+
+    if (expected_reg != actual_reg) {
+        fprintf(stderr,
+                "test_decode_ldr failed: decode_ldr({.ready=%d, .ir=0x%04X}, "
+                "&dbuf): expected_reg: r%d, actual_reg: r%d\n",
+                fbuf.ready, fbuf.ir, expected_reg, actual_reg);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand1 != actual_operand1) {
+        fprintf(stderr,
+                "test_decode_ldr failed: decode_ldr({.ready=%d, .ir=0x%04X}, "
+                "&dbuf): expected_operand1: 0x%04X, actual_operand1: 0x%04X\n",
+                fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand2 != actual_operand2) {
+        fprintf(stderr,
+                "test_decode_ldr failed: decode_ldr({.ready=%d, .ir=0x%04X}, "
+                "&dbuf): expected_operand2: %d, actual_operand2: %d\n",
+                fbuf.ready, fbuf.ir, expected_operand2, actual_operand2);
     } else {
         passed_tests++;
     }
 }
 
 static void test_decode_str() {
-    fbuf_t fbad, fg;
-    dbuf_t dg;
+    fbuf_t fbuf;
+    dbuf_t dbuf;
     int expected_errno, actual_errno;
+    int16_t expected_reg, expected_operand1, expected_operand2;
+    int16_t actual_reg, actual_operand1, actual_operand2;
 
-    // error case: !ready
-    fbad = (fbuf_t){.ready = 0};
-    decode_str(fbad, NULL);
+    // error case: !fbuf.ready
+    errno = 0;
+    fbuf.ready = 0;
+    decode_str(fbuf, &dbuf);
     expected_errno = EINVAL;
     actual_errno = errno;
     if (expected_errno != actual_errno) {
         fprintf(stderr,
-                "test_decode_str failed: decode_str(fbuf.ready=0, dbuf=NULL): "
-                "expected_errno: %d, actual_errno: %d\n",
-                expected_errno, actual_errno);
+                "test_decode_str failed: decode_str({.ready=%d}, "
+                "&dbuf): expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
     }
 
-    // valid STR
+    // error case: dbuf = NULL
     errno = 0;
-    fg =
-        (fbuf_t){.ready = 1, .ir = (OP_STR << 12) | (2 << 9) | (3 << 6) | 0x02};
-    vm.reg[2] = 0xAB;
-    vm.reg[3] = 0xCD;
-    dg = (dbuf_t){0};
-    decode_str(fg, &dg);
-    if (dg.reg != 0xCD || dg.operand1 != 0xAB || dg.operand2 != 2) {
+    fbuf.ready = 1;
+    decode_str(fbuf, NULL);
+    expected_errno = EINVAL;
+    actual_errno = errno;
+    if (expected_errno != actual_errno) {
         fprintf(stderr,
-                "test_decode_str failed: decode_str(ir=0x%04X): expected: "
-                "reg=0xCD, operand1=0xAB, operand2=2; actual: reg=0x%X, "
-                "operand1=0x%X, operand2=%d\n",
-                fg.ir, dg.reg, dg.operand1, dg.operand2);
+                "test_decode_str failed: decode_str({.ready=%d}, "
+                "NULL): expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
+    // str r0, r5, 3
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1,
+                    .ir = (int16_t)((OP_STR << 12) | (0 << 9) | (5 << 6) | 3)};
+    memset(&dbuf, 0, sizeof(dbuf_t));
+    vm.reg[0] = (int16_t)0x19;
+    vm.reg[5] = (int16_t)0xEFFE;
+    expected_reg = (int16_t)0x19;
+    expected_operand1 = (int16_t)0xEFFE;
+    expected_operand2 = 3;
+
+    decode_str(fbuf, &dbuf);
+
+    actual_reg = dbuf.reg;
+    actual_operand1 = dbuf.operand1;
+    actual_operand2 = dbuf.operand2;
+
+    if (expected_reg != actual_reg) {
+        fprintf(stderr,
+                "test_decode_str failed: decode_str({.ready=%d, .ir=0x%04X}, "
+                "&dbuf): expected_reg: 0x%04X, actual_reg: 0x%04X\n",
+                fbuf.ready, fbuf.ir, expected_reg, actual_reg);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand1 != actual_operand1) {
+        fprintf(stderr,
+                "test_decode_str failed: decode_str({.ready=%d, .ir=0x%04X}, "
+                "&dbuf): expected_operand1: 0x%04X, actual_operand1: 0x%04X\n",
+                fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
+    } else {
+        passed_tests++;
+    }
+
+    if (expected_operand2 != actual_operand2) {
+        fprintf(stderr,
+                "test_decode_str failed: decode_str({.ready=%d, .ir=0x%04X}, "
+                "&dbuf): expected_operand2: %d, actual_operand2: %d\n",
+                fbuf.ready, fbuf.ir, expected_operand2, actual_operand2);
     } else {
         passed_tests++;
     }
 }
 
 static void test_decode_trap() {
-    fbuf_t fbad, fg;
-    dbuf_t dg;
+    fbuf_t fbuf;
+    dbuf_t dbuf;
     int expected_errno, actual_errno;
+    int16_t expected_operand1, actual_operand1;
 
-    // error case: !ready
-    fbad = (fbuf_t){.ready = 0};
-    decode_trap(fbad, NULL);
+    // error case: !fbuf.ready
+    errno = 0;
+    fbuf.ready = 0;
+    decode_trap(fbuf, &dbuf);
     expected_errno = EINVAL;
     actual_errno = errno;
     if (expected_errno != actual_errno) {
         fprintf(stderr,
-                "test_decode_trap failed: decode_trap(fbuf.ready=0, "
-                "dbuf=NULL): expected_errno: %d, actual_errno: %d\n",
-                expected_errno, actual_errno);
+                "test_decode_trap failed: decode_trap({.ready=%d}, "
+                "&dbuf): expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, expected_errno, actual_errno);
     } else {
         passed_tests++;
     }
 
-    // valid TRAP
+    // error case: dbuf = NULL
     errno = 0;
-    fg = (fbuf_t){.ready = 1, .ir = (OP_TRAP << 12) | 0x7F};
-    dg = (dbuf_t){0};
-    decode_trap(fg, &dg);
-    if (dg.operand1 != 0x7F) {
+    fbuf.ready = 1;
+    decode_trap(fbuf, NULL);
+    expected_errno = EINVAL;
+    actual_errno = errno;
+    if (expected_errno != actual_errno) {
         fprintf(stderr,
-                "test_decode_trap failed: decode_trap(ir=0x%04X): expected: "
-                "operand1=0x7F; actual: operand1=0x%X\n",
-                fg.ir, dg.operand1);
+                "test_decode_trap failed: decode_trap({.ready=%d}, "
+                "NULL): expected_errno: %d, actual_errno: %d\n",
+                fbuf.ready, expected_errno, actual_errno);
+    } else {
+        passed_tests++;
+    }
+
+    // trap 0x25
+    errno = 0;
+    fbuf = (fbuf_t){.ready = 1, .ir = (int16_t)((OP_TRAP << 12) | 0x25)};
+    memset(&dbuf, 0, sizeof(dbuf_t));
+    expected_operand1 = 0x25;
+
+    decode_trap(fbuf, &dbuf);
+
+    actual_operand1 = dbuf.operand1;
+
+    if (expected_operand1 != actual_operand1) {
+        fprintf(stderr,
+                "test_decode_trap failed: decode_trap({.ready=%d, .ir=0x%04X}, "
+                "&dbuf): expected_operand1: 0x%04X, actual_operand1: 0x%04X\n",
+                fbuf.ready, fbuf.ir, expected_operand1, actual_operand1);
     } else {
         passed_tests++;
     }
