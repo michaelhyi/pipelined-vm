@@ -1,8 +1,8 @@
 #ifndef DRIVER_H
 #define DRIVER_H
 
-// TODO: verify this number
-#define TOTAL_TESTS 61
+// TODO: is there a better way than to hardcode it
+#define TOTAL_TESTS 63
 
 extern int passed_tests;
 
