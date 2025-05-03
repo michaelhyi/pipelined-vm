@@ -10,10 +10,6 @@
 #include "util/test_bitops.h"
 #include "util/test_id_util.h"
 
-// TODO: descriptive test cases per output line
-// TODO: standardize error messages
-// TODO: no need to test for thread failure
-
 int passed_tests;
 
 /**
@@ -46,15 +42,14 @@ int main(void) {
     errno = 0;
     // test_id_exec_cycle(passed_tests, total_tests);
     if (errno) {
-        fprintf(stderr, "error while running test_id_exec_cycle; errno: %d\n",
-                errno);
+        fprintf(stderr, "test_id failed: errno: %d\n", errno);
         test_teardown();
     }
 
     errno = 0;
     test_bitops();
     if (errno) {
-        fprintf(stderr, "error while running test_util; errno: %d\n", errno);
+        fprintf(stderr, "test_bitops failed: errno: %d\n", errno);
         test_teardown();
     }
 
