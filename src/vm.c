@@ -9,4 +9,6 @@ void system_init() {
     vm.dbuf.ready = 0;
     vm.ebuf.ready = 0;
     vm.mbuf.ready = 0;
+
+    vm.psr = 1 << 15;
 }
