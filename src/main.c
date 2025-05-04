@@ -1,6 +1,8 @@
 #include "vm.h"
 
 int main(void) {
-    system_init();
+    vm_init();
+
+    vm_teardown();
     return 0;
 }

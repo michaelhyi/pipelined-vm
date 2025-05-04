@@ -12,17 +12,17 @@
 int passed_tests;
 
 /**
- * Helper function that initializes the VM and test parameters.
+ * Initializes the VM and test parameters.
  */
-static void test_setup(void);
+static void test_init(void);
 
 /**
- * Helper function that tears down tests.
+ * Tears down tests.
  */
 static void test_teardown(void);
 
 int main(void) {
-    test_setup();
+    test_init();
 
     errno = 0;
     test_if_run();
@@ -48,15 +48,18 @@ int main(void) {
     test_teardown();
 }
 
-static void test_setup() {
-    system_init();
+static void test_init() {
+    vm_init();
     passed_tests = 0;
 }
 
 static void test_teardown() {
+    vm_teardown();
+
     printf("\n");
     printf("\n");
     printf("\n");
     printf("test results: %d/%d passed\n", passed_tests, TOTAL_TESTS);
+
     exit(passed_tests != TOTAL_TESTS);
 }
