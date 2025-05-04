@@ -33,7 +33,7 @@ gdb-test: $(TEST_OUTPUT)
 	gdb ./$(TEST_OUTPUT)
 	
 clean:
-	rm -f $(SRC_OUTPUT) $(TEST_OUTPUT)
+	rm -f $(SRC_OUTPUT) $(TEST_OUTPUT) .clang-format
 
 format: format-setup
 	find . \( -name "*.c" -o -name "*.h" \) -exec clang-format -style=file -i {} +
