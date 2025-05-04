@@ -46,7 +46,6 @@ void test_if_run() {
         passed_tests++;
     }
 
-    // prepare vm.mem and vm.pc
     vm.pc = 0x3000;
     vm.mem[0x3000] = 0x0000;
     vm.mem[0x3001] = 0x0001;
