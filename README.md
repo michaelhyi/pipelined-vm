@@ -28,7 +28,7 @@ Run the Docker container:
 
 To start the VM, run:
 ```bash
-make
+make # or make run
 ```
 
 To test the VM, run:
@@ -39,6 +39,12 @@ make test
 To run Valgrind on the VM, run:
 ```bash
 make valgrind
+```
+
+To run gdb on the VM, run:
+```bash
+make gdb
+make gdb-test # to run while testing
 ```
 
 To clean the project, run:
