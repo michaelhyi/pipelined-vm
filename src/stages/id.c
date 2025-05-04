@@ -4,6 +4,7 @@
 #include <pthread.h>
 #include <stdio.h>
 
+#include "../isa.h"
 #include "../util/bitops.h"
 #include "../util/id_util.h"
 #include "../vm.h"

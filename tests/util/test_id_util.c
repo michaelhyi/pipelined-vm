@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../../src/stages/id.h"
+#include "../../src/isa.h"
 #include "../../src/util/bitops.h"
 #include "../../src/util/id_util.h"
 #include "../../src/vm.h"

@@ -3,8 +3,7 @@
 #include <errno.h>
 #include <stdio.h>
 
-#include "../stages/id.h"
-#include "../vm.h"
+#include "../isa.h"
 #include "bitops.h"
 
 int16_t get_opcode(int16_t ir) { return bit_range(ir, 12, 15); }

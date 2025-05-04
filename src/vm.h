@@ -3,13 +3,46 @@
 
 #include <stdint.h>
 
-#include "./stages/ex.h"
-#include "./stages/id.h"
-#include "./stages/if.h"
-#include "./stages/mem.h"
-
 #define ADDRESS_SPACE (1 << 16)
 #define NUM_REGISTERS 8
+
+typedef struct fbuf_t {
+    int16_t ready;
+
+    int16_t pc;
+    int16_t ir;
+} fbuf_t;
+
+typedef struct dbuf_t {
+    int16_t ready;
+
+    int16_t pc;
+    int16_t opcode;
+
+    int16_t reg;
+    int16_t operand1;
+    int16_t operand2;
+
+    int16_t cc;
+} dbuf_t;
+
+typedef struct ebuf_t {
+    int16_t ready;
+
+    int16_t pc;
+    int16_t opcode;
+    int16_t result;
+    int16_t reg;
+} ebuf_t;
+
+typedef struct mbuf_t {
+    int16_t ready;
+
+    int16_t pc;
+    int16_t opcode;
+    int16_t result;
+    int16_t reg;
+} mbuf_t;
 
 // TODO: add mutex locks
 typedef struct vm_t {

@@ -3,8 +3,7 @@
 
 #include <stdint.h>
 
-#include "../stages/id.h"
-#include "../stages/if.h"
+#include "../vm.h"
 
 /**
  * Returns the opcode of an instruction.

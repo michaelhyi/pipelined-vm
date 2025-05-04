@@ -4,6 +4,7 @@
 #include <pthread.h>
 #include <stdio.h>
 
+#include "../isa.h"
 #include "../vm.h"
 
 void *ex_run(void *arg) {

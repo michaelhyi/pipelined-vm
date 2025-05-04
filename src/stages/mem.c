@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "../isa.h"
 #include "../vm.h"
 
 void *mem_run(void *arg) {
