@@ -28,5 +28,6 @@ void *if_run(void *arg) {
     }
     vm.fbuf = fbuf;
     pthread_mutex_unlock(&vm.fbuf_mutex);
+
     return NULL;
 }

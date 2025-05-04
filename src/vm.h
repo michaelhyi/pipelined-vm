@@ -25,7 +25,6 @@ typedef struct dbuf_t {
     int16_t reg;
     int16_t operand1;
     int16_t operand2;
-
     int16_t cc;
 } dbuf_t;
 
@@ -73,6 +72,9 @@ typedef struct vm_t {
     pthread_mutex_t mbuf_mutex;
 
     pthread_cond_t fbuf_read_cond;
+    pthread_cond_t dbuf_read_cond;
+    pthread_cond_t ebuf_read_cond;
+    pthread_cond_t mbuf_read_cond;
 } vm_t;
 
 extern vm_t vm;
