@@ -37,15 +37,15 @@ To test the VM, run:
 make test
 ```
 
+To debug the VM using gdb, run:
+```bash
+make debug 
+make debug-tests # to run while testing
+```
+
 To run Valgrind on the VM, run:
 ```bash
 make valgrind
-```
-
-To run gdb on the VM, run:
-```bash
-make gdb
-make gdb-test # to run while testing
 ```
 
 To clean the project, run:
