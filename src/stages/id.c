@@ -22,6 +22,8 @@ void *id_run(void *arg) {
         return NULL;
     }
 
+    fbuf.read = 1;
+
     dbuf_t dbuf;
     dbuf.ready = 1;
     dbuf.read = 0;
