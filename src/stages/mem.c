@@ -13,19 +13,15 @@ void *mem_run(void *arg) {
 
     pthread_mutex_lock(&vm.ebuf_mutex);
     ebuf_t ebuf = vm.ebuf;
-    vm.ebuf.read = 1;
-    pthread_cond_signal(&vm.ebuf_read_cond);
     pthread_mutex_unlock(&vm.ebuf_mutex);
 
     if (!ebuf.ready) {
+        pthread_barrier_wait(&vm.pipeline_cycle_barrier);
         return NULL;
     }
 
-    ebuf.read = 1;
-
     mbuf_t mbuf;
     mbuf.ready = 1;
-    mbuf.read = 0;
     mbuf.pc = ebuf.pc;
     mbuf.opcode = ebuf.opcode;
     mbuf.result = ebuf.result;
@@ -43,10 +39,8 @@ void *mem_run(void *arg) {
         // TODO
     }
 
+    pthread_barrier_wait(&vm.pipeline_cycle_barrier);
     pthread_mutex_lock(&vm.mbuf_mutex);
-    while (!vm.mbuf.read) {
-        pthread_cond_wait(&vm.mbuf_read_cond, &vm.mbuf_mutex);
-    }
     vm.mbuf = mbuf;
     pthread_mutex_unlock(&vm.mbuf_mutex);
 

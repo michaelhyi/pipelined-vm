@@ -14,19 +14,15 @@ void *id_run(void *arg) {
 
     pthread_mutex_lock(&vm.fbuf_mutex);
     fbuf_t fbuf = vm.fbuf;
-    vm.fbuf.read = 1;
-    pthread_cond_signal(&vm.fbuf_read_cond);
     pthread_mutex_unlock(&vm.fbuf_mutex);
 
     if (!fbuf.ready) {
+        pthread_barrier_wait(&vm.pipeline_cycle_barrier);
         return NULL;
     }
 
-    fbuf.read = 1;
-
     dbuf_t dbuf;
     dbuf.ready = 1;
-    dbuf.read = 0;
     dbuf.pc = fbuf.pc;
     dbuf.opcode = get_opcode(fbuf.ir);
 
@@ -57,10 +53,8 @@ void *id_run(void *arg) {
         pthread_exit((void *)(intptr_t)errno);
     }
 
+    pthread_barrier_wait(&vm.pipeline_cycle_barrier);
     pthread_mutex_lock(&vm.dbuf_mutex);
-    while (!vm.dbuf.read) {
-        pthread_cond_wait(&vm.dbuf_read_cond, &vm.dbuf_mutex);
-    }
     vm.dbuf = dbuf;
     pthread_mutex_unlock(&vm.dbuf_mutex);
 

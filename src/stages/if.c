@@ -11,7 +11,6 @@ void *if_run(void *arg) {
 
     fbuf_t fbuf;
     fbuf.ready = 1;
-    fbuf.read = 0;
 
     pthread_mutex_lock(&vm.pc_mutex);
     fbuf.pc = vm.pc;
@@ -22,10 +21,8 @@ void *if_run(void *arg) {
     fbuf.ir = vm.mem[fbuf.pc];
     pthread_mutex_unlock(&vm.mem_mutex);
 
+    pthread_barrier_wait(&vm.pipeline_cycle_barrier);
     pthread_mutex_lock(&vm.fbuf_mutex);
-    while (!vm.fbuf.read) {
-        pthread_cond_wait(&vm.fbuf_read_cond, &vm.fbuf_mutex);
-    }
     vm.fbuf = fbuf;
     pthread_mutex_unlock(&vm.fbuf_mutex);
 

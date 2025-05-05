@@ -6,10 +6,10 @@
 
 #define ADDRESS_SPACE (1 << 16)
 #define NUM_REGISTERS 8
+#define NUM_PIPELINE_STAGES 5
 
 typedef struct fbuf_t {
     int16_t ready;
-    int16_t read;
 
     int16_t pc;
     int16_t ir;
@@ -17,7 +17,6 @@ typedef struct fbuf_t {
 
 typedef struct dbuf_t {
     int16_t ready;
-    int16_t read;
 
     int16_t pc;
     int16_t opcode;
@@ -30,7 +29,6 @@ typedef struct dbuf_t {
 
 typedef struct ebuf_t {
     int16_t ready;
-    int16_t read;
 
     int16_t pc;
     int16_t opcode;
@@ -40,7 +38,6 @@ typedef struct ebuf_t {
 
 typedef struct mbuf_t {
     int16_t ready;
-    int16_t read;
 
     int16_t pc;
     int16_t opcode;
@@ -71,10 +68,7 @@ typedef struct vm_t {
     pthread_mutex_t ebuf_mutex;
     pthread_mutex_t mbuf_mutex;
 
-    pthread_cond_t fbuf_read_cond;
-    pthread_cond_t dbuf_read_cond;
-    pthread_cond_t ebuf_read_cond;
-    pthread_cond_t mbuf_read_cond;
+    pthread_barrier_t pipeline_cycle_barrier;
 } vm_t;
 
 extern vm_t vm;
@@ -83,6 +77,11 @@ extern vm_t vm;
  * Initializes the virtual machine.
  */
 void vm_init(void);
+
+/**
+ * Runs the virtual machine.
+ */
+void vm_run(void);
 
 /**
  * Tears down the virtual machine.

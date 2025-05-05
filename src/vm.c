@@ -1,5 +1,14 @@
 #include "vm.h"
 
+#include <stdio.h>
+
+#include "isa.h"
+#include "stages/ex.h"
+#include "stages/id.h"
+#include "stages/if.h"
+#include "stages/mem.h"
+#include "stages/wb.h"
+
 vm_t vm;
 
 void vm_init() {
@@ -10,11 +19,6 @@ void vm_init() {
     vm.dbuf.ready = 0;
     vm.ebuf.ready = 0;
     vm.mbuf.ready = 0;
-
-    vm.fbuf.read = 0;
-    vm.dbuf.read = 0;
-    vm.ebuf.read = 0;
-    vm.mbuf.read = 0;
 
     pthread_mutex_init(&vm.mem_mutex, NULL);
     pthread_mutex_init(&vm.reg_mutex, NULL);
@@ -27,7 +31,36 @@ void vm_init() {
     pthread_mutex_init(&vm.ebuf_mutex, NULL);
     pthread_mutex_init(&vm.mbuf_mutex, NULL);
 
-    pthread_cond_init(&vm.fbuf_read_cond, NULL);
+    pthread_barrier_init(&vm.pipeline_cycle_barrier, NULL, NUM_PIPELINE_STAGES);
+}
+
+void vm_run() {
+    vm.reg[0] = 2;
+    vm.reg[1] = 4;
+    vm.mem[0x3000] = (OP_ADD << 12) | (2 << 9) | (0 << 6) | (1 << 0);
+
+    for (int i = 0; i < 5; i++) {
+        printf("cycle: %d\n", i + 1);
+        pthread_t if_tid;
+        pthread_t id_tid;
+        pthread_t ex_tid;
+        pthread_t mem_tid;
+        pthread_t wb_tid;
+
+        pthread_create(&if_tid, NULL, if_run, NULL);
+        pthread_create(&id_tid, NULL, id_run, NULL);
+        pthread_create(&ex_tid, NULL, ex_run, NULL);
+        pthread_create(&mem_tid, NULL, mem_run, NULL);
+        pthread_create(&wb_tid, NULL, wb_run, NULL);
+
+        pthread_join(if_tid, NULL);
+        pthread_join(id_tid, NULL);
+        pthread_join(ex_tid, NULL);
+        pthread_join(mem_tid, NULL);
+        pthread_join(wb_tid, NULL);
+    }
+
+    printf("r2=%d\n", vm.reg[2]);
 }
 
 void vm_teardown() {
@@ -42,5 +75,5 @@ void vm_teardown() {
     pthread_mutex_destroy(&vm.ebuf_mutex);
     pthread_mutex_destroy(&vm.mbuf_mutex);
 
-    pthread_cond_destroy(&vm.fbuf_read_cond);
+    pthread_barrier_destroy(&vm.pipeline_cycle_barrier);
 }

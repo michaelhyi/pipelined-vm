@@ -13,15 +13,12 @@ void *wb_run(void *arg) {
 
     pthread_mutex_lock(&vm.mbuf_mutex);
     mbuf_t mbuf = vm.mbuf;
-    vm.mbuf.read = 1;
-    pthread_cond_signal(&vm.mbuf_read_cond);
     pthread_mutex_unlock(&vm.mbuf_mutex);
 
     if (!mbuf.ready) {
+        pthread_barrier_wait(&vm.pipeline_cycle_barrier);
         return NULL;
     }
-
-    mbuf.read = 1;
 
     if (mbuf.opcode == OP_ADD || mbuf.opcode == OP_LD ||
         mbuf.opcode == OP_AND || mbuf.opcode == OP_LDR ||
@@ -33,6 +30,8 @@ void *wb_run(void *arg) {
 
         set_cc(mbuf);
     }
+
+    pthread_barrier_wait(&vm.pipeline_cycle_barrier);
 
     return NULL;
 }

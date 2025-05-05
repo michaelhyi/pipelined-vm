@@ -12,19 +12,15 @@ void *ex_run(void *arg) {
 
     pthread_mutex_lock(&vm.dbuf_mutex);
     dbuf_t dbuf = vm.dbuf;
-    vm.dbuf.read = 1;
-    pthread_cond_signal(&vm.dbuf_read_cond);
     pthread_mutex_unlock(&vm.dbuf_mutex);
 
     if (!dbuf.ready) {
+        pthread_barrier_wait(&vm.pipeline_cycle_barrier);
         return NULL;
     }
 
-    dbuf.read = 1;
-
     ebuf_t ebuf;
     ebuf.ready = 1;
-    ebuf.read = 0;
     ebuf.pc = dbuf.pc;
     ebuf.opcode = dbuf.opcode;
     ebuf.reg = dbuf.reg;
@@ -50,10 +46,8 @@ void *ex_run(void *arg) {
         // TODO
     }
 
+    pthread_barrier_wait(&vm.pipeline_cycle_barrier);
     pthread_mutex_lock(&vm.ebuf_mutex);
-    while (!vm.ebuf.read) {
-        pthread_cond_wait(&vm.ebuf_read_cond, &vm.ebuf_mutex);
-    }
     vm.ebuf = ebuf;
     pthread_mutex_unlock(&vm.ebuf_mutex);
 
