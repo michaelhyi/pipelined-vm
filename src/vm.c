@@ -35,9 +35,6 @@ void vm_init() {
 }
 
 void vm_run() {
-    vm.reg[0] = 2;
-    vm.reg[1] = 4;
-    vm.mem[0x3000] = (OP_ADD << 12) | (2 << 9) | (0 << 6) | (1 << 0);
 
     for (int i = 0; i < 5; i++) {
         printf("cycle: %d\n", i + 1);
@@ -59,8 +56,6 @@ void vm_run() {
         pthread_join(mem_tid, NULL);
         pthread_join(wb_tid, NULL);
     }
-
-    printf("r2=%d\n", vm.reg[2]);
 }
 
 void vm_teardown() {

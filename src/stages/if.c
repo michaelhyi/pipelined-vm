@@ -13,8 +13,8 @@ void *if_run(void *arg) {
     fbuf.ready = 1;
 
     pthread_mutex_lock(&vm.pc_mutex);
-    fbuf.pc = vm.pc;
     vm.pc++;
+    fbuf.pc = vm.pc;
     pthread_mutex_unlock(&vm.pc_mutex);
 
     pthread_mutex_lock(&vm.mem_mutex);
