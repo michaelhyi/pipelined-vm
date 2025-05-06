@@ -10,14 +10,13 @@
 
 typedef struct fbuf_t {
     uint16_t nop;
-
     uint16_t pc;
+
     int16_t ir;
 } fbuf_t;
 
 typedef struct dbuf_t {
     uint16_t nop;
-
     uint16_t pc;
     int16_t opcode;
 
@@ -25,22 +24,23 @@ typedef struct dbuf_t {
     int16_t operand1;
     int16_t operand2;
     int16_t cc;
+    uint16_t bit11;
 } dbuf_t;
 
 typedef struct ebuf_t {
     uint16_t nop;
-
     uint16_t pc;
     int16_t opcode;
+
     int16_t result;
     int16_t reg;
 } ebuf_t;
 
 typedef struct mbuf_t {
     uint16_t nop;
-
     uint16_t pc;
     int16_t opcode;
+
     int16_t result;
     int16_t reg;
 } mbuf_t;
@@ -57,6 +57,8 @@ typedef struct vm_t {
     ebuf_t ebuf;
     mbuf_t mbuf;
 
+    uint16_t fbuf_nop;
+
     pthread_mutex_t mem_mutex;
     pthread_mutex_t reg_mutex;
     pthread_mutex_t pc_mutex;
@@ -67,6 +69,8 @@ typedef struct vm_t {
     pthread_mutex_t dbuf_mutex;
     pthread_mutex_t ebuf_mutex;
     pthread_mutex_t mbuf_mutex;
+
+    pthread_mutex_t fbuf_nop_mutex;
 
     pthread_barrier_t pipeline_cycle_barrier;
 } vm_t;

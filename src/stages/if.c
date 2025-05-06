@@ -21,6 +21,12 @@ void *if_run(void *arg) {
     pthread_mutex_unlock(&vm.pc_mutex);
 
     pthread_barrier_wait(&vm.pipeline_cycle_barrier);
+
+    pthread_mutex_lock(&vm.fbuf_nop_mutex);
+    fbuf.nop = vm.fbuf_nop;
+    vm.fbuf_nop = 0;
+    pthread_mutex_unlock(&vm.fbuf_nop_mutex);
+
     pthread_mutex_lock(&vm.fbuf_mutex);
     vm.fbuf = fbuf;
     pthread_mutex_unlock(&vm.fbuf_mutex);

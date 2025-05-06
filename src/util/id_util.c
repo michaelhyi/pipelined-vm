@@ -133,6 +133,7 @@ void decode_jsr(fbuf_t fbuf, dbuf_t *dbuf) {
 
     dbuf->operand1 = (int16_t)fbuf.pc;
     dbuf->operand2 = sign_extend(bit_range(fbuf.ir, 0, 10), 11);
+    dbuf->bit11 = 1;
 }
 
 void decode_jmp_jsrr(fbuf_t fbuf, dbuf_t *dbuf) {
@@ -155,6 +156,8 @@ void decode_jmp_jsrr(fbuf_t fbuf, dbuf_t *dbuf) {
     pthread_mutex_lock(&vm.reg_mutex);
     dbuf->reg = vm.reg[bit_range(fbuf.ir, 6, 8)];
     pthread_mutex_unlock(&vm.reg_mutex);
+
+    dbuf->bit11 = 0;
 }
 
 void decode_ldr(fbuf_t fbuf, dbuf_t *dbuf) {

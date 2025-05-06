@@ -31,22 +31,49 @@ void *ex_run(void *arg) {
     ebuf.reg = dbuf.reg;
 
     if (dbuf.opcode == OP_BR) {
-        // TODO
+        // TODO: compare nzp bits, override pc on match
     } else if (dbuf.opcode == OP_ADD || dbuf.opcode == OP_LD ||
                dbuf.opcode == OP_ST || dbuf.opcode == OP_LDR ||
                dbuf.opcode == OP_STR || dbuf.opcode == OP_LDI ||
                dbuf.opcode == OP_STI || dbuf.opcode == OP_LEA) {
         ebuf.result = dbuf.operand1 + dbuf.operand2;
-    } else if (dbuf.opcode == OP_JSR || dbuf.opcode == OP_JSRR) {
-        // TODO
+    } else if (dbuf.opcode == OP_JSR && dbuf.bit11) {
+        // send bubble
+        pthread_mutex_lock(&vm.fbuf_nop_mutex);
+        vm.fbuf_nop = 1;
+        pthread_mutex_unlock(&vm.fbuf_nop_mutex);
+
+        // override pc
+        pthread_mutex_lock(&vm.pc_mutex);
+        vm.pc = (uint16_t)(dbuf.operand1 + dbuf.operand2);
+        pthread_mutex_unlock(&vm.pc_mutex);
+    } else if (dbuf.opcode == OP_JSRR && !dbuf.bit11) {
+        // send bubble
+        pthread_mutex_lock(&vm.fbuf_nop_mutex);
+        vm.fbuf_nop = 1;
+        pthread_mutex_unlock(&vm.fbuf_nop_mutex);
+
+        // override pc
+        pthread_mutex_lock(&vm.pc_mutex);
+        vm.pc = (uint16_t)dbuf.reg;
+        pthread_mutex_unlock(&vm.pc_mutex);
     } else if (dbuf.opcode == OP_AND) {
         ebuf.result = dbuf.operand1 & dbuf.operand2;
     } else if (dbuf.opcode == OP_NOT) {
         ebuf.result = ~dbuf.operand1;
     } else if (dbuf.opcode == OP_JMP) {
-        // TODO
+        // send bubble
+        pthread_mutex_lock(&vm.fbuf_nop_mutex);
+        vm.fbuf_nop = 1;
+        pthread_mutex_unlock(&vm.fbuf_nop_mutex);
+
+        // override pc
+        pthread_mutex_lock(&vm.pc_mutex);
+        vm.pc = (uint16_t)dbuf.reg;
+        pthread_mutex_unlock(&vm.pc_mutex);
     } else if (dbuf.opcode == OP_TRAP) {
-        // TODO
+        // TODO: fetch starting address of trap handler using the trap vector
+        // table, then set pc to starting address of trap handler
     }
 
     pthread_barrier_wait(&vm.pipeline_cycle_barrier);

@@ -9,6 +9,8 @@
 #include "stages/mem.h"
 #include "stages/wb.h"
 
+#include "util/bitops.h"
+
 vm_t vm;
 
 void vm_init() {
@@ -19,6 +21,8 @@ void vm_init() {
     vm.dbuf.nop = 1;
     vm.ebuf.nop = 1;
     vm.mbuf.nop = 1;
+
+    vm.fbuf_nop = 0;
 
     pthread_mutex_init(&vm.mem_mutex, NULL);
     pthread_mutex_init(&vm.reg_mutex, NULL);
@@ -31,11 +35,19 @@ void vm_init() {
     pthread_mutex_init(&vm.ebuf_mutex, NULL);
     pthread_mutex_init(&vm.mbuf_mutex, NULL);
 
+    pthread_mutex_init(&vm.fbuf_nop_mutex, NULL);
+
     pthread_barrier_init(&vm.pipeline_cycle_barrier, NULL, NUM_PIPELINE_STAGES);
 }
 
 void vm_run() {
-    for (int i = 0; i < 5; i++) {
+    vm.reg[0] = 0x3101;
+    vm.mem[0x3000] = (OP_JSRR << 12);
+    vm.mem[0x3101] = 0x2110;
+    vm.mem[0x3102] = 0x2200;
+    vm.mem[0x3103] = 0x3210;
+
+    for (int i = 0; i < 10; i++) {
         printf("cycle: %d\n", i + 1);
         pthread_t if_tid;
         pthread_t id_tid;
@@ -68,6 +80,8 @@ void vm_teardown() {
     pthread_mutex_destroy(&vm.dbuf_mutex);
     pthread_mutex_destroy(&vm.ebuf_mutex);
     pthread_mutex_destroy(&vm.mbuf_mutex);
+
+    pthread_mutex_destroy(&vm.fbuf_nop_mutex);
 
     pthread_barrier_destroy(&vm.pipeline_cycle_barrier);
 }

@@ -42,8 +42,18 @@ void *id_run(void *arg) {
         decode_st_sti(fbuf, &dbuf);
     } else if (is_jsr(fbuf.ir)) {
         decode_jsr(fbuf, &dbuf);
+
+        // send bubble
+        pthread_mutex_lock(&vm.fbuf_nop_mutex);
+        vm.fbuf_nop = 1;
+        pthread_mutex_unlock(&vm.fbuf_nop_mutex);
     } else if (is_jsrr(fbuf.ir) || dbuf.opcode == OP_JMP) {
         decode_jmp_jsrr(fbuf, &dbuf);
+
+        // send bubble
+        pthread_mutex_lock(&vm.fbuf_nop_mutex);
+        vm.fbuf_nop = 1;
+        pthread_mutex_unlock(&vm.fbuf_nop_mutex);
     } else if (dbuf.opcode == OP_LDR) {
         decode_ldr(fbuf, &dbuf);
     } else if (dbuf.opcode == OP_STR) {
@@ -59,6 +69,7 @@ void *id_run(void *arg) {
     }
 
     pthread_barrier_wait(&vm.pipeline_cycle_barrier);
+
     pthread_mutex_lock(&vm.dbuf_mutex);
     vm.dbuf = dbuf;
     pthread_mutex_unlock(&vm.dbuf_mutex);
