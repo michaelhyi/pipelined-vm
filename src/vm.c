@@ -35,9 +35,7 @@ void vm_init() {
 }
 
 void vm_run() {
-
     for (int i = 0; i < 5; i++) {
-        printf("cycle: %d\n", i + 1);
         pthread_t if_tid;
         pthread_t id_tid;
         pthread_t ex_tid;

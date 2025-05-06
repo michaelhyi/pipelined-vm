@@ -13,13 +13,12 @@ void *if_run(void *arg) {
     fbuf.ready = 1;
 
     pthread_mutex_lock(&vm.pc_mutex);
+    pthread_mutex_lock(&vm.mem_mutex);
+    fbuf.ir = vm.mem[vm.pc];
+    pthread_mutex_unlock(&vm.mem_mutex);
     vm.pc++;
     fbuf.pc = vm.pc;
     pthread_mutex_unlock(&vm.pc_mutex);
-
-    pthread_mutex_lock(&vm.mem_mutex);
-    fbuf.ir = vm.mem[fbuf.pc];
-    pthread_mutex_unlock(&vm.mem_mutex);
 
     pthread_barrier_wait(&vm.pipeline_cycle_barrier);
     pthread_mutex_lock(&vm.fbuf_mutex);
