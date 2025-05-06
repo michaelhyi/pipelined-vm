@@ -70,9 +70,15 @@ void *id_run(void *arg) {
 
     pthread_barrier_wait(&vm.pipeline_cycle_barrier);
 
-    pthread_mutex_lock(&vm.dbuf_mutex);
-    vm.dbuf = dbuf;
-    pthread_mutex_unlock(&vm.dbuf_mutex);
+    pthread_mutex_lock(&vm.dbuf_stay_mutex);
+    if (!vm.dbuf_stay) {
+        pthread_mutex_lock(&vm.dbuf_mutex);
+        vm.dbuf = dbuf;
+        pthread_mutex_unlock(&vm.dbuf_mutex);
+    }
+
+    vm.dbuf_stay = 0;
+    pthread_mutex_unlock(&vm.dbuf_stay_mutex);
 
     return NULL;
 }

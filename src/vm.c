@@ -37,15 +37,19 @@ void vm_init() {
 
     pthread_mutex_init(&vm.fbuf_nop_mutex, NULL);
 
+    pthread_mutex_init(&vm.fbuf_stay_mutex, NULL);
+    pthread_mutex_init(&vm.dbuf_stay_mutex, NULL);
+    pthread_mutex_init(&vm.ebuf_stay_mutex, NULL);
+    pthread_mutex_init(&vm.mbuf_stay_mutex, NULL);
+
     pthread_barrier_init(&vm.pipeline_cycle_barrier, NULL, NUM_PIPELINE_STAGES);
 }
 
 void vm_run() {
-    vm.reg[0] = 0x3101;
-    vm.mem[0x3000] = (OP_JSRR << 12);
-    vm.mem[0x3101] = 0x2110;
-    vm.mem[0x3102] = 0x2200;
-    vm.mem[0x3103] = 0x3210;
+    vm.reg[0] = 0x2110;
+    // mem[0x2200]
+    vm.mem[0x3000] = OP_STI << 12;
+    vm.mem[0x3001] = 0x2200;
 
     for (int i = 0; i < 10; i++) {
         printf("cycle: %d\n", i + 1);
@@ -82,6 +86,11 @@ void vm_teardown() {
     pthread_mutex_destroy(&vm.mbuf_mutex);
 
     pthread_mutex_destroy(&vm.fbuf_nop_mutex);
+
+    pthread_mutex_destroy(&vm.fbuf_stay_mutex);
+    pthread_mutex_destroy(&vm.dbuf_stay_mutex);
+    pthread_mutex_destroy(&vm.ebuf_stay_mutex);
+    pthread_mutex_destroy(&vm.mbuf_stay_mutex);
 
     pthread_barrier_destroy(&vm.pipeline_cycle_barrier);
 }

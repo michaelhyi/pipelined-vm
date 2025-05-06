@@ -34,6 +34,8 @@ typedef struct ebuf_t {
 
     int16_t result;
     int16_t reg;
+
+    uint16_t indirect_counter;
 } ebuf_t;
 
 typedef struct mbuf_t {
@@ -59,6 +61,11 @@ typedef struct vm_t {
 
     uint16_t fbuf_nop;
 
+    uint16_t fbuf_stay;
+    uint16_t dbuf_stay;
+    uint16_t ebuf_stay;
+    uint16_t mbuf_stay;
+
     pthread_mutex_t mem_mutex;
     pthread_mutex_t reg_mutex;
     pthread_mutex_t pc_mutex;
@@ -71,6 +78,11 @@ typedef struct vm_t {
     pthread_mutex_t mbuf_mutex;
 
     pthread_mutex_t fbuf_nop_mutex;
+
+    pthread_mutex_t fbuf_stay_mutex;
+    pthread_mutex_t dbuf_stay_mutex;
+    pthread_mutex_t ebuf_stay_mutex;
+    pthread_mutex_t mbuf_stay_mutex;
 
     pthread_barrier_t pipeline_cycle_barrier;
 } vm_t;

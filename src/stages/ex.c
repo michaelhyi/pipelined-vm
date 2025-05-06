@@ -29,6 +29,7 @@ void *ex_run(void *arg) {
     ebuf.pc = dbuf.pc;
     ebuf.opcode = dbuf.opcode;
     ebuf.reg = dbuf.reg;
+    ebuf.indirect_counter = 0;
 
     if (dbuf.opcode == OP_BR) {
         // TODO: compare nzp bits, override pc on match
@@ -77,9 +78,16 @@ void *ex_run(void *arg) {
     }
 
     pthread_barrier_wait(&vm.pipeline_cycle_barrier);
-    pthread_mutex_lock(&vm.ebuf_mutex);
-    vm.ebuf = ebuf;
-    pthread_mutex_unlock(&vm.ebuf_mutex);
+
+    pthread_mutex_lock(&vm.ebuf_stay_mutex);
+    if (!vm.ebuf_stay) {
+        pthread_mutex_lock(&vm.ebuf_mutex);
+        vm.ebuf = ebuf;
+        pthread_mutex_unlock(&vm.ebuf_mutex);
+    }
+
+    vm.ebuf_stay = 0;
+    pthread_mutex_unlock(&vm.ebuf_stay_mutex);
 
     return NULL;
 }
