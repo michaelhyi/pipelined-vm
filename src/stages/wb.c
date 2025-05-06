@@ -15,7 +15,7 @@ void *wb_run(void *arg) {
     mbuf_t mbuf = vm.mbuf;
     pthread_mutex_unlock(&vm.mbuf_mutex);
 
-    if (!mbuf.ready) {
+    if (mbuf.nop) {
         pthread_barrier_wait(&vm.pipeline_cycle_barrier);
         return NULL;
     }
@@ -36,6 +36,5 @@ void *wb_run(void *arg) {
     }
 
     pthread_barrier_wait(&vm.pipeline_cycle_barrier);
-
     return NULL;
 }

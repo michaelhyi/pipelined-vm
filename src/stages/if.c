@@ -10,7 +10,7 @@ void *if_run(void *arg) {
     (void)arg;
 
     fbuf_t fbuf;
-    fbuf.ready = 1;
+    fbuf.nop = 0;
 
     pthread_mutex_lock(&vm.pc_mutex);
     pthread_mutex_lock(&vm.mem_mutex);

@@ -17,10 +17,9 @@ int is_jsrr(int16_t ir) {
 }
 
 void decode_br(fbuf_t fbuf, dbuf_t *dbuf) {
-    if (!fbuf.ready || !dbuf) {
-        fprintf(
-            stderr,
-            "decode_br failed: fbuf must be ready and dbuf must be non-null\n");
+    if (fbuf.nop || !dbuf) {
+        fprintf(stderr, "decode_br failed: fbuf must not be a nop and dbuf "
+                        "must be non-null\n");
         errno = EINVAL;
         return;
     }
@@ -38,9 +37,10 @@ void decode_br(fbuf_t fbuf, dbuf_t *dbuf) {
 }
 
 void decode_add_and(fbuf_t fbuf, dbuf_t *dbuf) {
-    if (!fbuf.ready || !dbuf) {
-        fprintf(stderr, "decode_add_and failed: fbuf must be ready and dbuf "
-                        "must be non-null\n");
+    if (fbuf.nop || !dbuf) {
+        fprintf(stderr,
+                "decode_add_and failed: fbuf must not be a nop and dbuf "
+                "must be non-null\n");
         errno = EINVAL;
         return;
     }
@@ -69,9 +69,10 @@ void decode_add_and(fbuf_t fbuf, dbuf_t *dbuf) {
 }
 
 void decode_ld_ldi_lea(fbuf_t fbuf, dbuf_t *dbuf) {
-    if (!fbuf.ready || !dbuf) {
-        fprintf(stderr, "decode_ld_ldi_lea failed: fbuf must be ready and dbuf "
-                        "must be non-null\n");
+    if (fbuf.nop || !dbuf) {
+        fprintf(stderr,
+                "decode_ld_ldi_lea failed: fbuf must not be a nop and dbuf "
+                "must be non-null\n");
         errno = EINVAL;
         return;
     }
@@ -90,8 +91,8 @@ void decode_ld_ldi_lea(fbuf_t fbuf, dbuf_t *dbuf) {
 }
 
 void decode_st_sti(fbuf_t fbuf, dbuf_t *dbuf) {
-    if (!fbuf.ready || !dbuf) {
-        fprintf(stderr, "decode_st_sti failed: fbuf must be ready and dbuf "
+    if (fbuf.nop || !dbuf) {
+        fprintf(stderr, "decode_st_sti failed: fbuf must not be a nop and dbuf "
                         "must be non-null\n");
         errno = EINVAL;
         return;
@@ -115,9 +116,10 @@ void decode_st_sti(fbuf_t fbuf, dbuf_t *dbuf) {
 }
 
 void decode_jsr(fbuf_t fbuf, dbuf_t *dbuf) {
-    if (!fbuf.ready || !dbuf) {
-        fprintf(stderr, "decode_jsr failed: fbuf must be ready and dbuf must "
-                        "be non-null\n");
+    if (fbuf.nop || !dbuf) {
+        fprintf(stderr,
+                "decode_jsr failed: fbuf must not be a nop and dbuf must "
+                "be non-null\n");
         errno = EINVAL;
         return;
     }
@@ -134,9 +136,10 @@ void decode_jsr(fbuf_t fbuf, dbuf_t *dbuf) {
 }
 
 void decode_jmp_jsrr(fbuf_t fbuf, dbuf_t *dbuf) {
-    if (!fbuf.ready || !dbuf) {
-        fprintf(stderr, "decode_jmp_jsrr failed: fbuf must be ready and dbuf "
-                        "must be non-null\n");
+    if (fbuf.nop || !dbuf) {
+        fprintf(stderr,
+                "decode_jmp_jsrr failed: fbuf must not be a nop and dbuf "
+                "must be non-null\n");
         errno = EINVAL;
         return;
     }
@@ -155,9 +158,10 @@ void decode_jmp_jsrr(fbuf_t fbuf, dbuf_t *dbuf) {
 }
 
 void decode_ldr(fbuf_t fbuf, dbuf_t *dbuf) {
-    if (!fbuf.ready || !dbuf) {
-        fprintf(stderr, "decode_ldr failed: fbuf must be ready and dbuf must "
-                        "be non-null\n");
+    if (fbuf.nop || !dbuf) {
+        fprintf(stderr,
+                "decode_ldr failed: fbuf must not be a nop and dbuf must "
+                "be non-null\n");
         errno = EINVAL;
         return;
     }
@@ -179,9 +183,10 @@ void decode_ldr(fbuf_t fbuf, dbuf_t *dbuf) {
 }
 
 void decode_str(fbuf_t fbuf, dbuf_t *dbuf) {
-    if (!fbuf.ready || !dbuf) {
-        fprintf(stderr, "decode_str failed: fbuf must be ready and dbuf must "
-                        "be non-null\n");
+    if (fbuf.nop || !dbuf) {
+        fprintf(stderr,
+                "decode_str failed: fbuf must not be a nop and dbuf must "
+                "be non-null\n");
         errno = EINVAL;
         return;
     }
@@ -202,9 +207,10 @@ void decode_str(fbuf_t fbuf, dbuf_t *dbuf) {
 }
 
 void decode_not(fbuf_t fbuf, dbuf_t *dbuf) {
-    if (!fbuf.ready || !dbuf) {
-        fprintf(stderr, "decode_not failed: fbuf must be ready and dbuf must "
-                        "be non-null\n");
+    if (fbuf.nop || !dbuf) {
+        fprintf(stderr,
+                "decode_not failed: fbuf must not be a nop and dbuf must "
+                "be non-null\n");
         errno = EINVAL;
         return;
     }
@@ -224,9 +230,10 @@ void decode_not(fbuf_t fbuf, dbuf_t *dbuf) {
 }
 
 void decode_trap(fbuf_t fbuf, dbuf_t *dbuf) {
-    if (!fbuf.ready || !dbuf) {
-        fprintf(stderr, "decode_trap failed: fbuf must be ready and dbuf must "
-                        "be non-null\n");
+    if (fbuf.nop || !dbuf) {
+        fprintf(stderr,
+                "decode_trap failed: fbuf must not be a nop and dbuf must "
+                "be non-null\n");
         errno = EINVAL;
         return;
     }

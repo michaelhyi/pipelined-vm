@@ -15,13 +15,18 @@ void *mem_run(void *arg) {
     ebuf_t ebuf = vm.ebuf;
     pthread_mutex_unlock(&vm.ebuf_mutex);
 
-    if (!ebuf.ready) {
+    mbuf_t mbuf;
+    mbuf.nop = ebuf.nop;
+
+    if (ebuf.nop) {
         pthread_barrier_wait(&vm.pipeline_cycle_barrier);
+        pthread_mutex_lock(&vm.mbuf_mutex);
+        vm.mbuf = mbuf;
+        pthread_mutex_unlock(&vm.mbuf_mutex);
+
         return NULL;
     }
 
-    mbuf_t mbuf;
-    mbuf.ready = 1;
     mbuf.pc = ebuf.pc;
     mbuf.opcode = ebuf.opcode;
     mbuf.result = ebuf.result;

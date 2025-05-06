@@ -15,10 +15,10 @@ void vm_init() {
     vm.pc = 0x3000;
     vm.psr = (int16_t)(1 << 15);
 
-    vm.fbuf.ready = 0;
-    vm.dbuf.ready = 0;
-    vm.ebuf.ready = 0;
-    vm.mbuf.ready = 0;
+    vm.fbuf.nop = 1;
+    vm.dbuf.nop = 1;
+    vm.ebuf.nop = 1;
+    vm.mbuf.nop = 1;
 
     pthread_mutex_init(&vm.mem_mutex, NULL);
     pthread_mutex_init(&vm.reg_mutex, NULL);
@@ -36,6 +36,7 @@ void vm_init() {
 
 void vm_run() {
     for (int i = 0; i < 5; i++) {
+        printf("cycle: %d\n", i + 1);
         pthread_t if_tid;
         pthread_t id_tid;
         pthread_t ex_tid;

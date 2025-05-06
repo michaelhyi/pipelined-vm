@@ -16,13 +16,18 @@ void *id_run(void *arg) {
     fbuf_t fbuf = vm.fbuf;
     pthread_mutex_unlock(&vm.fbuf_mutex);
 
-    if (!fbuf.ready) {
+    dbuf_t dbuf;
+    dbuf.nop = fbuf.nop;
+
+    if (fbuf.nop) {
         pthread_barrier_wait(&vm.pipeline_cycle_barrier);
+        pthread_mutex_lock(&vm.dbuf_mutex);
+        vm.dbuf = dbuf;
+        pthread_mutex_unlock(&vm.dbuf_mutex);
+
         return NULL;
     }
 
-    dbuf_t dbuf;
-    dbuf.ready = 1;
     dbuf.pc = fbuf.pc;
     dbuf.opcode = get_opcode(fbuf.ir);
 

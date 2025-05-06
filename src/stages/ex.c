@@ -14,13 +14,18 @@ void *ex_run(void *arg) {
     dbuf_t dbuf = vm.dbuf;
     pthread_mutex_unlock(&vm.dbuf_mutex);
 
-    if (!dbuf.ready) {
+    ebuf_t ebuf;
+    ebuf.nop = dbuf.nop;
+
+    if (dbuf.nop) {
         pthread_barrier_wait(&vm.pipeline_cycle_barrier);
+        pthread_mutex_lock(&vm.ebuf_mutex);
+        vm.ebuf = ebuf;
+        pthread_mutex_unlock(&vm.ebuf_mutex);
+
         return NULL;
     }
 
-    ebuf_t ebuf;
-    ebuf.ready = 1;
     ebuf.pc = dbuf.pc;
     ebuf.opcode = dbuf.opcode;
     ebuf.reg = dbuf.reg;
