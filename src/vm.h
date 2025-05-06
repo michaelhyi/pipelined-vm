@@ -9,16 +9,16 @@
 #define NUM_PIPELINE_STAGES 5
 
 typedef struct fbuf_t {
-    int16_t ready;
+    uint16_t ready;
 
-    int16_t pc;
+    uint16_t pc;
     int16_t ir;
 } fbuf_t;
 
 typedef struct dbuf_t {
-    int16_t ready;
+    uint16_t ready;
 
-    int16_t pc;
+    uint16_t pc;
     int16_t opcode;
 
     int16_t reg;
@@ -28,18 +28,18 @@ typedef struct dbuf_t {
 } dbuf_t;
 
 typedef struct ebuf_t {
-    int16_t ready;
+    uint16_t ready;
 
-    int16_t pc;
+    uint16_t pc;
     int16_t opcode;
     int16_t result;
     int16_t reg;
 } ebuf_t;
 
 typedef struct mbuf_t {
-    int16_t ready;
+    uint16_t ready;
 
-    int16_t pc;
+    uint16_t pc;
     int16_t opcode;
     int16_t result;
     int16_t reg;
@@ -48,7 +48,7 @@ typedef struct mbuf_t {
 typedef struct vm_t {
     int16_t mem[ADDRESS_SPACE];
     int16_t reg[NUM_REGISTERS];
-    int16_t pc;
+    uint16_t pc;
     int16_t cc;
     int16_t psr;
 

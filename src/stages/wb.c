@@ -31,7 +31,7 @@ void *wb_run(void *arg) {
         set_cc(mbuf);
     } else if (mbuf.opcode == OP_JSR || OP_JSRR) {
         pthread_mutex_lock(&vm.reg_mutex);
-        vm.reg[7] = mbuf.pc;
+        vm.reg[7] = (int16_t)mbuf.pc;
         pthread_mutex_unlock(&vm.reg_mutex);
     }
 
