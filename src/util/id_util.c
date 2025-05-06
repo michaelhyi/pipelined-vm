@@ -33,7 +33,8 @@ void decode_br(fbuf_t fbuf, dbuf_t *dbuf) {
     }
 
     dbuf->cc = bit_range(fbuf.ir, 9, 11);
-    dbuf->operand1 = sign_extend(bit_range(fbuf.ir, 0, 8), 9);
+    dbuf->operand1 = fbuf.pc;
+    dbuf->operand2 = sign_extend(bit_range(fbuf.ir, 0, 8), 9);
 }
 
 void decode_add_and(fbuf_t fbuf, dbuf_t *dbuf) {
@@ -53,6 +54,7 @@ void decode_add_and(fbuf_t fbuf, dbuf_t *dbuf) {
     }
 
     dbuf->reg = bit_range(fbuf.ir, 9, 11);
+
     pthread_mutex_lock(&vm.reg_mutex);
     dbuf->operand1 = vm.reg[bit_range(fbuf.ir, 6, 8)];
     pthread_mutex_unlock(&vm.reg_mutex);
@@ -83,7 +85,8 @@ void decode_ld_ldi_lea(fbuf_t fbuf, dbuf_t *dbuf) {
     }
 
     dbuf->reg = bit_range(fbuf.ir, 9, 11);
-    dbuf->operand1 = sign_extend(bit_range(fbuf.ir, 0, 8), 9);
+    dbuf->operand1 = fbuf.pc;
+    dbuf->operand2 = sign_extend(bit_range(fbuf.ir, 0, 8), 9);
 }
 
 void decode_st_sti(fbuf_t fbuf, dbuf_t *dbuf) {
@@ -106,7 +109,9 @@ void decode_st_sti(fbuf_t fbuf, dbuf_t *dbuf) {
     pthread_mutex_lock(&vm.reg_mutex);
     dbuf->reg = vm.reg[bit_range(fbuf.ir, 9, 11)];
     pthread_mutex_unlock(&vm.reg_mutex);
-    dbuf->operand1 = sign_extend(bit_range(fbuf.ir, 0, 8), 9);
+
+    dbuf->operand1 = fbuf.pc;
+    dbuf->operand2 = sign_extend(bit_range(fbuf.ir, 0, 8), 9);
 }
 
 void decode_jsr(fbuf_t fbuf, dbuf_t *dbuf) {
@@ -124,7 +129,8 @@ void decode_jsr(fbuf_t fbuf, dbuf_t *dbuf) {
         return;
     }
 
-    dbuf->operand1 = sign_extend(bit_range(fbuf.ir, 0, 10), 11);
+    dbuf->operand1 = fbuf.pc;
+    dbuf->operand2 = sign_extend(bit_range(fbuf.ir, 0, 10), 11);
 }
 
 void decode_jmp_jsrr(fbuf_t fbuf, dbuf_t *dbuf) {
@@ -144,7 +150,7 @@ void decode_jmp_jsrr(fbuf_t fbuf, dbuf_t *dbuf) {
     }
 
     pthread_mutex_lock(&vm.reg_mutex);
-    dbuf->operand1 = vm.reg[bit_range(fbuf.ir, 6, 8)];
+    dbuf->reg = vm.reg[bit_range(fbuf.ir, 6, 8)];
     pthread_mutex_unlock(&vm.reg_mutex);
 }
 
@@ -164,9 +170,11 @@ void decode_ldr(fbuf_t fbuf, dbuf_t *dbuf) {
     }
 
     dbuf->reg = bit_range(fbuf.ir, 9, 11);
+
     pthread_mutex_lock(&vm.reg_mutex);
     dbuf->operand1 = vm.reg[bit_range(fbuf.ir, 6, 8)];
     pthread_mutex_unlock(&vm.reg_mutex);
+
     dbuf->operand2 = sign_extend(bit_range(fbuf.ir, 0, 5), 6);
 }
 
@@ -189,6 +197,7 @@ void decode_str(fbuf_t fbuf, dbuf_t *dbuf) {
     dbuf->reg = vm.reg[bit_range(fbuf.ir, 9, 11)];
     dbuf->operand1 = vm.reg[bit_range(fbuf.ir, 6, 8)];
     pthread_mutex_unlock(&vm.reg_mutex);
+
     dbuf->operand2 = sign_extend(bit_range(fbuf.ir, 0, 5), 6);
 }
 
@@ -208,6 +217,7 @@ void decode_not(fbuf_t fbuf, dbuf_t *dbuf) {
     }
 
     dbuf->reg = bit_range(fbuf.ir, 9, 11);
+
     pthread_mutex_lock(&vm.reg_mutex);
     dbuf->operand1 = vm.reg[bit_range(fbuf.ir, 6, 8)];
     pthread_mutex_unlock(&vm.reg_mutex);
