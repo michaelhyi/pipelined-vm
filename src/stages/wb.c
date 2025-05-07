@@ -28,6 +28,13 @@ void *wb_run(void *arg) {
         set_cc(mbuf);
     } else if (mbuf.opcode == OP_JSR || OP_JSRR) {
         save_pc_in_r7(mbuf);
+    } else if (mbuf.opcode == OP_TRAP) {
+        // TODO: for now, it is assumed that all traps passed in are HALT
+        // statements. this will, obviously, change in the near future. this is
+        // just for testing purposes
+        pthread_mutex_lock(&vm.running_mutex);
+        vm.running = 0;
+        pthread_mutex_unlock(&vm.running_mutex);
     }
 
     pthread_barrier_wait(&vm.pipeline_cycle_barrier);

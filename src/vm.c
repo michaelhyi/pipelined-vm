@@ -21,12 +21,16 @@ void vm_init() {
     vm.pc = 0x3000;
     vm.psr = (int16_t)(1 << 15);
 
+    vm.running = 1;
+
     vm.fbuf.nop = 1;
     vm.dbuf.nop = 1;
     vm.ebuf.nop = 1;
     vm.mbuf.nop = 1;
 
     vm.fbuf_nop = 0;
+
+    pthread_mutex_init(&vm.running_mutex, NULL);
 
     pthread_mutex_init(&vm.mem_mutex, NULL);
     pthread_mutex_init(&vm.reg_mutex, NULL);
@@ -50,13 +54,7 @@ void vm_init() {
 }
 
 void vm_run() {
-    vm.register_file[0].data = 0x2110;
-    // mem[0x2200]
-    vm.mem[0x3000] = OP_STI << 12;
-    vm.mem[0x3001] = 0x2200;
-
-    for (int i = 0; i < 10; i++) {
-        printf("cycle: %d\n", i + 1);
+    while (vm.running) {
         pthread_t if_tid;
         pthread_t id_tid;
         pthread_t ex_tid;
@@ -78,6 +76,8 @@ void vm_run() {
 }
 
 void vm_teardown() {
+    pthread_mutex_destroy(&vm.running_mutex);
+
     pthread_mutex_destroy(&vm.mem_mutex);
     pthread_mutex_destroy(&vm.reg_mutex);
     pthread_mutex_destroy(&vm.pc_mutex);

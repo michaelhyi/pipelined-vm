@@ -59,17 +59,22 @@ typedef struct vm_t {
     int16_t cc;
     int16_t psr;
 
+    uint16_t running;
+
     fbuf_t fbuf;
     dbuf_t dbuf;
     ebuf_t ebuf;
     mbuf_t mbuf;
 
+    // TOOD: why do i need this?
     uint16_t fbuf_nop;
 
     uint16_t fbuf_stay;
     uint16_t dbuf_stay;
     uint16_t ebuf_stay;
     uint16_t mbuf_stay;
+
+    pthread_mutex_t running_mutex;
 
     pthread_mutex_t mem_mutex;
     pthread_mutex_t reg_mutex;
