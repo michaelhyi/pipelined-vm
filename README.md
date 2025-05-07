@@ -15,7 +15,6 @@ prediction, and interrupt handlers.
 Tools:
 - C
 - Make
-- Criterion 
 - Bash
 - Docker 
 
