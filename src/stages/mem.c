@@ -44,5 +44,6 @@ void *mem_run(void *arg) {
 
     pthread_barrier_wait(&vm.pipeline_cycle_barrier);
     update_mbuf(mbuf);
+    free(mbuf);
     return NULL;
 }
