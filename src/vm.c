@@ -14,6 +14,10 @@
 vm_t vm;
 
 void vm_init() {
+    for (int i = 0; i < NUM_REGISTERS; i++) {
+        vm.register_file[i].busy_counter = 0;
+    }
+
     vm.pc = 0x3000;
     vm.psr = (int16_t)(1 << 15);
 
@@ -46,7 +50,7 @@ void vm_init() {
 }
 
 void vm_run() {
-    vm.reg[0] = 0x2110;
+    vm.register_file[0].data = 0x2110;
     // mem[0x2200]
     vm.mem[0x3000] = OP_STI << 12;
     vm.mem[0x3001] = 0x2200;

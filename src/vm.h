@@ -8,6 +8,11 @@
 #define NUM_REGISTERS 8
 #define NUM_PIPELINE_STAGES 5
 
+typedef struct vm_register_t {
+    uint16_t busy_counter;
+    int16_t data;
+} vm_register_t;
+
 typedef struct fbuf_t {
     uint16_t nop;
     uint16_t pc;
@@ -49,7 +54,7 @@ typedef struct mbuf_t {
 
 typedef struct vm_t {
     int16_t mem[ADDRESS_SPACE];
-    int16_t reg[NUM_REGISTERS];
+    vm_register_t register_file[NUM_REGISTERS];
     uint16_t pc;
     int16_t cc;
     int16_t psr;

@@ -24,15 +24,10 @@ void *wb_run(void *arg) {
         mbuf.opcode == OP_AND || mbuf.opcode == OP_LDR ||
         mbuf.opcode == OP_NOT || mbuf.opcode == OP_LDI ||
         mbuf.opcode == OP_LEA) {
-        pthread_mutex_lock(&vm.reg_mutex);
-        vm.reg[mbuf.reg] = mbuf.result;
-        pthread_mutex_unlock(&vm.reg_mutex);
-
+        write_to_register(mbuf);
         set_cc(mbuf);
     } else if (mbuf.opcode == OP_JSR || OP_JSRR) {
-        pthread_mutex_lock(&vm.reg_mutex);
-        vm.reg[7] = (int16_t)mbuf.pc;
-        pthread_mutex_unlock(&vm.reg_mutex);
+        save_pc_in_r7(mbuf);
     }
 
     pthread_barrier_wait(&vm.pipeline_cycle_barrier);

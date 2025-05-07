@@ -2,6 +2,13 @@
 
 #include "../isa.h"
 
+void write_to_register(mbuf_t mbuf) {
+    pthread_mutex_lock(&vm.reg_mutex);
+    vm.register_file[mbuf.reg].data = mbuf.result;
+    vm.register_file[mbuf.reg].busy_counter--;
+    pthread_mutex_unlock(&vm.reg_mutex);
+}
+
 void set_cc(mbuf_t mbuf) {
     if (mbuf.opcode != OP_LEA) {
         pthread_mutex_lock(&vm.cc_mutex);
@@ -16,4 +23,11 @@ void set_cc(mbuf_t mbuf) {
 
         pthread_mutex_unlock(&vm.cc_mutex);
     }
+}
+
+void save_pc_in_r7(mbuf_t mbuf) {
+    pthread_mutex_lock(&vm.reg_mutex);
+    vm.register_file[7].data = (int16_t)mbuf.pc;
+    vm.register_file[7].busy_counter--;
+    pthread_mutex_unlock(&vm.reg_mutex);
 }

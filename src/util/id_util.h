@@ -6,6 +6,29 @@
 #include "../vm.h"
 
 /**
+ * Returns the VM's current `fbuf`.
+ */
+fbuf_t get_fbuf(void);
+
+/**
+ * Returns an initialized `dbuf` based on `fbuf`.
+ *
+ * @param fbuf the VM's current `fbuf`
+ * @returns a pointer to a new dynamically allocated dbuf
+ */
+dbuf_t *init_dbuf(fbuf_t fbuf);
+
+/**
+ * Sends a NOP bubble to the `ID` stage.
+ */
+void send_bubble_to_id(void);
+
+/**
+ * Sends a NOP bubble to the `EX` stage.
+ */
+void send_bubble_to_ex(void);
+
+/**
  * Returns the opcode of an instruction.
  *
  * @param ir instruction to decode
@@ -19,7 +42,7 @@ int16_t get_opcode(int16_t ir);
  * @param ir instruction to decode
  * @return 1 if the instruction performs JSR, 0 otherwise
  */
-int is_jsr(int16_t ir);
+int id_instruction_is_jsr(int16_t ir);
 
 /**
  * Returns whether the instruction performs JSRR.
@@ -27,7 +50,7 @@ int is_jsr(int16_t ir);
  * @param ir instruction to decode
  * @return 1 if the instruction performs JSRR, 0 otherwise
  */
-int is_jsrr(int16_t ir);
+int id_instruction_is_jsrr(int16_t ir);
 
 /**
  * Decodes BR instruction.
@@ -108,5 +131,20 @@ void decode_not(fbuf_t fbuf, dbuf_t *dbuf);
  * @param dbuf pointer to dbuf to write to
  */
 void decode_trap(fbuf_t fbuf, dbuf_t *dbuf);
+
+/**
+ * Increments the busy counter of a register.
+ *
+ * @param register_num the number of the register to update
+ */
+void increment_busy_counter(uint16_t register_num);
+
+/**
+ * Updates `dbuf` with the new dbuf from the `ID` stage if its STAY signal is
+ * not high.
+ *
+ * @param dbuf pointer to the new dbuf from the `ID` stage
+ */
+void update_dbuf(dbuf_t *dbuf);
 
 #endif
