@@ -15,7 +15,7 @@
  */
 static void set_dbuf(dbuf_t *dbuf);
 
-fbuf_t get_fbuf() {
+fbuf_t get_fbuf(void) {
     fbuf_t fbuf;
 
     pthread_mutex_lock(&vm.fbuf_mutex);
@@ -35,13 +35,13 @@ dbuf_t *init_dbuf(fbuf_t fbuf) {
     return dbuf;
 }
 
-void send_bubble_to_id() {
+void send_bubble_to_id(void) {
     pthread_mutex_lock(&vm.fbuf_nop_mutex);
     vm.fbuf_nop = 1;
     pthread_mutex_unlock(&vm.fbuf_nop_mutex);
 }
 
-void send_bubble_to_ex() {
+void send_bubble_to_ex(void) {
     pthread_mutex_lock(&vm.dbuf_mutex);
     vm.dbuf.nop = 1;
     pthread_mutex_unlock(&vm.dbuf_mutex);

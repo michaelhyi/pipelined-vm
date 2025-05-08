@@ -12,7 +12,7 @@
  */
 static void set_ebuf(ebuf_t *ebuf);
 
-dbuf_t get_dbuf() {
+dbuf_t get_dbuf(void) {
     dbuf_t dbuf;
 
     pthread_mutex_lock(&vm.dbuf_mutex);
@@ -22,7 +22,7 @@ dbuf_t get_dbuf() {
     return dbuf;
 }
 
-void send_bubble_to_mem() {
+void send_bubble_to_mem(void) {
     pthread_mutex_lock(&vm.ebuf_mutex);
     vm.ebuf.nop = 1;
     pthread_mutex_unlock(&vm.ebuf_mutex);
@@ -54,7 +54,7 @@ int ex_instruction_is_jsrr(dbuf_t dbuf) {
     return dbuf.opcode == OP_JSRR && !dbuf.bit11;
 }
 
-void flush_id() {
+void flush_id(void) {
     pthread_mutex_lock(&vm.fbuf_nop_mutex);
     vm.fbuf_nop = 1;
     pthread_mutex_unlock(&vm.fbuf_nop_mutex);

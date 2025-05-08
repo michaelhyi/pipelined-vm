@@ -3,7 +3,7 @@
 #include <stddef.h>
 #include <string.h>
 
-int16_t get_instruction_and_increment_pc() {
+int16_t get_instruction_and_increment_pc(void) {
     int16_t ir;
 
     pthread_mutex_lock(&vm.pc_mutex);

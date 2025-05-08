@@ -1,5 +1,6 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Wstrict-prototypes -pthread
+CFLAGS = -std=gnu99 -Wall -Wextra -Wpedantic -Werror -Wconversion -Wshadow \
+			-Wstrict-prototypes -Wold-style-definition -Werror=vla -pthread
 C_OPT_FLAGS = -O2
 C_DEBUG_FLAGS = -g -O0
 

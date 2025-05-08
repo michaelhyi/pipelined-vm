@@ -82,7 +82,7 @@ static void test_jmp(void);
  */
 static void test_lea(void);
 
-void test_vm() {
+void test_vm(void) {
     // TODO: test br, rti, trap
     test_add_reg_mode();
     test_add_imm_mode();
@@ -101,7 +101,7 @@ void test_vm() {
     test_lea();
 }
 
-static void test_add_reg_mode() {
+static void test_add_reg_mode(void) {
     // setup
     vm_init();
 
@@ -129,7 +129,7 @@ static void test_add_reg_mode() {
     assert(!errno);
 }
 
-static void test_add_imm_mode() {
+static void test_add_imm_mode(void) {
     // setup
     vm_init();
 
@@ -156,7 +156,7 @@ static void test_add_imm_mode() {
     assert(!errno);
 }
 
-static void test_ld() {
+static void test_ld(void) {
     // setup
     vm_init();
 
@@ -182,7 +182,7 @@ static void test_ld() {
     assert(!errno);
 }
 
-static void test_st() {
+static void test_st(void) {
     // setup
     vm_init();
 
@@ -204,7 +204,7 @@ static void test_st() {
     assert(!errno);
 }
 
-static void test_jsr() {
+static void test_jsr(void) {
     // setup
     vm_init();
 
@@ -233,7 +233,7 @@ static void test_jsr() {
     assert(!errno);
 }
 
-static void test_jsrr() {
+static void test_jsrr(void) {
     // setup
     vm_init();
 
@@ -263,7 +263,7 @@ static void test_jsrr() {
     assert(!errno);
 }
 
-static void test_and_reg_mode() {
+static void test_and_reg_mode(void) {
     // setup
     vm_init();
 
@@ -291,7 +291,7 @@ static void test_and_reg_mode() {
     assert(!errno);
 }
 
-static void test_and_imm_mode() {
+static void test_and_imm_mode(void) {
     // setup
     vm_init();
 
@@ -318,7 +318,7 @@ static void test_and_imm_mode() {
     assert(!errno);
 }
 
-static void test_ldr() {
+static void test_ldr(void) {
     // setup
     vm_init();
 
@@ -346,7 +346,7 @@ static void test_ldr() {
     assert(!errno);
 }
 
-static void test_str() {
+static void test_str(void) {
     // setup
     vm_init();
 
@@ -370,7 +370,7 @@ static void test_str() {
     assert(!errno);
 }
 
-static void test_not() {
+static void test_not(void) {
     // setup
     vm_init();
 
@@ -397,7 +397,7 @@ static void test_not() {
     assert(!errno);
 }
 
-static void test_ldi() {
+static void test_ldi(void) {
     // setup
     vm_init();
 
@@ -424,7 +424,7 @@ static void test_ldi() {
     assert(!errno);
 }
 
-static void test_sti() {
+static void test_sti(void) {
     // setup
     vm_init();
 
@@ -447,7 +447,7 @@ static void test_sti() {
     assert(!errno);
 }
 
-static void test_jmp() {
+static void test_jmp(void) {
     // setup
     vm_init();
 
@@ -473,7 +473,7 @@ static void test_jmp() {
     assert(!errno);
 }
 
-static void test_lea() {
+static void test_lea(void) {
     // setup
     vm_init();
 

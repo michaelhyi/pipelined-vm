@@ -12,7 +12,7 @@
  */
 static void set_mbuf(mbuf_t *mbuf);
 
-ebuf_t get_ebuf() {
+ebuf_t get_ebuf(void) {
     ebuf_t ebuf;
 
     pthread_mutex_lock(&vm.ebuf_mutex);
@@ -22,7 +22,7 @@ ebuf_t get_ebuf() {
     return ebuf;
 }
 
-void send_bubble_to_wb() {
+void send_bubble_to_wb(void) {
     pthread_mutex_lock(&vm.mbuf_mutex);
     vm.mbuf.nop = 1;
     pthread_mutex_unlock(&vm.mbuf_mutex);
@@ -56,7 +56,7 @@ void mem_set(uint16_t addr, int16_t data) {
     pthread_mutex_unlock(&vm.mem_mutex);
 }
 
-void stall_pipeline() {
+void stall_pipeline(void) {
     pthread_mutex_lock(&vm.fbuf_stay_mutex);
     vm.fbuf_stay = 1;
     pthread_mutex_unlock(&vm.fbuf_stay_mutex);

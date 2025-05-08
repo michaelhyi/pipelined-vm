@@ -14,7 +14,7 @@
 
 vm_t vm;
 
-void vm_init() {
+void vm_init(void) {
     memset(&vm, 0, sizeof(vm_t));
 
     vm.pc = 0x3000;
@@ -50,7 +50,7 @@ void vm_init() {
     pthread_barrier_init(&vm.pipeline_cycle_barrier, NULL, NUM_PIPELINE_STAGES);
 }
 
-void vm_run() {
+void vm_run(void) {
     while (vm.running) {
         pthread_t if_tid;
         pthread_t id_tid;
@@ -72,7 +72,7 @@ void vm_run() {
     }
 }
 
-void vm_teardown() {
+void vm_teardown(void) {
     pthread_mutex_destroy(&vm.running_mutex);
 
     pthread_mutex_destroy(&vm.mem_mutex);
