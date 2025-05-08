@@ -1,6 +1,7 @@
 #include "vm.h"
 
 #include <stdio.h>
+#include <string.h>
 
 #include "isa.h"
 #include "stages/ex.h"
@@ -14,9 +15,7 @@
 vm_t vm;
 
 void vm_init() {
-    for (int i = 0; i < NUM_REGISTERS; i++) {
-        vm.register_file[i].busy_counter = 0;
-    }
+    memset(&vm, 0, sizeof(vm_t));
 
     vm.pc = 0x3000;
     vm.psr = (int16_t)(1 << 15);
@@ -27,8 +26,6 @@ void vm_init() {
     vm.dbuf.nop = 1;
     vm.ebuf.nop = 1;
     vm.mbuf.nop = 1;
-
-    vm.fbuf_nop = 0;
 
     pthread_mutex_init(&vm.running_mutex, NULL);
 

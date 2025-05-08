@@ -98,7 +98,7 @@ void decode_add_and(fbuf_t fbuf, dbuf_t *dbuf) {
 
     pthread_mutex_lock(&vm.reg_mutex);
     // if register is busy
-    if (!vm.register_file[bit_range(fbuf.ir, 6, 8)].busy_counter) {
+    if (vm.register_file[bit_range(fbuf.ir, 6, 8)].busy_counter) {
         // tell stage to wait
         pthread_mutex_lock(&vm.fbuf_stay_mutex);
         vm.fbuf_stay = 1;
