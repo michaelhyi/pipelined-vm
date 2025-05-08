@@ -96,7 +96,7 @@ void decode_add_and(fbuf_t fbuf, dbuf_t *dbuf) {
 
     dbuf->reg = bit_range(fbuf.ir, 9, 11);
 
-    pthread_mutex_lock(&vm.reg_mutex);
+    pthread_mutex_lock(&vm.register_file_mutex);
     // if register is busy
     if (vm.register_file[bit_range(fbuf.ir, 6, 8)].busy_counter) {
         // tell stage to wait
@@ -104,22 +104,19 @@ void decode_add_and(fbuf_t fbuf, dbuf_t *dbuf) {
         vm.fbuf_stay = 1;
         pthread_mutex_unlock(&vm.fbuf_stay_mutex);
 
-        // send bubble forward
-        pthread_mutex_lock(&vm.dbuf_mutex);
-        vm.dbuf.nop = 1;
-        pthread_mutex_unlock(&vm.dbuf_mutex);
+        send_bubble_to_ex();
 
-        pthread_mutex_unlock(&vm.reg_mutex);
+        pthread_mutex_unlock(&vm.register_file_mutex);
         return;
     }
 
     dbuf->operand1 = vm.register_file[bit_range(fbuf.ir, 6, 8)].data;
-    pthread_mutex_unlock(&vm.reg_mutex);
+    pthread_mutex_unlock(&vm.register_file_mutex);
 
     if (bit_range(fbuf.ir, 5, 5) == 0) {
-        pthread_mutex_lock(&vm.reg_mutex);
+        pthread_mutex_lock(&vm.register_file_mutex);
         dbuf->operand2 = vm.register_file[bit_range(fbuf.ir, 0, 2)].data;
-        pthread_mutex_unlock(&vm.reg_mutex);
+        pthread_mutex_unlock(&vm.register_file_mutex);
     } else {
         dbuf->operand2 = sign_extend(bit_range(fbuf.ir, 0, 4), 5);
     }
@@ -164,9 +161,9 @@ void decode_st_sti(fbuf_t fbuf, dbuf_t *dbuf) {
         return;
     }
 
-    pthread_mutex_lock(&vm.reg_mutex);
+    pthread_mutex_lock(&vm.register_file_mutex);
     dbuf->reg = vm.register_file[bit_range(fbuf.ir, 9, 11)].data;
-    pthread_mutex_unlock(&vm.reg_mutex);
+    pthread_mutex_unlock(&vm.register_file_mutex);
 
     dbuf->operand1 = (int16_t)fbuf.pc;
     dbuf->operand2 = sign_extend(bit_range(fbuf.ir, 0, 8), 9);
@@ -210,9 +207,9 @@ void decode_jmp_jsrr(fbuf_t fbuf, dbuf_t *dbuf) {
         return;
     }
 
-    pthread_mutex_lock(&vm.reg_mutex);
+    pthread_mutex_lock(&vm.register_file_mutex);
     dbuf->reg = vm.register_file[bit_range(fbuf.ir, 6, 8)].data;
-    pthread_mutex_unlock(&vm.reg_mutex);
+    pthread_mutex_unlock(&vm.register_file_mutex);
 
     dbuf->bit11 = 0;
 }
@@ -235,9 +232,9 @@ void decode_ldr(fbuf_t fbuf, dbuf_t *dbuf) {
 
     dbuf->reg = bit_range(fbuf.ir, 9, 11);
 
-    pthread_mutex_lock(&vm.reg_mutex);
+    pthread_mutex_lock(&vm.register_file_mutex);
     dbuf->operand1 = vm.register_file[bit_range(fbuf.ir, 6, 8)].data;
-    pthread_mutex_unlock(&vm.reg_mutex);
+    pthread_mutex_unlock(&vm.register_file_mutex);
 
     dbuf->operand2 = sign_extend(bit_range(fbuf.ir, 0, 5), 6);
 }
@@ -258,10 +255,10 @@ void decode_str(fbuf_t fbuf, dbuf_t *dbuf) {
         return;
     }
 
-    pthread_mutex_lock(&vm.reg_mutex);
+    pthread_mutex_lock(&vm.register_file_mutex);
     dbuf->reg = vm.register_file[bit_range(fbuf.ir, 9, 11)].data;
     dbuf->operand1 = vm.register_file[bit_range(fbuf.ir, 6, 8)].data;
-    pthread_mutex_unlock(&vm.reg_mutex);
+    pthread_mutex_unlock(&vm.register_file_mutex);
 
     dbuf->operand2 = sign_extend(bit_range(fbuf.ir, 0, 5), 6);
 }
@@ -284,9 +281,9 @@ void decode_not(fbuf_t fbuf, dbuf_t *dbuf) {
 
     dbuf->reg = bit_range(fbuf.ir, 9, 11);
 
-    pthread_mutex_lock(&vm.reg_mutex);
+    pthread_mutex_lock(&vm.register_file_mutex);
     dbuf->operand1 = vm.register_file[bit_range(fbuf.ir, 6, 8)].data;
-    pthread_mutex_unlock(&vm.reg_mutex);
+    pthread_mutex_unlock(&vm.register_file_mutex);
 }
 
 void decode_trap(fbuf_t fbuf, dbuf_t *dbuf) {
@@ -310,9 +307,9 @@ void decode_trap(fbuf_t fbuf, dbuf_t *dbuf) {
 }
 
 void increment_busy_counter(uint16_t register_num) {
-    pthread_mutex_lock(&vm.reg_mutex);
+    pthread_mutex_lock(&vm.register_file_mutex);
     vm.register_file[register_num].busy_counter++;
-    pthread_mutex_unlock(&vm.reg_mutex);
+    pthread_mutex_unlock(&vm.register_file_mutex);
 }
 
 void update_dbuf(dbuf_t *dbuf) {

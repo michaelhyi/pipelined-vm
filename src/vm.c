@@ -30,7 +30,7 @@ void vm_init(void) {
     pthread_mutex_init(&vm.running_mutex, NULL);
 
     pthread_mutex_init(&vm.mem_mutex, NULL);
-    pthread_mutex_init(&vm.reg_mutex, NULL);
+    pthread_mutex_init(&vm.register_file_mutex, NULL);
     pthread_mutex_init(&vm.pc_mutex, NULL);
     pthread_mutex_init(&vm.cc_mutex, NULL);
     pthread_mutex_init(&vm.psr_mutex, NULL);
@@ -76,7 +76,7 @@ void vm_teardown(void) {
     pthread_mutex_destroy(&vm.running_mutex);
 
     pthread_mutex_destroy(&vm.mem_mutex);
-    pthread_mutex_destroy(&vm.reg_mutex);
+    pthread_mutex_destroy(&vm.register_file_mutex);
     pthread_mutex_destroy(&vm.pc_mutex);
     pthread_mutex_destroy(&vm.cc_mutex);
     pthread_mutex_destroy(&vm.psr_mutex);

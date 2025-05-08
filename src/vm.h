@@ -77,7 +77,7 @@ typedef struct vm_t {
     pthread_mutex_t running_mutex;
 
     pthread_mutex_t mem_mutex;
-    pthread_mutex_t reg_mutex;
+    pthread_mutex_t register_file_mutex;
     pthread_mutex_t pc_mutex;
     pthread_mutex_t cc_mutex;
     pthread_mutex_t psr_mutex;

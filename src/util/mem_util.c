@@ -40,22 +40,6 @@ mbuf_t *init_mbuf(ebuf_t ebuf) {
     return mbuf;
 }
 
-int16_t mem_get(uint16_t addr) {
-    int16_t data;
-
-    pthread_mutex_lock(&vm.mem_mutex);
-    data = vm.mem[addr];
-    pthread_mutex_unlock(&vm.mem_mutex);
-
-    return data;
-}
-
-void mem_set(uint16_t addr, int16_t data) {
-    pthread_mutex_lock(&vm.mem_mutex);
-    vm.mem[addr] = data;
-    pthread_mutex_unlock(&vm.mem_mutex);
-}
-
 void stall_pipeline(void) {
     pthread_mutex_lock(&vm.fbuf_stay_mutex);
     vm.fbuf_stay = 1;

@@ -8,6 +8,7 @@
 #include "../isa.h"
 #include "../util/mem_util.h"
 #include "../vm.h"
+#include "../vm_util.h"
 
 void *mem_run(void *arg) {
     (void)arg;
@@ -23,11 +24,11 @@ void *mem_run(void *arg) {
     mbuf_t *mbuf = init_mbuf(ebuf);
 
     if (ebuf.opcode == OP_LD || ebuf.opcode == OP_LDR) {
-        mbuf->result = mem_get((uint16_t)ebuf.result);
+        mbuf->result = get_mem((uint16_t)ebuf.result);
     } else if (ebuf.opcode == OP_ST || ebuf.opcode == OP_STR) {
-        mem_set((uint16_t)ebuf.result, ebuf.reg);
+        set_mem((uint16_t)ebuf.result, ebuf.reg);
     } else if (ebuf.opcode == OP_LDI || ebuf.opcode == OP_STI) {
-        mbuf->result = mem_get((uint16_t)ebuf.result);
+        mbuf->result = get_mem((uint16_t)ebuf.result);
 
         pthread_mutex_lock(&vm.ebuf_mutex);
         vm.ebuf.indirect_counter =
@@ -38,7 +39,7 @@ void *mem_run(void *arg) {
             vm.ebuf.result = mbuf->result;
             stall_pipeline();
         } else if (ebuf.opcode == OP_STI) {
-            mem_set((uint16_t)ebuf.result, ebuf.reg);
+            set_mem((uint16_t)ebuf.result, ebuf.reg);
         }
         pthread_mutex_unlock(&vm.ebuf_mutex);
     }

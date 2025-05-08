@@ -22,22 +22,6 @@ void send_bubble_to_wb(void);
 mbuf_t *init_mbuf(ebuf_t ebuf);
 
 /**
- * Fetches data from the VM's memory in a thread-safe manner.
- *
- * @param addr memory address to fetch from
- * @returns the value stored at that memory address
- */
-int16_t mem_get(uint16_t addr);
-
-/**
- * Sets data in the VM's memory in a thread-safe manner.
- *
- * @param addr memory address to set
- * @param data data to set in `mem[addr]`
- */
-void mem_set(uint16_t addr, int16_t data);
-
-/**
  * Stalls all 5 pipline stages. Used for `LDI` and `STI` instructions.
  */
 void stall_pipeline(void);
