@@ -77,6 +77,12 @@ void set_register(uint16_t reg_num, int16_t data) {
     }
 
     pthread_mutex_lock(&vm.register_file_mutex);
+    if (!vm.register_file[reg_num].busy_counter) {
+        errno = EINVAL;
+        pthread_mutex_unlock(&vm.register_file_mutex);
+        return;
+    }
+
     vm.register_file[reg_num].data = data;
     vm.register_file[reg_num].busy_counter--;
     pthread_mutex_unlock(&vm.register_file_mutex);

@@ -40,7 +40,7 @@ int16_t get_register(uint16_t reg_num);
  *
  * @param reg_num register to set data in
  * @param data data to set in register
- * @note sets errno to EINVAL if reg_num > 7
+ * @note sets errno to EINVAL if reg_num > 7 or if the register is not busy
  */
 void set_register(uint16_t reg_num, int16_t data);
 
