@@ -173,7 +173,7 @@ static void test_ld() {
     assert(expected_r0 == actual_r0);
 
     int16_t expected_cc = 1; // 001
-    int16_t actual_cc = 1;
+    int16_t actual_cc = vm.cc;
     assert(expected_cc == actual_cc);
 
     // teardown
@@ -415,7 +415,7 @@ static void test_ldi() {
     assert(expected_r0 == actual_r0);
 
     int16_t expected_cc = 1; // 001
-    int16_t actual_cc = 1;
+    int16_t actual_cc = vm.cc;
     assert(expected_cc == actual_cc);
 
     // teardown
