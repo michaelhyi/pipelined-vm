@@ -4,6 +4,7 @@
 #include <pthread.h>
 
 #include "../util/if_util.h"
+#include "../vm.h"
 
 /**
  * Tears down the `if` stage.

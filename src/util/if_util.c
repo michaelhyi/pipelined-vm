@@ -1,17 +1,16 @@
 #include "if_util.h"
 
-#include <stddef.h>
 #include <string.h>
 
 int16_t get_instruction_and_increment_pc(void) {
-    int16_t ir;
-
     pthread_mutex_lock(&vm.pc_mutex);
 
+    // get instruction
     pthread_mutex_lock(&vm.mem_mutex);
-    ir = vm.mem[vm.pc];
+    int16_t ir = vm.mem[vm.pc];
     pthread_mutex_unlock(&vm.mem_mutex);
 
+    // increment pc
     vm.pc++;
     pthread_mutex_unlock(&vm.pc_mutex);
 

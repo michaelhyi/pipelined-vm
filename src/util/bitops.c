@@ -1,6 +1,7 @@
 #include "bitops.h"
 
 #include <errno.h>
+#include <stdint.h>
 
 int16_t bit_range(int16_t n, uint16_t lower, uint16_t upper) {
     if (lower > upper || upper >= 16) {

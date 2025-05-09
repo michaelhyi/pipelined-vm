@@ -22,7 +22,7 @@ void *id_run(void *arg) {
     fbuf_t fbuf = get_fbuf();
 
     if (fbuf.nop) {
-        send_bubble_to_ex(); // TODO: bug on this line.
+        send_bubble_to_ex();
         id_teardown((dbuf_t){.nop = 1});
         return NULL;
     }

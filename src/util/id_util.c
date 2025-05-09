@@ -22,16 +22,18 @@ dbuf_t init_next_dbuf(fbuf_t fbuf) {
     dbuf.pc = fbuf.pc;
     dbuf.opcode = get_opcode(fbuf.ir);
 
+    // TODO: handle errno
+
     return dbuf;
 }
 
 int16_t get_opcode(int16_t ir) { return bit_range(ir, 12, 15); }
 
-int id_instruction_is_jsr(int16_t ir) {
+inline int id_instruction_is_jsr(int16_t ir) {
     return get_opcode(ir) == OP_JSR && bit_range(ir, 11, 11);
 }
 
-int id_instruction_is_jsrr(int16_t ir) {
+inline int id_instruction_is_jsrr(int16_t ir) {
     return get_opcode(ir) == OP_JSRR && !bit_range(ir, 11, 11);
 }
 
@@ -43,9 +45,17 @@ void decode_br(fbuf_t fbuf, dbuf_t *dbuf) {
         return;
     }
 
-    dbuf->cc = bit_range(fbuf.ir, 9, 11);
-    dbuf->operand1 = (int16_t)fbuf.pc;
-    dbuf->operand2 = sign_extend(bit_range(fbuf.ir, 0, 8), 9);
+    int16_t cc = bit_range(fbuf.ir, 9, 11);
+    int16_t operand1 = (int16_t)fbuf.pc;
+    int16_t operand2 = sign_extend(bit_range(fbuf.ir, 0, 8), 9);
+
+    if (errno) {
+        return;
+    }
+
+    dbuf->cc = cc;
+    dbuf->operand1 = operand1;
+    dbuf->operand2 = operand2;
 }
 
 void decode_add_and(fbuf_t fbuf, dbuf_t *dbuf) {

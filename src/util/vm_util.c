@@ -9,7 +9,7 @@
 /**
  * Returns whether the VM is operating in supervisor or user mode.
  *
- * @returns 1 if supervisor mode, 0 if user mode
+ * @returns 1 if supervisor mode, 0 if user mode or on error
  */
 static int supervisor_mode(void);
 
@@ -26,6 +26,11 @@ static int supervisor_mode(void) {
     pthread_mutex_lock(&vm.psr_mutex);
     int supervisor_mode = !bit_range(vm.psr, 15, 15);
     pthread_mutex_unlock(&vm.psr_mutex);
+
+    if (errno) {
+        errno = 0;
+        return 0;
+    }
 
     return supervisor_mode;
 }
@@ -78,6 +83,7 @@ void set_register_data(uint16_t reg_num, int16_t data) {
     }
 
     pthread_mutex_lock(&vm.register_file_mutex);
+    // TODO: abstract conditional to function
     if (!vm.register_file[reg_num].busy_counter) {
         errno = EINVAL;
         pthread_mutex_unlock(&vm.register_file_mutex);

@@ -6,7 +6,7 @@
  * pipelined processor. Runs within a thread.
  *
  * @param arg unused
- * @return NULL
+ * @returns NULL
  */
 void *if_run(void *arg);
 

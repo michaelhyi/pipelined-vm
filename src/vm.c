@@ -1,15 +1,14 @@
 #include "vm.h"
 
+#include <pthread.h>
+#include <stdint.h>
 #include <string.h>
 
-#include "isa.h"
 #include "stages/ex.h"
 #include "stages/id.h"
 #include "stages/if.h"
 #include "stages/mem.h"
 #include "stages/wb.h"
-
-#include "util/bitops.h"
 
 vm_t vm;
 
@@ -71,6 +70,8 @@ void vm_run(void) {
         pthread_join(ex_tid, NULL);
         pthread_join(mem_tid, NULL);
         pthread_join(wb_tid, NULL);
+
+        // TODO: handle errno
     }
 }
 

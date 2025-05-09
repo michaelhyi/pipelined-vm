@@ -1,6 +1,8 @@
 #ifndef IF_UTIL_H
 #define IF_UTIL_H
 
+#include <stdint.h>
+
 #include "../vm.h"
 
 /**
