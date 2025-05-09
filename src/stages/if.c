@@ -2,25 +2,36 @@
 
 #include <errno.h>
 #include <pthread.h>
-#include <stdio.h>
 
 #include "../util/if_util.h"
+
+/**
+ * A function that runs at the end of every `IF` stage to tear it down.
+ *
+ * @param next_fbuf the next fbuf that the VM will use
+ */
+static void if_teardown(fbuf_t next_fbuf);
 
 void *if_run(void *arg) {
     (void)arg;
 
-    fbuf_t fbuf;
-    fbuf.ir = get_instruction_and_increment_pc();
-    save_pc(&fbuf);
+    fbuf_t next_fbuf;
+    next_fbuf.ir = get_instruction_and_increment_pc();
+    save_pc(&next_fbuf);
 
     pthread_barrier_wait(&vm.pipeline_cycle_barrier);
-
-    // receive any bubbles
-    pthread_mutex_lock(&vm.fbuf_nop_mutex);
-    fbuf.nop = vm.fbuf_nop;
-    vm.fbuf_nop = 0;
-    pthread_mutex_unlock(&vm.fbuf_nop_mutex);
-
-    update_fbuf(&fbuf);
+    if_teardown(next_fbuf);
     return NULL;
+}
+
+static void if_teardown(fbuf_t next_fbuf) {
+    // receive any bubbles
+    pthread_mutex_lock(&vm.id_nop_mutex);
+    next_fbuf.nop = vm.id_nop;
+    vm.id_nop = 0;
+    pthread_mutex_unlock(&vm.id_nop_mutex);
+
+    update_fbuf(&next_fbuf);
+
+    pthread_exit(0);
 }

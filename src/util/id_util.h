@@ -6,27 +6,12 @@
 #include "../vm.h"
 
 /**
- * Returns the VM's current `fbuf`.
- */
-fbuf_t get_fbuf(void);
-
-/**
  * Returns an initialized `dbuf` based on `fbuf`.
  *
  * @param fbuf the VM's current `fbuf`
- * @returns a pointer to a new dynamically allocated dbuf
+ * @returns a new initialized dbuf
  */
-dbuf_t *init_dbuf(fbuf_t fbuf);
-
-/**
- * Sends a NOP bubble to the `ID` stage.
- */
-void send_bubble_to_id(void);
-
-/**
- * Sends a NOP bubble to the `EX` stage.
- */
-void send_bubble_to_ex(void);
+dbuf_t init_dbuf(fbuf_t fbuf);
 
 /**
  * Returns the opcode of an instruction.
@@ -140,11 +125,11 @@ void decode_trap(fbuf_t fbuf, dbuf_t *dbuf);
 void increment_busy_counter(uint16_t register_num);
 
 /**
- * Updates `dbuf` with the new dbuf from the `ID` stage if its STAY signal is
+ * Updates `dbuf` with the next dbuf from the `ID` stage if its STAY signal is
  * not high.
  *
- * @param dbuf pointer to the new dbuf from the `ID` stage
+ * @param dbuf the next dbuf from the `ID` stage
  */
-void update_dbuf(dbuf_t *dbuf);
+void update_dbuf(dbuf_t dbuf);
 
 #endif

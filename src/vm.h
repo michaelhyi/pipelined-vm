@@ -66,8 +66,10 @@ typedef struct vm_t {
     ebuf_t ebuf;
     mbuf_t mbuf;
 
-    // TOOD: why do i need this?
-    uint16_t fbuf_nop;
+    uint16_t id_nop;
+    uint16_t ex_nop;
+    uint16_t mem_nop;
+    uint16_t wb_nop;
 
     uint16_t id_stay;
     uint16_t ex_stay;
@@ -87,7 +89,10 @@ typedef struct vm_t {
     pthread_mutex_t ebuf_mutex;
     pthread_mutex_t mbuf_mutex;
 
-    pthread_mutex_t fbuf_nop_mutex;
+    pthread_mutex_t id_nop_mutex;
+    pthread_mutex_t ex_nop_mutex;
+    pthread_mutex_t mem_nop_mutex;
+    pthread_mutex_t wb_nop_mutex;
 
     pthread_mutex_t id_stay_mutex;
     pthread_mutex_t ex_stay_mutex;

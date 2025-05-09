@@ -1,12 +1,9 @@
 #include "bitops.h"
 
 #include <errno.h>
-#include <stdio.h>
 
 int16_t bit_range(int16_t n, uint16_t lower, uint16_t upper) {
     if (lower > upper || upper >= 16) {
-        fprintf(stderr, "bit_range failed: lower must be <= upper, and upper "
-                        "must be < 16\n");
         errno = EINVAL;
         return 0;
     }
@@ -19,8 +16,6 @@ int16_t bit_range(int16_t n, uint16_t lower, uint16_t upper) {
 
 int16_t sign_extend(int16_t n, uint16_t bit_length) {
     if (bit_length == 0 || bit_length >= 16) {
-        fprintf(stderr,
-                "sign_extend failed: bit_length must be > 0 and < 16\n");
         errno = EINVAL;
         return 0;
     }

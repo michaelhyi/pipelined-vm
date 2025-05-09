@@ -8,6 +8,8 @@
 
 #include <stdint.h>
 
+#include "vm.h"
+
 /**
  * Gets data from the VM's memory in a thread-safe manner.
  *
@@ -45,7 +47,90 @@ int16_t get_register_data(uint16_t reg_num);
 void set_register_data(uint16_t reg_num, int16_t data);
 
 /**
- * Asserts the STAY signal to both the `IF` and `ID` stages of the pipeline.
+ * Sets the VM's PC in a thread-safe manner.
+ *
+ * @param pc the new PC to set
+ */
+void set_pc(uint16_t pc);
+
+/**
+ * Gets the VM's current FBUF in a thread-safe manner.
+ *
+ * @returns the current `fbuf` value
+ */
+fbuf_t get_fbuf(void);
+
+/**
+ * Sets the VM's FBUF in a thread-safe manner.
+ *
+ * @param fbuf the new FBUF value to set
+ */
+void set_fbuf(fbuf_t fbuf);
+
+/**
+ * Gets the VM's current DBUF in a thread-safe manner.
+ *
+ * @returns the current `dbuf` value
+ */
+dbuf_t get_dbuf(void);
+
+/**
+ * Sets the VM's DBUF in a thread-safe manner.
+ *
+ * @param dbuf the new DBUF value to set
+ */
+void set_dbuf(dbuf_t dbuf);
+
+/**
+ * Gets the VM's current EBUF in a thread-safe manner.
+ *
+ * @returns the current `ebuf` value
+ */
+ebuf_t get_ebuf(void);
+
+/**
+ * Sets the VM's EBUF in a thread-safe manner.
+ *
+ * @param ebuf the new EBUF value to set
+ */
+void set_ebuf(ebuf_t ebuf);
+
+/**
+ * Gets the VM's current MBUF in a thread-safe manner.
+ *
+ * @returns the current `mbuf` value
+ */
+mbuf_t get_mbuf(void);
+
+/**
+ * Sets the VM's MBUF in a thread-safe manner.
+ *
+ * @param mbuf the new MBUF value to set
+ */
+void set_mbuf(mbuf_t mbuf);
+
+/**
+ * Asserts the NOP bit to the `ID` stage of the pipeline.
+ */
+void send_bubble_to_id(void);
+
+/**
+ * Asserts the NOP bit to the `EX` stage of the pipeline.
+ */
+void send_bubble_to_ex(void);
+
+/**
+ * Asserts the NOP bit to the `MEM` stage of the pipeline.
+ */
+void send_bubble_to_mem(void);
+
+/**
+ * Asserts the NOP bit to the `WB` stage of the pipeline.
+ */
+void send_bubble_to_wb(void);
+
+/**
+ * Asserts the STAY bit to both the `IF` and `ID` stages of the pipeline.
  */
 void send_stay_to_id(void);
 

@@ -4,5 +4,7 @@
 
 int main(void) {
     test_vm();
+
     printf("all tests passed\n");
+    return 0;
 }

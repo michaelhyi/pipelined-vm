@@ -1,6 +1,7 @@
 #include "vm_util.h"
 
 #include <errno.h>
+#include <string.h>
 
 #include "util/bitops.h"
 #include "vm.h"
@@ -87,6 +88,91 @@ void set_register_data(uint16_t reg_num, int16_t data) {
     vm.register_file[reg_num]
         .busy_counter--; // TODO: decouple this logic from this method
     pthread_mutex_unlock(&vm.register_file_mutex);
+}
+
+void set_pc(uint16_t pc) {
+    pthread_mutex_lock(&vm.pc_mutex);
+    vm.pc = pc;
+    pthread_mutex_unlock(&vm.pc_mutex);
+}
+
+fbuf_t get_fbuf(void) {
+    pthread_mutex_lock(&vm.fbuf_mutex);
+    fbuf_t fbuf = vm.fbuf;
+    pthread_mutex_unlock(&vm.fbuf_mutex);
+
+    return fbuf;
+}
+
+void set_fbuf(fbuf_t fbuf) {
+    pthread_mutex_lock(&vm.fbuf_mutex);
+    memcpy(&vm.fbuf, &fbuf, sizeof(fbuf_t));
+    pthread_mutex_unlock(&vm.fbuf_mutex);
+}
+
+dbuf_t get_dbuf(void) {
+    pthread_mutex_lock(&vm.dbuf_mutex);
+    dbuf_t dbuf = vm.dbuf;
+    pthread_mutex_unlock(&vm.dbuf_mutex);
+
+    return dbuf;
+}
+
+void set_dbuf(dbuf_t dbuf) {
+    pthread_mutex_lock(&vm.dbuf_mutex);
+    memcpy(&vm.dbuf, &dbuf, sizeof(dbuf_t));
+    pthread_mutex_unlock(&vm.dbuf_mutex);
+}
+
+ebuf_t get_ebuf(void) {
+    pthread_mutex_lock(&vm.ebuf_mutex);
+    ebuf_t ebuf = vm.ebuf;
+    pthread_mutex_unlock(&vm.ebuf_mutex);
+
+    return ebuf;
+}
+
+void set_ebuf(ebuf_t ebuf) {
+    pthread_mutex_lock(&vm.ebuf_mutex);
+    memcpy(&vm.ebuf, &ebuf, sizeof(ebuf_t));
+    pthread_mutex_unlock(&vm.ebuf_mutex);
+}
+
+mbuf_t get_mbuf(void) {
+    pthread_mutex_lock(&vm.mbuf_mutex);
+    mbuf_t mbuf = vm.mbuf;
+    pthread_mutex_unlock(&vm.mbuf_mutex);
+    return mbuf;
+}
+
+void set_mbuf(mbuf_t mbuf) {
+    pthread_mutex_lock(&vm.mbuf_mutex);
+    memcpy(&vm.mbuf, &mbuf, sizeof(mbuf_t));
+    pthread_mutex_unlock(&vm.mbuf_mutex);
+}
+
+void send_bubble_to_id(void) {
+    pthread_mutex_lock(&vm.id_nop_mutex);
+    vm.id_nop = 1;
+    pthread_mutex_unlock(&vm.id_nop_mutex);
+}
+
+void send_bubble_to_ex(void) {
+    pthread_mutex_lock(&vm.ex_nop_mutex);
+    vm.ex_nop = 1;
+    pthread_mutex_unlock(&vm.ex_nop_mutex);
+}
+
+void send_bubble_to_mem(void) {
+    pthread_mutex_lock(&vm.mem_nop_mutex);
+    vm.mem_nop = 1;
+    pthread_mutex_unlock(&vm.mem_nop_mutex);
+}
+
+void send_bubble_to_wb(void) {
+    pthread_mutex_lock(&vm.wb_nop_mutex);
+    vm.wb_nop = 1;
+    pthread_mutex_unlock(&vm.wb_nop_mutex);
 }
 
 void send_stay_to_id(void) {

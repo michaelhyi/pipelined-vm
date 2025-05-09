@@ -4,16 +4,6 @@
 #include "../vm.h"
 
 /**
- * Returns the VM's current `ebuf` in a thread-safe manner.
- */
-ebuf_t get_ebuf(void);
-
-/**
- * Sends a NOP bubble to the `WB` stage.
- */
-void send_bubble_to_wb(void);
-
-/**
  * Returns an initialized `mbuf` based on `ebuf`.
  *
  * @param ebuf the VM's current `ebuf`

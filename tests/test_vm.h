@@ -2,7 +2,7 @@
 #define TEST_VM_H
 
 /**
- * Runs the vm test suite.
+ * Runs the VM test suite.
  */
 void test_vm(void);
 

@@ -1,5 +1,5 @@
 /**
- * All operations interfacing with `vm` can be assumed to be thread-safe even
+ * All operations interfacing with the VM can be assumed to be thread-safe, even
  * without mutex locks, as there are no threads concurrently running before and
  * after `vm_run` is called.
  */

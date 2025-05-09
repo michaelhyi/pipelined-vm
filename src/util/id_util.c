@@ -1,61 +1,28 @@
 #include "id_util.h"
 
 #include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 #include "../isa.h"
 #include "../vm_util.h"
 #include "bitops.h"
 
 /**
- * Sets `dbuf` unconditionally.
- *
- * @param dbuf pointer to dbuf to set
- */
-static void set_dbuf(dbuf_t *dbuf);
-
-/**
  * Handles a busy register by sending a STAY signal to the `IF` and `ID` stages
  * of the pipeline and sending a bubble to the `EX` stage.
  *
  * @param reg_num the register number to handle
- * @param dbuf dbuf to modify when sending a bubble
  * @note sets errno to be EINVAL if reg_num > 7 or if the register is not busy
  */
-static void handle_busy_register(uint16_t reg_num, dbuf_t *dbuf);
+static void handle_busy_register(uint16_t reg_num);
 
-fbuf_t get_fbuf(void) {
-    fbuf_t fbuf;
+dbuf_t init_dbuf(fbuf_t fbuf) {
+    dbuf_t dbuf;
 
-    pthread_mutex_lock(&vm.fbuf_mutex);
-    fbuf = vm.fbuf;
-    pthread_mutex_unlock(&vm.fbuf_mutex);
-
-    return fbuf;
-}
-
-dbuf_t *init_dbuf(fbuf_t fbuf) {
-    dbuf_t *dbuf = malloc(sizeof(dbuf_t));
-
-    dbuf->nop = fbuf.nop;
-    dbuf->pc = fbuf.pc;
-    dbuf->opcode = get_opcode(fbuf.ir);
+    dbuf.nop = fbuf.nop;
+    dbuf.pc = fbuf.pc;
+    dbuf.opcode = get_opcode(fbuf.ir);
 
     return dbuf;
-}
-
-void send_bubble_to_id(void) {
-    pthread_mutex_lock(&vm.fbuf_nop_mutex);
-    vm.fbuf_nop = 1;
-    pthread_mutex_unlock(&vm.fbuf_nop_mutex);
-}
-
-void send_bubble_to_ex(void) {
-    pthread_mutex_lock(&vm.dbuf_mutex);
-    vm.dbuf.nop = 1;
-    pthread_mutex_unlock(&vm.dbuf_mutex);
 }
 
 int16_t get_opcode(int16_t ir) { return bit_range(ir, 12, 15); }
@@ -69,16 +36,9 @@ int id_instruction_is_jsrr(int16_t ir) {
 }
 
 void decode_br(fbuf_t fbuf, dbuf_t *dbuf) {
-    if (fbuf.nop || !dbuf) {
-        fprintf(stderr, "decode_br failed: fbuf must not be a nop and dbuf "
-                        "must be non-null\n");
-        errno = EINVAL;
-        return;
-    }
-
     int opcode = get_opcode(fbuf.ir);
-    if (opcode != OP_BR) {
-        fprintf(stderr, "decode_br failed: fbuf.ir must have opcode OP_BR\n");
+
+    if (fbuf.nop || !dbuf || opcode != OP_BR) {
         errno = EINVAL;
         return;
     }
@@ -100,7 +60,7 @@ void decode_add_and(fbuf_t fbuf, dbuf_t *dbuf) {
 
     int sr1 = bit_range(fbuf.ir, 6, 8);
 
-    handle_busy_register((uint16_t)sr1, dbuf);
+    handle_busy_register((uint16_t)sr1);
     if (!errno) {
         return;
     }
@@ -111,7 +71,7 @@ void decode_add_and(fbuf_t fbuf, dbuf_t *dbuf) {
     if (!bit_range(fbuf.ir, 5, 5)) {
         int sr2 = bit_range(fbuf.ir, 0, 2);
 
-        handle_busy_register((uint16_t)sr2, dbuf);
+        handle_busy_register((uint16_t)sr2);
         if (!errno) {
             return;
         }
@@ -147,7 +107,7 @@ void decode_st_sti(fbuf_t fbuf, dbuf_t *dbuf) {
 
     int sr = bit_range(fbuf.ir, 9, 11);
 
-    handle_busy_register((uint16_t)sr, dbuf);
+    handle_busy_register((uint16_t)sr);
     if (!errno) {
         return;
     }
@@ -181,7 +141,7 @@ void decode_jmp_jsrr(fbuf_t fbuf, dbuf_t *dbuf) {
 
     int base_r = bit_range(fbuf.ir, 6, 8);
 
-    handle_busy_register((uint16_t)base_r, dbuf);
+    handle_busy_register((uint16_t)base_r);
     if (!errno) {
         return;
     }
@@ -203,7 +163,7 @@ void decode_ldr(fbuf_t fbuf, dbuf_t *dbuf) {
 
     dbuf->reg = bit_range(fbuf.ir, 9, 11);
 
-    handle_busy_register((uint16_t)base_r, dbuf);
+    handle_busy_register((uint16_t)base_r);
     if (!errno) {
         return;
     }
@@ -224,7 +184,7 @@ void decode_str(fbuf_t fbuf, dbuf_t *dbuf) {
     int sr = bit_range(fbuf.ir, 9, 11);
     int base_r = bit_range(fbuf.ir, 6, 8);
 
-    handle_busy_register((uint16_t)sr, dbuf);
+    handle_busy_register((uint16_t)sr);
     if (!errno) {
         return;
     }
@@ -232,7 +192,7 @@ void decode_str(fbuf_t fbuf, dbuf_t *dbuf) {
 
     dbuf->reg = get_register_data((uint16_t)sr);
 
-    handle_busy_register((uint16_t)base_r, dbuf);
+    handle_busy_register((uint16_t)base_r);
     if (!errno) {
         return;
     }
@@ -254,7 +214,7 @@ void decode_not(fbuf_t fbuf, dbuf_t *dbuf) {
 
     dbuf->reg = bit_range(fbuf.ir, 9, 11);
 
-    handle_busy_register((uint16_t)sr, dbuf);
+    handle_busy_register((uint16_t)sr);
     if (!errno) {
         return;
     }
@@ -264,18 +224,9 @@ void decode_not(fbuf_t fbuf, dbuf_t *dbuf) {
 }
 
 void decode_trap(fbuf_t fbuf, dbuf_t *dbuf) {
-    if (fbuf.nop || !dbuf) {
-        fprintf(stderr,
-                "decode_trap failed: fbuf must not be a nop and dbuf must "
-                "be non-null\n");
-        errno = EINVAL;
-        return;
-    }
-
     int opcode = get_opcode(fbuf.ir);
-    if (opcode != OP_TRAP) {
-        fprintf(stderr,
-                "decode_trap failed: fbuf.ir must have opcode OP_TRAP\n");
+
+    if (fbuf.nop || !dbuf || opcode != OP_TRAP) {
         errno = EINVAL;
         return;
     }
@@ -289,7 +240,7 @@ void increment_busy_counter(uint16_t register_num) {
     pthread_mutex_unlock(&vm.register_file_mutex);
 }
 
-void update_dbuf(dbuf_t *dbuf) {
+void update_dbuf(dbuf_t dbuf) {
     pthread_mutex_lock(&vm.ex_stay_mutex);
 
     if (!vm.ex_stay) {
@@ -301,13 +252,7 @@ void update_dbuf(dbuf_t *dbuf) {
     pthread_mutex_unlock(&vm.ex_stay_mutex);
 }
 
-static void set_dbuf(dbuf_t *dbuf) {
-    pthread_mutex_lock(&vm.dbuf_mutex);
-    memcpy(&vm.dbuf, dbuf, sizeof(dbuf_t));
-    pthread_mutex_unlock(&vm.dbuf_mutex);
-}
-
-static void handle_busy_register(uint16_t reg_num, dbuf_t *dbuf) {
+static void handle_busy_register(uint16_t reg_num) {
     pthread_mutex_lock(&vm.register_file_mutex);
     if (reg_num > 7 || !vm.register_file[reg_num].busy_counter) {
         errno = EINVAL;
@@ -317,6 +262,5 @@ static void handle_busy_register(uint16_t reg_num, dbuf_t *dbuf) {
     pthread_mutex_unlock(&vm.register_file_mutex);
 
     send_stay_to_id();
-    // send bubble to EX
-    dbuf->nop = 1;
+    send_bubble_to_ex();
 }

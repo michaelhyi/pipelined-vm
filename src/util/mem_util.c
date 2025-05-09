@@ -4,29 +4,7 @@
 #include <string.h>
 
 #include "../vm.h"
-
-/**
- * Sets `mbuf` unconditionally.
- *
- * @param mbuf pointer to mbuf to set
- */
-static void set_mbuf(mbuf_t *mbuf);
-
-ebuf_t get_ebuf(void) {
-    ebuf_t ebuf;
-
-    pthread_mutex_lock(&vm.ebuf_mutex);
-    ebuf = vm.ebuf;
-    pthread_mutex_unlock(&vm.ebuf_mutex);
-
-    return ebuf;
-}
-
-void send_bubble_to_wb(void) {
-    pthread_mutex_lock(&vm.mbuf_mutex);
-    vm.mbuf.nop = 1;
-    pthread_mutex_unlock(&vm.mbuf_mutex);
-}
+#include "../vm_util.h"
 
 mbuf_t *init_mbuf(ebuf_t ebuf) {
     mbuf_t *mbuf = malloc(sizeof(mbuf_t));
@@ -61,15 +39,9 @@ void stall_pipeline(void) {
 void update_mbuf(mbuf_t *mbuf) {
     pthread_mutex_lock(&vm.wb_stay_mutex);
     if (!vm.wb_stay) {
-        set_mbuf(mbuf);
+        set_mbuf(*mbuf);
     } else {
         vm.wb_stay = 0;
     }
     pthread_mutex_unlock(&vm.wb_stay_mutex);
-}
-
-static void set_mbuf(mbuf_t *mbuf) {
-    pthread_mutex_lock(&vm.mbuf_mutex);
-    memcpy(&vm.mbuf, mbuf, sizeof(mbuf_t));
-    pthread_mutex_unlock(&vm.mbuf_mutex);
 }
