@@ -41,31 +41,31 @@ mbuf_t *init_mbuf(ebuf_t ebuf) {
 }
 
 void stall_pipeline(void) {
-    pthread_mutex_lock(&vm.fbuf_stay_mutex);
-    vm.fbuf_stay = 1;
-    pthread_mutex_unlock(&vm.fbuf_stay_mutex);
+    pthread_mutex_lock(&vm.id_stay_mutex);
+    vm.id_stay = 1;
+    pthread_mutex_unlock(&vm.id_stay_mutex);
 
-    pthread_mutex_lock(&vm.dbuf_stay_mutex);
-    vm.dbuf_stay = 1;
-    pthread_mutex_unlock(&vm.dbuf_stay_mutex);
+    pthread_mutex_lock(&vm.ex_stay_mutex);
+    vm.ex_stay = 1;
+    pthread_mutex_unlock(&vm.ex_stay_mutex);
 
-    pthread_mutex_lock(&vm.ebuf_stay_mutex);
-    vm.ebuf_stay = 1;
-    pthread_mutex_unlock(&vm.ebuf_stay_mutex);
+    pthread_mutex_lock(&vm.mem_stay_mutex);
+    vm.mem_stay = 1;
+    pthread_mutex_unlock(&vm.mem_stay_mutex);
 
-    pthread_mutex_lock(&vm.mbuf_stay_mutex);
-    vm.mbuf_stay = 1;
-    pthread_mutex_unlock(&vm.mbuf_stay_mutex);
+    pthread_mutex_lock(&vm.wb_stay_mutex);
+    vm.wb_stay = 1;
+    pthread_mutex_unlock(&vm.wb_stay_mutex);
 }
 
 void update_mbuf(mbuf_t *mbuf) {
-    pthread_mutex_lock(&vm.mbuf_stay_mutex);
-    if (!vm.mbuf_stay) {
+    pthread_mutex_lock(&vm.wb_stay_mutex);
+    if (!vm.wb_stay) {
         set_mbuf(mbuf);
     } else {
-        vm.mbuf_stay = 0;
+        vm.wb_stay = 0;
     }
-    pthread_mutex_unlock(&vm.mbuf_stay_mutex);
+    pthread_mutex_unlock(&vm.wb_stay_mutex);
 }
 
 static void set_mbuf(mbuf_t *mbuf) {

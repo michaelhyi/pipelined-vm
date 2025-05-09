@@ -57,7 +57,7 @@ void set_mem(uint16_t addr, int16_t data) {
     pthread_mutex_unlock(&vm.mem_mutex);
 }
 
-int16_t get_register(uint16_t reg_num) {
+int16_t get_register_data(uint16_t reg_num) {
     if (reg_num > 7) {
         errno = EINVAL;
         return 0;
@@ -70,7 +70,7 @@ int16_t get_register(uint16_t reg_num) {
     return data;
 }
 
-void set_register(uint16_t reg_num, int16_t data) {
+void set_register_data(uint16_t reg_num, int16_t data) {
     if (reg_num > 7) {
         errno = EINVAL;
         return;
@@ -84,6 +84,13 @@ void set_register(uint16_t reg_num, int16_t data) {
     }
 
     vm.register_file[reg_num].data = data;
-    vm.register_file[reg_num].busy_counter--;
+    vm.register_file[reg_num]
+        .busy_counter--; // TODO: decouple this logic from this method
     pthread_mutex_unlock(&vm.register_file_mutex);
+}
+
+void send_stay_to_id(void) {
+    pthread_mutex_lock(&vm.id_stay_mutex);
+    vm.id_stay = 1;
+    pthread_mutex_unlock(&vm.id_stay_mutex);
 }

@@ -1,3 +1,9 @@
+/**
+ * All operations interfacing with `vm` can be assumed to be thread-safe even
+ * without mutex locks, as there are no threads concurrently running until
+ * `vm_run` is called.
+ */
+
 #include "test_vm.h"
 
 #include <assert.h>
@@ -82,6 +88,56 @@ static void test_jmp(void);
  */
 static void test_lea(void);
 
+/**
+ * Tests the handling of RAW hazards with the ADD instruction.
+ */
+static void test_add_raw_hazard(void);
+
+/**
+ * Tests the handling of RAW hazards with the ST instruction.
+ */
+static void test_st_raw_hazard(void);
+
+/**
+ * Tests the handling of RAW hazards with the JSRR instruction.
+ */
+static void test_jsrr_raw_hazard(void);
+
+/**
+ * Tests the handling of RAW hazards with the AND instruction.
+ */
+static void test_and_raw_hazard(void);
+
+/**
+ * Tests the handling of RAW hazards with the LDR instruction.
+ */
+static void test_ldr_raw_hazard(void);
+
+/**
+ * Tests the handling of RAW hazards with the STR instruction.
+ */
+static void test_str_raw_hazard(void);
+
+/**
+ * Tests the handling of RAW hazards with the NOT instruction.
+ */
+static void test_not_raw_hazard(void);
+
+/**
+ * Tests the handling of RAW hazards with the LDI instruction.
+ */
+static void test_ldi_raw_hazard(void);
+
+/**
+ * Tests the handling of RAW hazards with the STI instruction.
+ */
+static void test_sti_raw_hazard(void);
+
+/**
+ * Tests the handling of RAW hazards with the JMP instruction.
+ */
+static void test_jmp_raw_hazard(void);
+
 void test_vm(void) {
     // TODO: test br, rti, trap
     test_add_reg_mode();
@@ -99,6 +155,8 @@ void test_vm(void) {
     test_sti();
     test_jmp();
     test_lea();
+
+    test_add_raw_hazard();
 }
 
 static void test_add_reg_mode(void) {
@@ -487,6 +545,32 @@ static void test_lea(void) {
     int16_t expected_r0 = 0x3002;
     int16_t actual_r0 = vm.register_file[0].data;
     assert(expected_r0 == actual_r0);
+
+    // teardown
+    vm_teardown();
+
+    assert(!errno);
+}
+
+static void test_add_raw_hazard(void) {
+    // setup
+    vm_init();
+
+    // when
+    vm.register_file[0].data = 2;
+    vm.register_file[1].data = 4;
+    vm.mem[0x3000] =
+        (int16_t)((OP_ADD << 12) | (2 << 9) | (0 << 6) | 1); // add r2, r0, r1
+    vm.mem[0x3001] =
+        (int16_t)((OP_ADD << 12) | (2 << 9) | (2 << 6) | 2); // add r2, r2, r2
+    vm.mem[0x3002] = (int16_t)((OP_TRAP << 12) | 0x25);      // halt
+
+    vm_run();
+
+    // then
+    int16_t expected_r2 = 12;
+    int16_t actual_r2 = vm.register_file[2].data;
+    assert(expected_r2 == actual_r2);
 
     // teardown
     vm_teardown();

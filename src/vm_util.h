@@ -33,7 +33,7 @@ void set_mem(uint16_t addr, int16_t data);
  * @returns the data stored at that register, 0 on invalid arguments
  * @note sets errno to EINVAL if reg_num > 7
  */
-int16_t get_register(uint16_t reg_num);
+int16_t get_register_data(uint16_t reg_num);
 
 /**
  * Sets data in the VM's register file in a thread-safe manner.
@@ -42,6 +42,11 @@ int16_t get_register(uint16_t reg_num);
  * @param data data to set in register
  * @note sets errno to EINVAL if reg_num > 7 or if the register is not busy
  */
-void set_register(uint16_t reg_num, int16_t data);
+void set_register_data(uint16_t reg_num, int16_t data);
+
+/**
+ * Asserts the STAY signal to both the `IF` and `ID` stages of the pipeline.
+ */
+void send_stay_to_id(void);
 
 #endif

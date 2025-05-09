@@ -42,10 +42,10 @@ void vm_init(void) {
 
     pthread_mutex_init(&vm.fbuf_nop_mutex, NULL);
 
-    pthread_mutex_init(&vm.fbuf_stay_mutex, NULL);
-    pthread_mutex_init(&vm.dbuf_stay_mutex, NULL);
-    pthread_mutex_init(&vm.ebuf_stay_mutex, NULL);
-    pthread_mutex_init(&vm.mbuf_stay_mutex, NULL);
+    pthread_mutex_init(&vm.id_stay_mutex, NULL);
+    pthread_mutex_init(&vm.ex_stay_mutex, NULL);
+    pthread_mutex_init(&vm.mem_stay_mutex, NULL);
+    pthread_mutex_init(&vm.wb_stay_mutex, NULL);
 
     pthread_barrier_init(&vm.pipeline_cycle_barrier, NULL, NUM_PIPELINE_STAGES);
 }
@@ -88,10 +88,10 @@ void vm_teardown(void) {
 
     pthread_mutex_destroy(&vm.fbuf_nop_mutex);
 
-    pthread_mutex_destroy(&vm.fbuf_stay_mutex);
-    pthread_mutex_destroy(&vm.dbuf_stay_mutex);
-    pthread_mutex_destroy(&vm.ebuf_stay_mutex);
-    pthread_mutex_destroy(&vm.mbuf_stay_mutex);
+    pthread_mutex_destroy(&vm.id_stay_mutex);
+    pthread_mutex_destroy(&vm.ex_stay_mutex);
+    pthread_mutex_destroy(&vm.mem_stay_mutex);
+    pthread_mutex_destroy(&vm.wb_stay_mutex);
 
     pthread_barrier_destroy(&vm.pipeline_cycle_barrier);
 }

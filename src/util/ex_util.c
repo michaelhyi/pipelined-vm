@@ -67,15 +67,15 @@ void override_pc(uint16_t new_pc) {
 }
 
 void update_ebuf(ebuf_t *ebuf) {
-    pthread_mutex_lock(&vm.ebuf_stay_mutex);
+    pthread_mutex_lock(&vm.mem_stay_mutex);
 
-    if (!vm.ebuf_stay) {
+    if (!vm.mem_stay) {
         set_ebuf(ebuf);
     } else {
-        vm.ebuf_stay = 0;
+        vm.mem_stay = 0;
     }
 
-    pthread_mutex_unlock(&vm.ebuf_stay_mutex);
+    pthread_mutex_unlock(&vm.mem_stay_mutex);
 }
 
 static void set_ebuf(ebuf_t *ebuf) {

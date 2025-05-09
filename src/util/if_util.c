@@ -25,14 +25,14 @@ void save_pc(fbuf_t *fbuf) {
 }
 
 void update_fbuf(fbuf_t *fbuf) {
-    pthread_mutex_lock(&vm.fbuf_stay_mutex);
+    pthread_mutex_lock(&vm.id_stay_mutex);
 
-    if (!vm.fbuf_stay) {
+    if (!vm.id_stay) {
         pthread_mutex_lock(&vm.fbuf_mutex);
         memcpy(&vm.fbuf, fbuf, sizeof(fbuf_t));
         pthread_mutex_unlock(&vm.fbuf_mutex);
     } else {
-        vm.fbuf_stay = 0;
+        vm.id_stay = 0;
 
         // decrement PC, since the pipline is stalled
         pthread_mutex_lock(&vm.pc_mutex);
@@ -40,5 +40,5 @@ void update_fbuf(fbuf_t *fbuf) {
         pthread_mutex_unlock(&vm.pc_mutex);
     }
 
-    pthread_mutex_unlock(&vm.fbuf_stay_mutex);
+    pthread_mutex_unlock(&vm.id_stay_mutex);
 }
