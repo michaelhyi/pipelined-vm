@@ -1,19 +1,16 @@
 #include "mem_util.h"
 
-#include <stdlib.h>
-#include <string.h>
-
 #include "../vm.h"
 #include "vm_util.h"
 
-mbuf_t *init_mbuf(ebuf_t ebuf) {
-    mbuf_t *mbuf = malloc(sizeof(mbuf_t));
+mbuf_t init_next_mbuf(ebuf_t ebuf) {
+    mbuf_t mbuf;
 
-    mbuf->nop = ebuf.nop;
-    mbuf->pc = ebuf.pc;
-    mbuf->opcode = ebuf.opcode;
-    mbuf->result = ebuf.result;
-    mbuf->reg = ebuf.reg;
+    mbuf.nop = ebuf.nop;
+    mbuf.pc = ebuf.pc;
+    mbuf.opcode = ebuf.opcode;
+    mbuf.result = ebuf.result;
+    mbuf.reg = ebuf.reg;
 
     return mbuf;
 }

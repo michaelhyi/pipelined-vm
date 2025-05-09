@@ -1,7 +1,6 @@
 #include "mem.h"
 
 #include <errno.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "../isa.h"
@@ -29,14 +28,14 @@ void *mem_run(void *arg) {
         return NULL;
     }
 
-    mbuf_t *mbuf = init_mbuf(ebuf);
+    mbuf_t next_mbuf = init_next_mbuf(ebuf);
 
     if (ebuf.opcode == OP_LD || ebuf.opcode == OP_LDR) {
-        mbuf->result = get_mem((uint16_t)ebuf.result);
+        next_mbuf.result = get_mem((uint16_t)ebuf.result);
     } else if (ebuf.opcode == OP_ST || ebuf.opcode == OP_STR) {
         set_mem((uint16_t)ebuf.result, ebuf.reg);
     } else if (ebuf.opcode == OP_LDI || ebuf.opcode == OP_STI) {
-        mbuf->result = get_mem((uint16_t)ebuf.result);
+        next_mbuf.result = get_mem((uint16_t)ebuf.result);
 
         pthread_mutex_lock(&vm.ebuf_mutex);
         vm.ebuf.indirect_counter =
@@ -44,7 +43,7 @@ void *mem_run(void *arg) {
 
         // if first indirect
         if (vm.ebuf.indirect_counter) {
-            vm.ebuf.result = mbuf->result;
+            vm.ebuf.result = next_mbuf.result;
             stall_pipeline();
         } else if (ebuf.opcode == OP_STI) {
             set_mem((uint16_t)ebuf.result, ebuf.reg);
@@ -53,8 +52,7 @@ void *mem_run(void *arg) {
     }
 
     pthread_barrier_wait(&vm.pipeline_cycle_barrier);
-    mem_teardown(*mbuf);
-    free(mbuf); // TODO: need to make it not a ptr, otherwise mem leak
+    mem_teardown(next_mbuf);
     return NULL;
 }
 

@@ -6,7 +6,7 @@
 #include "../isa.h"
 #include "vm_util.h"
 
-ebuf_t init_ebuf(dbuf_t dbuf) {
+ebuf_t init_next_ebuf(dbuf_t dbuf) {
     ebuf_t ebuf;
 
     ebuf.nop = dbuf.nop;

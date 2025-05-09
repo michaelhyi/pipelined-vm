@@ -24,12 +24,12 @@ void *ex_run(void *arg) {
         return NULL;
     }
 
-    ebuf_t ebuf = init_ebuf(dbuf);
+    ebuf_t next_ebuf = init_next_ebuf(dbuf);
 
     if (dbuf.opcode == OP_BR) {
         // TODO: compare nzp bits, override pc on match
     } else if (instruction_needs_add(dbuf.opcode)) {
-        ebuf.result = dbuf.operand1 + dbuf.operand2;
+        next_ebuf.result = dbuf.operand1 + dbuf.operand2;
     } else if (ex_instruction_is_jsr(dbuf)) {
         send_bubble_to_id();
 
@@ -41,9 +41,9 @@ void *ex_run(void *arg) {
         uint16_t new_pc = (uint16_t)dbuf.reg;
         set_pc(new_pc);
     } else if (dbuf.opcode == OP_AND) {
-        ebuf.result = dbuf.operand1 & dbuf.operand2;
+        next_ebuf.result = dbuf.operand1 & dbuf.operand2;
     } else if (dbuf.opcode == OP_NOT) {
-        ebuf.result = ~dbuf.operand1;
+        next_ebuf.result = ~dbuf.operand1;
     } else if (dbuf.opcode == OP_JMP) {
         send_bubble_to_id();
 
@@ -55,7 +55,7 @@ void *ex_run(void *arg) {
     }
 
     pthread_barrier_wait(&vm.pipeline_cycle_barrier);
-    ex_teardown(ebuf);
+    ex_teardown(next_ebuf);
     return NULL;
 }
 

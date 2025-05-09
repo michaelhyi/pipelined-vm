@@ -28,45 +28,45 @@ void *id_run(void *arg) {
         return NULL;
     }
 
-    dbuf_t dbuf = init_dbuf(fbuf);
+    dbuf_t next_dbuf = init_next_dbuf(fbuf);
 
-    if (dbuf.opcode == OP_BR) {
-        decode_br(fbuf, &dbuf);
-    } else if (dbuf.opcode == OP_ADD || dbuf.opcode == OP_AND) {
-        decode_add_and(fbuf, &dbuf);
+    if (next_dbuf.opcode == OP_BR) {
+        decode_br(fbuf, &next_dbuf);
+    } else if (next_dbuf.opcode == OP_ADD || next_dbuf.opcode == OP_AND) {
+        decode_add_and(fbuf, &next_dbuf);
 
         // TODO: make thread-safe
         if (!vm.ex_nop)
-            increment_busy_counter((uint16_t)dbuf.reg);
-    } else if (dbuf.opcode == OP_LD || dbuf.opcode == OP_LDI ||
-               dbuf.opcode == OP_LEA) {
-        decode_ld_ldi_lea(fbuf, &dbuf);
+            increment_busy_counter((uint16_t)next_dbuf.reg);
+    } else if (next_dbuf.opcode == OP_LD || next_dbuf.opcode == OP_LDI ||
+               next_dbuf.opcode == OP_LEA) {
+        decode_ld_ldi_lea(fbuf, &next_dbuf);
         if (!vm.ex_nop)
-            increment_busy_counter((uint16_t)dbuf.reg);
-    } else if (dbuf.opcode == OP_ST || dbuf.opcode == OP_STI) {
-        decode_st_sti(fbuf, &dbuf);
+            increment_busy_counter((uint16_t)next_dbuf.reg);
+    } else if (next_dbuf.opcode == OP_ST || next_dbuf.opcode == OP_STI) {
+        decode_st_sti(fbuf, &next_dbuf);
     } else if (id_instruction_is_jsr(fbuf.ir)) {
-        decode_jsr(fbuf, &dbuf);
+        decode_jsr(fbuf, &next_dbuf);
         send_bubble_to_id();
         if (!vm.ex_nop)
             increment_busy_counter((uint16_t)7);
-    } else if (id_instruction_is_jsrr(fbuf.ir) || dbuf.opcode == OP_JMP) {
-        decode_jmp_jsrr(fbuf, &dbuf);
+    } else if (id_instruction_is_jsrr(fbuf.ir) || next_dbuf.opcode == OP_JMP) {
+        decode_jmp_jsrr(fbuf, &next_dbuf);
         send_bubble_to_id();
         if (!vm.ex_nop)
             increment_busy_counter((uint16_t)7);
-    } else if (dbuf.opcode == OP_LDR) {
-        decode_ldr(fbuf, &dbuf);
+    } else if (next_dbuf.opcode == OP_LDR) {
+        decode_ldr(fbuf, &next_dbuf);
         if (!vm.ex_nop)
-            increment_busy_counter((uint16_t)dbuf.reg);
-    } else if (dbuf.opcode == OP_STR) {
-        decode_str(fbuf, &dbuf);
-    } else if (dbuf.opcode == OP_NOT) {
-        decode_not(fbuf, &dbuf);
+            increment_busy_counter((uint16_t)next_dbuf.reg);
+    } else if (next_dbuf.opcode == OP_STR) {
+        decode_str(fbuf, &next_dbuf);
+    } else if (next_dbuf.opcode == OP_NOT) {
+        decode_not(fbuf, &next_dbuf);
         if (!vm.ex_nop)
-            increment_busy_counter((uint16_t)dbuf.reg);
-    } else if (dbuf.opcode == OP_TRAP) {
-        decode_trap(fbuf, &dbuf);
+            increment_busy_counter((uint16_t)next_dbuf.reg);
+    } else if (next_dbuf.opcode == OP_TRAP) {
+        decode_trap(fbuf, &next_dbuf);
     }
 
     if (errno) {
@@ -75,7 +75,7 @@ void *id_run(void *arg) {
     }
 
     pthread_barrier_wait(&vm.pipeline_cycle_barrier);
-    id_teardown(dbuf);
+    id_teardown(next_dbuf);
     return NULL;
 }
 

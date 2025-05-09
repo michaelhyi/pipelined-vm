@@ -4,12 +4,12 @@
 #include "../vm.h"
 
 /**
- * Returns an initialized `mbuf` based on `ebuf`.
+ * Initializes the next `mbuf`.
  *
  * @param ebuf the VM's current `ebuf`
- * @returns a pointer to a new dynamically allocated mbuf
+ * @returns a new initialized mbuf
  */
-mbuf_t *init_mbuf(ebuf_t ebuf);
+mbuf_t init_next_mbuf(ebuf_t ebuf);
 
 /**
  * Stalls all 5 pipline stages. Used for `LDI` and `STI` instructions.

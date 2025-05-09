@@ -15,7 +15,7 @@
  */
 static void handle_busy_register(uint16_t reg_num);
 
-dbuf_t init_dbuf(fbuf_t fbuf) {
+dbuf_t init_next_dbuf(fbuf_t fbuf) {
     dbuf_t dbuf;
 
     dbuf.nop = fbuf.nop;

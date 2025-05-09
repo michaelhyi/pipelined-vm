@@ -4,12 +4,12 @@
 #include "../vm.h"
 
 /**
- * Returns an initialized `ebuf` based on `dbuf`.
+ * Initializes the next `ebuf`.
  *
  * @param dbuf the VM's current `dbuf`
  * @returns a new initialized ebuf
  */
-ebuf_t init_ebuf(dbuf_t dbuf);
+ebuf_t init_next_ebuf(dbuf_t dbuf);
 
 /**
  * Returns whether or not the instruction needs the ALU for adding based on its

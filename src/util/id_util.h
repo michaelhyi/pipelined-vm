@@ -6,12 +6,12 @@
 #include "../vm.h"
 
 /**
- * Returns an initialized `dbuf` based on `fbuf`.
+ * Initializes the next `dbuf`.
  *
  * @param fbuf the VM's current `fbuf`
  * @returns a new initialized dbuf
  */
-dbuf_t init_dbuf(fbuf_t fbuf);
+dbuf_t init_next_dbuf(fbuf_t fbuf);
 
 /**
  * Returns the opcode of an instruction.
