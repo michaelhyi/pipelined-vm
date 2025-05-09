@@ -1,14 +1,13 @@
 #include "mem.h"
 
 #include <errno.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "../isa.h"
 #include "../util/mem_util.h"
-#include "../vm.h"
 #include "../util/vm_util.h"
+#include "../vm.h"
 
 // TODO: refactor each of these comments, need for wb?
 /**

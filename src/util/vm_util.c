@@ -3,8 +3,8 @@
 #include <errno.h>
 #include <string.h>
 
-#include "bitops.h"
 #include "../vm.h"
+#include "bitops.h"
 
 /**
  * Returns whether the VM is operating in supervisor or user mode.

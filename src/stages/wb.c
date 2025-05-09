@@ -1,13 +1,12 @@
 #include "wb.h"
 
 #include <errno.h>
-#include <stdio.h>
 #include <string.h>
 
 #include "../isa.h"
+#include "../util/vm_util.h"
 #include "../util/wb_util.h"
 #include "../vm.h"
-#include "../util/vm_util.h"
 
 void *wb_run(void *arg) {
     (void)arg;
