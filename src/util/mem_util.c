@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "../vm.h"
-#include "../vm_util.h"
+#include "vm_util.h"
 
 mbuf_t *init_mbuf(ebuf_t ebuf) {
     mbuf_t *mbuf = malloc(sizeof(mbuf_t));

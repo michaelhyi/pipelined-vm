@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "../isa.h"
-#include "../vm_util.h"
+#include "vm_util.h"
 
 ebuf_t init_ebuf(dbuf_t dbuf) {
     ebuf_t ebuf;

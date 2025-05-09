@@ -6,8 +6,8 @@
 #include "../isa.h"
 #include "../util/bitops.h"
 #include "../util/id_util.h"
+#include "../util/vm_util.h"
 #include "../vm.h"
-#include "../vm_util.h"
 
 /**
  * A function that runs at the end of every `ID` stage to tear it down.

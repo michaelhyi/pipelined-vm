@@ -8,7 +8,7 @@
 
 #include <stdint.h>
 
-#include "vm.h"
+#include "../vm.h"
 
 /**
  * Gets data from the VM's memory in a thread-safe manner.

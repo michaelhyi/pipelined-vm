@@ -7,7 +7,7 @@
 #include "../isa.h"
 #include "../util/wb_util.h"
 #include "../vm.h"
-#include "../vm_util.h"
+#include "../util/vm_util.h"
 
 void *wb_run(void *arg) {
     (void)arg;

@@ -3,8 +3,8 @@
 #include <errno.h>
 
 #include "../isa.h"
-#include "../vm_util.h"
 #include "bitops.h"
+#include "vm_util.h"
 
 /**
  * Handles a busy register by sending a STAY signal to the `IF` and `ID` stages

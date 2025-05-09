@@ -2,8 +2,8 @@
 
 #include "../isa.h"
 #include "../util/ex_util.h"
+#include "../util/vm_util.h"
 #include "../vm.h"
-#include "../vm_util.h"
 
 /**
  * A function that runs at the end of every `EX` stage to tear it down.
