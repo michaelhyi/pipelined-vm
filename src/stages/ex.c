@@ -6,9 +6,9 @@
 #include "../vm.h"
 
 /**
- * A function that runs at the end of every `EX` stage to tear it down.
+ * Tears down the `ex` stage.
  *
- * @param next_ebuf the next ebuf that the VM will use
+ * @param next_ebuf the next ebuf that the vm will use
  */
 static void ex_teardown(ebuf_t next_ebuf);
 
@@ -19,7 +19,6 @@ void *ex_run(void *arg) {
 
     if (dbuf.nop) {
         send_bubble_to_mem();
-        pthread_barrier_wait(&vm.pipeline_cycle_barrier);
         ex_teardown((ebuf_t){.nop = 1});
         return NULL;
     }
@@ -54,13 +53,14 @@ void *ex_run(void *arg) {
         // table, then set pc to starting address of trap handler
     }
 
-    pthread_barrier_wait(&vm.pipeline_cycle_barrier);
     ex_teardown(next_ebuf);
     return NULL;
 }
 
 static void ex_teardown(ebuf_t next_ebuf) {
-    // receive any bubbles
+    pthread_barrier_wait(&vm.pipeline_cycle_barrier);
+
+    // handle bubbles
     pthread_mutex_lock(&vm.mem_nop_mutex);
     next_ebuf.nop = vm.mem_nop;
     vm.mem_nop = 0;

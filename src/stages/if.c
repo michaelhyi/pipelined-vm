@@ -6,9 +6,9 @@
 #include "../util/if_util.h"
 
 /**
- * A function that runs at the end of every `IF` stage to tear it down.
+ * Tears down the `if` stage.
  *
- * @param next_fbuf the next fbuf that the VM will use
+ * @param next_fbuf the next fbuf that the vm will use
  */
 static void if_teardown(fbuf_t next_fbuf);
 
@@ -19,13 +19,14 @@ void *if_run(void *arg) {
     next_fbuf.ir = get_instruction_and_increment_pc();
     save_pc(&next_fbuf);
 
-    pthread_barrier_wait(&vm.pipeline_cycle_barrier);
     if_teardown(next_fbuf);
     return NULL;
 }
 
 static void if_teardown(fbuf_t next_fbuf) {
-    // receive any bubbles
+    pthread_barrier_wait(&vm.pipeline_cycle_barrier);
+
+    // handle bubbles
     pthread_mutex_lock(&vm.id_nop_mutex);
     next_fbuf.nop = vm.id_nop;
     vm.id_nop = 0;

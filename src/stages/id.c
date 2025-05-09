@@ -10,9 +10,9 @@
 #include "../vm.h"
 
 /**
- * A function that runs at the end of every `ID` stage to tear it down.
+ * Tears down the `id` stage.
  *
- * @param next_dbuf the next dbuf that the VM will use
+ * @param next_dbuf the next dbuf that the vm will use
  */
 static void id_teardown(dbuf_t next_dbuf);
 
@@ -23,7 +23,6 @@ void *id_run(void *arg) {
 
     if (fbuf.nop) {
         send_bubble_to_ex(); // TODO: bug on this line.
-        pthread_barrier_wait(&vm.pipeline_cycle_barrier);
         id_teardown((dbuf_t){.nop = 1});
         return NULL;
     }
@@ -74,13 +73,14 @@ void *id_run(void *arg) {
         pthread_exit((void *)(intptr_t)errno);
     }
 
-    pthread_barrier_wait(&vm.pipeline_cycle_barrier);
     id_teardown(next_dbuf);
     return NULL;
 }
 
 static void id_teardown(dbuf_t next_dbuf) {
-    // receive any bubbles
+    pthread_barrier_wait(&vm.pipeline_cycle_barrier);
+
+    // handle bubbles
     pthread_mutex_lock(&vm.ex_nop_mutex);
     next_dbuf.nop = vm.ex_nop;
     vm.ex_nop = 0;

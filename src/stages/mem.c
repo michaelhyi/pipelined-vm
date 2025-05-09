@@ -8,22 +8,20 @@
 #include "../util/vm_util.h"
 #include "../vm.h"
 
-// TODO: refactor each of these comments, need for wb?
 /**
- * A function that runs at the end of every `MEM` stage to tear it down.
+ * Tears down the `mem` stage.
  *
- * @param next_mbuf the next mbuf that the VM will use
+ * @param next_mbuf the next mbuf that the vm will use
  */
 static void mem_teardown(mbuf_t next_mbuf);
 
 void *mem_run(void *arg) {
     (void)arg;
 
-    ebuf_t ebuf = get_ebuf(); // TODO: next_ebuf
+    ebuf_t ebuf = get_ebuf();
 
     if (ebuf.nop) {
         send_bubble_to_wb();
-        pthread_barrier_wait(&vm.pipeline_cycle_barrier);
         mem_teardown((mbuf_t){.nop = 1});
         return NULL;
     }
@@ -51,13 +49,14 @@ void *mem_run(void *arg) {
         pthread_mutex_unlock(&vm.ebuf_mutex);
     }
 
-    pthread_barrier_wait(&vm.pipeline_cycle_barrier);
     mem_teardown(next_mbuf);
     return NULL;
 }
 
 static void mem_teardown(mbuf_t next_mbuf) {
-    // receive any bubbles
+    pthread_barrier_wait(&vm.pipeline_cycle_barrier);
+
+    // handle bubbles
     pthread_mutex_lock(&vm.wb_nop_mutex);
     next_mbuf.nop = vm.wb_nop;
     vm.wb_nop = 0;

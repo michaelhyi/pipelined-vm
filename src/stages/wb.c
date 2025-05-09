@@ -8,15 +8,18 @@
 #include "../util/wb_util.h"
 #include "../vm.h"
 
+/**
+ * Tears down the `wb` stage.
+ */
+static void wb_teardown(void);
+
 void *wb_run(void *arg) {
     (void)arg;
 
-    pthread_mutex_lock(&vm.mbuf_mutex);
-    mbuf_t mbuf = vm.mbuf;
-    pthread_mutex_unlock(&vm.mbuf_mutex);
+    mbuf_t mbuf = get_mbuf();
 
     if (mbuf.nop) {
-        pthread_barrier_wait(&vm.pipeline_cycle_barrier);
+        wb_teardown();
         return NULL;
     }
 
@@ -37,6 +40,11 @@ void *wb_run(void *arg) {
         pthread_mutex_unlock(&vm.running_mutex);
     }
 
-    pthread_barrier_wait(&vm.pipeline_cycle_barrier);
+    wb_teardown();
     return NULL;
+}
+
+static void wb_teardown(void) {
+    pthread_barrier_wait(&vm.pipeline_cycle_barrier);
+    pthread_exit(0);
 }
