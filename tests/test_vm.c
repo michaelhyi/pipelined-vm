@@ -1,7 +1,7 @@
 /**
  * All operations interfacing with `vm` can be assumed to be thread-safe even
- * without mutex locks, as there are no threads concurrently running until
- * `vm_run` is called.
+ * without mutex locks, as there are no threads concurrently running before and
+ * after `vm_run` is called.
  */
 
 #include "test_vm.h"
@@ -124,11 +124,6 @@ static void test_str_raw_hazard(void);
 static void test_not_raw_hazard(void);
 
 /**
- * Tests the handling of RAW hazards with the LDI instruction.
- */
-static void test_ldi_raw_hazard(void);
-
-/**
  * Tests the handling of RAW hazards with the STI instruction.
  */
 static void test_sti_raw_hazard(void);
@@ -137,6 +132,8 @@ static void test_sti_raw_hazard(void);
  * Tests the handling of RAW hazards with the JMP instruction.
  */
 static void test_jmp_raw_hazard(void);
+
+// TODO: assert cc in all tests
 
 void test_vm(void) {
     // TODO: test br, rti, trap
@@ -157,6 +154,14 @@ void test_vm(void) {
     test_lea();
 
     test_add_raw_hazard();
+    test_st_raw_hazard();
+    test_jsrr_raw_hazard();
+    test_and_raw_hazard();
+    test_ldr_raw_hazard();
+    test_str_raw_hazard();
+    test_not_raw_hazard();
+    test_sti_raw_hazard();
+    test_jmp_raw_hazard();
 }
 
 static void test_add_reg_mode(void) {
@@ -571,6 +576,228 @@ static void test_add_raw_hazard(void) {
     int16_t expected_r2 = 12;
     int16_t actual_r2 = vm.register_file[2].data;
     assert(expected_r2 == actual_r2);
+
+    // teardown
+    vm_teardown();
+
+    assert(!errno);
+}
+
+static void test_st_raw_hazard(void) {
+    // setup
+    vm_init();
+
+    // when
+    vm.register_file[0].data = 2;
+    vm.register_file[1].data = 4;
+    vm.mem[0x3000] =
+        (int16_t)((OP_ADD << 12) | (2 << 9) | (0 << 6) | 1); // add r2, r0, r1
+    vm.mem[0x3001] = (int16_t)((OP_ADD << 12) | (6 << 9) | (6 << 6) | (1 << 5) |
+                               (bit_range(-1, 0, 4)));        // add r6, r6, -1
+    vm.mem[0x3002] = (int16_t)((OP_ST << 12) | (2 << 9) | 1); // st r2, 1
+    vm.mem[0x3003] = (int16_t)((OP_TRAP << 12) | 0x25);       // halt
+
+    vm_run();
+
+    // then
+    int16_t expected_mem = 6;
+    int16_t actual_mem = vm.mem[0x3004];
+    assert(expected_mem == actual_mem);
+
+    // teardown
+    vm_teardown();
+
+    assert(!errno);
+}
+
+static void test_jsrr_raw_hazard(void) {
+    // setup
+    vm_init();
+
+    // when
+    vm.register_file[0].data = 0x3000;
+    vm.register_file[1].data = 5;
+    vm.mem[0x3000] =
+        (int16_t)((OP_ADD << 12) | (2 << 9) | (0 << 6) | 1); // add r2, r0, r1
+    vm.mem[0x3001] = (int16_t)((OP_ADD << 12) | (6 << 9) | (6 << 6) | (1 << 5) |
+                               (bit_range(-1, 0, 4)));        // add r6, r6, -1
+    vm.mem[0x3002] = (int16_t)((OP_ST << 12) | (7 << 9) | 5); // st r7, 5
+    vm.mem[0x3003] =
+        (int16_t)((OP_JSRR << 12) | (0 << 11) | (2 << 6)); // jsrr r2;
+    vm.mem[0x3004] =
+        (int16_t)((OP_ADD << 12) | (2 << 9) | (2 << 6) | 2); // add r2, r2, r2
+    vm.mem[0x3005] = (int16_t)((OP_TRAP << 12) | 0x25);      // halt
+
+    vm_run();
+
+    // then
+    int16_t expected_r2 = 0x3005;
+    int16_t actual_r2 = vm.register_file[2].data;
+    assert(expected_r2 == actual_r2);
+
+    // teardown
+    vm_teardown();
+
+    assert(!errno);
+}
+
+static void test_and_raw_hazard(void) {
+    // setup
+    vm_init();
+
+    // when
+    vm.register_file[0].data = 2;
+    vm.register_file[1].data = 4;
+    vm.mem[0x3000] =
+        (int16_t)((OP_ADD << 12) | (2 << 9) | (0 << 6) | 1); // add r2, r0, r1
+    vm.mem[0x3001] = (int16_t)((OP_ADD << 12) | (6 << 9) | (6 << 6) | (1 << 5) |
+                               (bit_range(-1, 0, 4)));        // add r6, r6, -1
+    vm.mem[0x3002] = (int16_t)((OP_ST << 12) | (7 << 9) | 5); // st r7, 5
+    vm.mem[0x3003] = (int16_t)((OP_AND << 12) | (2 << 9) | (2 << 6) | (1 << 5) |
+                               (3));                    // and r2, r2, 3
+    vm.mem[0x3004] = (int16_t)((OP_TRAP << 12) | 0x25); // halt
+
+    vm_run();
+
+    // then
+    int16_t expected_r2 = 2;
+    int16_t actual_r2 = vm.register_file[2].data;
+    assert(expected_r2 == actual_r2);
+
+    // teardown
+    vm_teardown();
+
+    assert(!errno);
+}
+
+static void test_ldr_raw_hazard(void) {
+    // setup
+    vm_init();
+
+    // when
+    vm.register_file[0].data = 0x3000;
+    vm.register_file[1].data = 3;
+    vm.mem[0x3000] =
+        (int16_t)((OP_ADD << 12) | (2 << 9) | (0 << 6) | 1); // add r2, r0, r1
+    vm.mem[0x3001] = (int16_t)((OP_ADD << 12) | (6 << 9) | (6 << 6) | (1 << 5) |
+                               (bit_range(-1, 0, 4))); // add r6, r6, -1
+    vm.mem[0x3002] =
+        (int16_t)((OP_LDR << 12) | (2 << 9) | (2 << 6) | 1); // ldr r2, r2, 1
+    vm.mem[0x3003] = (int16_t)((OP_TRAP << 12) | 0x25);      // halt
+    vm.mem[0x3004] = 0x2110;
+
+    vm_run();
+
+    // then
+    int16_t expected_r2 = 0x2110;
+    int16_t actual_r2 = vm.register_file[2].data;
+    assert(expected_r2 == actual_r2);
+
+    // teardown
+    vm_teardown();
+
+    assert(!errno);
+}
+
+static void test_str_raw_hazard(void) {
+    // setup
+    vm_init();
+
+    // when
+    vm.register_file[0].data = 0x3000;
+    vm.register_file[1].data = 2;
+    vm.mem[0x3000] =
+        (int16_t)((OP_ADD << 12) | (2 << 9) | (0 << 6) | 1); // add r2, r0, r1
+    vm.mem[0x3001] =
+        (int16_t)((OP_STR << 12) | (2 << 9) | (2 << 6) | 1); // str r2, r2, 1
+    vm.mem[0x3002] = (int16_t)((OP_TRAP << 12) | 0x25);      // halt
+
+    vm_run();
+
+    // then
+    int16_t expected_mem = 0x3002;
+    int16_t actual_mem = vm.mem[0x3003];
+    assert(expected_mem == actual_mem);
+
+    // teardown
+    vm_teardown();
+
+    assert(!errno);
+}
+
+static void test_not_raw_hazard(void) {
+    // setup
+    vm_init();
+
+    // when
+    vm.register_file[0].data = 2;
+    vm.register_file[1].data = 4;
+    vm.mem[0x3000] =
+        (int16_t)((OP_ADD << 12) | (2 << 9) | (0 << 6) | 1); // add r2, r0, r1
+    vm.mem[0x3001] = (int16_t)((OP_ADD << 12) | (6 << 9) | (6 << 6) | (1 << 5) |
+                               (bit_range(-1, 0, 4))); // add r6, r6, -1
+    vm.mem[0x3002] =
+        (int16_t)((OP_NOT << 12) | (2 << 9) | (2 << 6)); // not r2, r2
+    vm.mem[0x3003] = (int16_t)((OP_TRAP << 12) | 0x25);  // halt
+
+    vm_run();
+
+    // then
+    int16_t expected_r2 = -7;
+    int16_t actual_r2 = vm.register_file[2].data;
+    assert(expected_r2 == actual_r2);
+
+    // teardown
+    vm_teardown();
+
+    assert(!errno);
+}
+
+static void test_sti_raw_hazard(void) {
+    // setup
+    vm_init();
+
+    // when
+    vm.register_file[0].data = 2;
+    vm.register_file[1].data = 4;
+    vm.mem[0x3000] =
+        (int16_t)((OP_ADD << 12) | (2 << 9) | (0 << 6) | 1); // add r2, r0, r1
+    vm.mem[0x3001] = (int16_t)((OP_ADD << 12) | (6 << 9) | (6 << 6) | (1 << 5) |
+                               (bit_range(-1, 0, 4))); // add r6, r6, -1
+    vm.mem[0x3002] = (int16_t)((OP_ADD << 12) | (6 << 9) | (6 << 6) | (1 << 5) |
+                               (bit_range(-1, 0, 4)));         // add r6, r6, -1
+    vm.mem[0x3003] = (int16_t)((OP_STI << 12) | (2 << 9) | 1); // sti r2, 1
+    vm.mem[0x3004] = (int16_t)((OP_TRAP << 12) | 0x25);        // halt
+    vm.mem[0x3005] = 0x3100;
+
+    vm_run();
+
+    // then
+    int16_t expected_mem = 6;
+    int16_t actual_mem = vm.mem[0x3100];
+    assert(expected_mem == actual_mem);
+
+    // teardown
+    vm_teardown();
+
+    assert(!errno);
+}
+
+static void test_jmp_raw_hazard(void) {
+    // setup
+    vm_init();
+
+    // when
+    vm.mem[0x3000] = (int16_t)((OP_JSR << 12) | (1 << 11) | 1); // jsr 1
+    vm.mem[0x3001] = (int16_t)((OP_TRAP << 12) | 0x25);         // halt
+    vm.mem[0x3002] = (int16_t)((OP_JMP << 12) | (7 << 6));      // jmp r7
+
+    vm_run();
+
+    // then
+    int16_t expected_r7 = 0x3001;
+    int16_t actual_r7 = vm.register_file[7].data;
+    assert(expected_r7 == actual_r7);
 
     // teardown
     vm_teardown();
