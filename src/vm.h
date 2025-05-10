@@ -56,7 +56,7 @@ typedef struct vm_t {
     int16_t mem[ADDRESS_SPACE];
     vm_register_t register_file[NUM_REGISTERS];
     uint16_t pc;
-    int16_t cc;
+    vm_register_t cc;
     int16_t psr;
 
     uint16_t running;

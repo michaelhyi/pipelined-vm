@@ -54,6 +54,20 @@ void set_register_data(uint16_t reg_num, int16_t data);
 void set_pc(uint16_t pc);
 
 /**
+ * Increments the condition code register's busy counter in a thread-safe
+ * manner.
+ */
+void increment_cc_busy_counter(void);
+
+/**
+ * Gets the condition codes stored in the condition code register in a
+ * thread-safe manner.
+ *
+ * @returns the vm's current conditions codes
+ */
+int16_t get_cc_data(void);
+
+/**
  * Gets the VM's current FBUF in a thread-safe manner.
  *
  * @returns the current `fbuf` value
@@ -130,8 +144,13 @@ void send_bubble_to_mem(void);
 void send_bubble_to_wb(void);
 
 /**
- * Asserts the STAY bit to both the `IF` and `ID` stages of the pipeline.
+ * Asserts the stay bit to both the `if` and `id` stages of the pipeline.
  */
 void send_stay_to_id(void);
+
+/**
+ * Asserts the stay bit to the `if`, `id`, and `ex` stages of the pipeline.
+ */
+void send_stay_to_ex(void);
 
 #endif

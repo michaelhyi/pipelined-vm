@@ -26,7 +26,18 @@ void *ex_run(void *arg) {
     ebuf_t next_ebuf = init_next_ebuf(dbuf);
 
     if (dbuf.opcode == OP_BR) {
-        // TODO: compare nzp bits, override pc on match
+        int16_t cc = get_cc_data();
+
+        // TODO: abstract into functions
+        if (cc_match(cc, dbuf.cc)) {
+            uint16_t new_pc = (uint16_t)(dbuf.operand1 + dbuf.operand2);
+            set_pc(new_pc); // TODO: what if this runs before IF increments PC
+
+            send_bubble_to_id();
+            // TODO: if we squash an instruction in decode that incremented the
+            // busy counter, we need to decrement it here
+            send_bubble_to_ex();
+        }
     } else if (instruction_needs_add(dbuf.opcode)) {
         next_ebuf.result = dbuf.operand1 + dbuf.operand2;
     } else if (ex_instruction_is_jsr(dbuf)) {

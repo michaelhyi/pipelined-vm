@@ -14,6 +14,16 @@
 #include "../src/vm.h"
 
 /**
+ * Tests the `br` instruction, but the case that it is not taken.
+ */
+static void test_branch_not_taken(void);
+
+/**
+ * Tests the `br` instruction, but the case that it is taken.
+ */
+static void test_branch_taken(void);
+
+/**
  * Tests the ADD instruction in register mode.
  */
 static void test_add_reg_mode(void);
@@ -136,7 +146,9 @@ static void test_jmp_raw_hazard(void);
 // TODO: assert cc in all tests
 
 void test_vm(void) {
-    // TODO: test br, rti, trap
+    // TODO: test rti, trap
+    test_branch_not_taken();
+    test_branch_taken();
     test_add_reg_mode();
     test_add_imm_mode();
     test_ld();
@@ -164,6 +176,67 @@ void test_vm(void) {
     test_jmp_raw_hazard();
 }
 
+static void test_branch_not_taken(void) {
+    // setup
+    vm_init();
+
+    // when
+    vm.register_file[0].data = 2;
+    vm.register_file[1].data = 4;
+    vm.mem[0x3000] = (int16_t)((OP_BR << 12) | (1 << 9) | 1); // brp 1
+    vm.mem[0x3001] =
+        (int16_t)((OP_ADD << 12) | (2 << 9) | (0 << 6) | 1); // add r2, r0, r1
+    vm.mem[0x3002] = (int16_t)((OP_TRAP << 12) | 0x25);      // halt
+
+    vm_run();
+
+    // then
+    int16_t expected_r2 = 0;
+    int16_t actual_r2 = vm.register_file[2].data;
+    assert(expected_r2 == actual_r2);
+
+    int16_t expected_cc = 0; // 000
+    int16_t actual_cc = vm.cc.data;
+    assert(expected_cc == actual_cc);
+
+    // teardown
+    vm_teardown();
+
+    assert(!errno);
+}
+
+static void test_branch_taken(void) {
+    // setup
+    vm_init();
+
+    // when
+    vm.register_file[0].data = 2;
+    vm.register_file[1].data = 4;
+    // TODO: need CC busy bit
+    vm.mem[0x3000] =
+        (int16_t)((OP_ADD << 12) | (2 << 9) | (0 << 6) | 1);  // add r2, r0, r1
+    vm.mem[0x3001] = (int16_t)((OP_BR << 12) | (1 << 9) | 1); // brp 1
+    vm.mem[0x3002] = (int16_t)((OP_ADD << 12) | (2 << 9) | (2 << 6) | (1 << 5) |
+                               bit_range(-8, 0, 4));    // add r2, r2, -8
+    vm.mem[0x3003] = (int16_t)((OP_TRAP << 12) | 0x25); // halt
+
+    vm_run();
+
+    // then
+    int16_t expected_r2 = 6;
+    int16_t actual_r2 = vm.register_file[2].data;
+    assert(expected_r2 == actual_r2);
+
+    int16_t expected_cc = 1; // 001
+    int16_t actual_cc = vm.cc.data;
+    assert(expected_cc == actual_cc);
+
+    // teardown
+    vm_teardown();
+
+    assert(!errno);
+}
+
 static void test_add_reg_mode(void) {
     // setup
     vm_init();
@@ -183,7 +256,7 @@ static void test_add_reg_mode(void) {
     assert(expected_r2 == actual_r2);
 
     int16_t expected_cc = 1; // 001
-    int16_t actual_cc = vm.cc;
+    int16_t actual_cc = vm.cc.data;
     assert(expected_cc == actual_cc);
 
     // teardown
@@ -210,7 +283,7 @@ static void test_add_imm_mode(void) {
     assert(expected_r6 == actual_r6);
 
     int16_t expected_cc = 4; // 100
-    int16_t actual_cc = vm.cc;
+    int16_t actual_cc = vm.cc.data;
     assert(expected_cc == actual_cc);
 
     // teardown
@@ -236,7 +309,7 @@ static void test_ld(void) {
     assert(expected_r0 == actual_r0);
 
     int16_t expected_cc = 1; // 001
-    int16_t actual_cc = vm.cc;
+    int16_t actual_cc = vm.cc.data;
     assert(expected_cc == actual_cc);
 
     // teardown
@@ -345,7 +418,7 @@ static void test_and_reg_mode(void) {
     assert(expected_r2 == actual_r2);
 
     int16_t expected_cc = 1; // 001
-    int16_t actual_cc = vm.cc;
+    int16_t actual_cc = vm.cc.data;
     assert(expected_cc == actual_cc);
 
     // teardown
@@ -372,7 +445,7 @@ static void test_and_imm_mode(void) {
     assert(expected_r0 == actual_r0);
 
     int16_t expected_cc = 2; // 010
-    int16_t actual_cc = vm.cc;
+    int16_t actual_cc = vm.cc.data;
     assert(expected_cc == actual_cc);
 
     // teardown
@@ -400,7 +473,7 @@ static void test_ldr(void) {
     assert(expected_r0 == actual_r0);
 
     int16_t expected_cc = 1; // 001
-    int16_t actual_cc = vm.cc;
+    int16_t actual_cc = vm.cc.data;
     assert(expected_cc == actual_cc);
 
     // teardown
@@ -451,7 +524,7 @@ static void test_not(void) {
     assert(expected_r0 == actual_r0);
 
     int16_t expected_cc = 4; // 100
-    int16_t actual_cc = vm.cc;
+    int16_t actual_cc = vm.cc.data;
     assert(expected_cc == actual_cc);
 
     // teardown
@@ -478,7 +551,7 @@ static void test_ldi(void) {
     assert(expected_r0 == actual_r0);
 
     int16_t expected_cc = 1; // 001
-    int16_t actual_cc = vm.cc;
+    int16_t actual_cc = vm.cc.data;
     assert(expected_cc == actual_cc);
 
     // teardown

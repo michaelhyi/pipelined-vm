@@ -12,6 +12,15 @@
 ebuf_t init_next_ebuf(dbuf_t dbuf);
 
 /**
+ * Returns whether condition codes match. Used by the `br` instruction.
+ *
+ * @param vm_cc the vm's current condition codes
+ * @param ir_cc the instruction's condition codes
+ * @returns 1 if an nzp bit matches, 0 otherwise
+ */
+int cc_match(int16_t vm_cc, int16_t ir_cc);
+
+/**
  * Returns whether or not the instruction needs the ALU for adding based on its
  * opcode.
  *

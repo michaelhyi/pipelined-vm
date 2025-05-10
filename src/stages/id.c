@@ -31,17 +31,35 @@ void *id_run(void *arg) {
 
     if (next_dbuf.opcode == OP_BR) {
         decode_br(fbuf, &next_dbuf);
+
+        pthread_mutex_lock(&vm.cc_mutex);
+        if (vm.cc.busy_counter) {
+            send_stay_to_id();
+            send_bubble_to_ex();
+            pthread_mutex_unlock(&vm.cc_mutex);
+            id_teardown((dbuf_t){.nop = 1});
+        }
+        pthread_mutex_unlock(&vm.cc_mutex);
+
     } else if (next_dbuf.opcode == OP_ADD || next_dbuf.opcode == OP_AND) {
         decode_add_and(fbuf, &next_dbuf);
 
         // TODO: make thread-safe
-        if (!vm.ex_nop)
+        if (!vm.ex_nop) {
             increment_busy_counter((uint16_t)next_dbuf.reg);
+            increment_cc_busy_counter();
+        }
+
     } else if (next_dbuf.opcode == OP_LD || next_dbuf.opcode == OP_LDI ||
                next_dbuf.opcode == OP_LEA) {
         decode_ld_ldi_lea(fbuf, &next_dbuf);
-        if (!vm.ex_nop)
+        if (!vm.ex_nop) {
             increment_busy_counter((uint16_t)next_dbuf.reg);
+
+            if (next_dbuf.opcode != OP_LEA) {
+                increment_cc_busy_counter();
+            }
+        }
     } else if (next_dbuf.opcode == OP_ST || next_dbuf.opcode == OP_STI) {
         decode_st_sti(fbuf, &next_dbuf);
     } else if (id_instruction_is_jsr(fbuf.ir)) {
@@ -56,14 +74,18 @@ void *id_run(void *arg) {
             increment_busy_counter((uint16_t)7);
     } else if (next_dbuf.opcode == OP_LDR) {
         decode_ldr(fbuf, &next_dbuf);
-        if (!vm.ex_nop)
+        if (!vm.ex_nop) {
             increment_busy_counter((uint16_t)next_dbuf.reg);
+            increment_cc_busy_counter();
+        }
     } else if (next_dbuf.opcode == OP_STR) {
         decode_str(fbuf, &next_dbuf);
     } else if (next_dbuf.opcode == OP_NOT) {
         decode_not(fbuf, &next_dbuf);
-        if (!vm.ex_nop)
+        if (!vm.ex_nop) {
             increment_busy_counter((uint16_t)next_dbuf.reg);
+            increment_cc_busy_counter();
+        }
     } else if (next_dbuf.opcode == OP_TRAP) {
         decode_trap(fbuf, &next_dbuf);
     }

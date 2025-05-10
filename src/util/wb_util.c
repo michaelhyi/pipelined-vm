@@ -7,12 +7,14 @@ void set_cc(mbuf_t mbuf) {
         pthread_mutex_lock(&vm.cc_mutex);
 
         if (mbuf.result < 0) {
-            vm.cc = 4;
+            vm.cc.data = 4;
         } else if (mbuf.result == 0) {
-            vm.cc = 2;
+            vm.cc.data = 2;
         } else {
-            vm.cc = 1;
+            vm.cc.data = 1;
         }
+
+        vm.cc.busy_counter--;
 
         pthread_mutex_unlock(&vm.cc_mutex);
     }

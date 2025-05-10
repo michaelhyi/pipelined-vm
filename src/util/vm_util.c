@@ -102,6 +102,20 @@ void set_pc(uint16_t pc) {
     pthread_mutex_unlock(&vm.pc_mutex);
 }
 
+void increment_cc_busy_counter(void) {
+    pthread_mutex_lock(&vm.cc_mutex);
+    vm.cc.busy_counter++;
+    pthread_mutex_unlock(&vm.cc_mutex);
+}
+
+int16_t get_cc_data(void) {
+    pthread_mutex_lock(&vm.cc_mutex);
+    int16_t cc = vm.cc.data;
+    pthread_mutex_unlock(&vm.cc_mutex);
+
+    return cc;
+}
+
 fbuf_t get_fbuf(void) {
     pthread_mutex_lock(&vm.fbuf_mutex);
     fbuf_t fbuf = vm.fbuf;
@@ -185,4 +199,12 @@ void send_stay_to_id(void) {
     pthread_mutex_lock(&vm.id_stay_mutex);
     vm.id_stay = 1;
     pthread_mutex_unlock(&vm.id_stay_mutex);
+}
+
+void send_stay_to_ex(void) {
+    pthread_mutex_lock(&vm.ex_stay_mutex);
+    vm.ex_stay = 1;
+    pthread_mutex_unlock(&vm.ex_stay_mutex);
+
+    send_stay_to_id();
 }
