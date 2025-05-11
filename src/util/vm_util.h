@@ -11,6 +11,16 @@
 #include "../vm.h"
 
 /**
+ * Initializes all pthread mutexes and barriers.
+ */
+void init_mutexes_and_barriers(void);
+
+/**
+ * Destroys all pthread mutexes and barriers.
+ */
+void destroy_mutexes_and_barriers(void);
+
+/**
  * Gets data from the VM's memory in a thread-safe manner.
  *
  * @param addr memory address to get data from

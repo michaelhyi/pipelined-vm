@@ -113,8 +113,10 @@ extern size_t clock_cycle_counter;
 
 /**
  * Initializes the virtual machine.
+ *
+ * @param test 1 if running tests, 0 otherwise
  */
-void vm_init(void);
+void vm_init(int test);
 
 /**
  * Runs the virtual machine.

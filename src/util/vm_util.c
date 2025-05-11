@@ -39,6 +39,66 @@ static inline int privileged_mem_addr(uint16_t addr) {
     return addr <= 0x2FFF || addr >= 0xFE00;
 }
 
+void init_mutexes_and_barriers(void) {
+    pthread_mutex_init(&vm.running_mutex, NULL);
+
+    pthread_mutex_init(&vm.mem_mutex, NULL);
+    pthread_mutex_init(&vm.register_file_mutex, NULL);
+    pthread_mutex_init(&vm.pc_mutex, NULL);
+    pthread_mutex_init(&vm.cc_mutex, NULL);
+    pthread_mutex_init(&vm.psr_mutex, NULL);
+
+    pthread_mutex_init(&vm.fbuf_mutex, NULL);
+    pthread_mutex_init(&vm.dbuf_mutex, NULL);
+    pthread_mutex_init(&vm.ebuf_mutex, NULL);
+    pthread_mutex_init(&vm.mbuf_mutex, NULL);
+
+    pthread_mutex_init(&vm.pc_override_mutex, NULL);
+    pthread_mutex_init(&vm.pc_override_signal_mutex, NULL);
+
+    pthread_mutex_init(&vm.id_nop_mutex, NULL);
+    pthread_mutex_init(&vm.ex_nop_mutex, NULL);
+    pthread_mutex_init(&vm.mem_nop_mutex, NULL);
+    pthread_mutex_init(&vm.wb_nop_mutex, NULL);
+
+    pthread_mutex_init(&vm.id_stay_mutex, NULL);
+    pthread_mutex_init(&vm.ex_stay_mutex, NULL);
+    pthread_mutex_init(&vm.mem_stay_mutex, NULL);
+    pthread_mutex_init(&vm.wb_stay_mutex, NULL);
+
+    pthread_barrier_init(&vm.pipeline_cycle_barrier, NULL, NUM_PIPELINE_STAGES);
+}
+
+void destroy_mutexes_and_barriers(void) {
+    pthread_mutex_destroy(&vm.running_mutex);
+
+    pthread_mutex_destroy(&vm.mem_mutex);
+    pthread_mutex_destroy(&vm.register_file_mutex);
+    pthread_mutex_destroy(&vm.pc_mutex);
+    pthread_mutex_destroy(&vm.cc_mutex);
+    pthread_mutex_destroy(&vm.psr_mutex);
+
+    pthread_mutex_destroy(&vm.fbuf_mutex);
+    pthread_mutex_destroy(&vm.dbuf_mutex);
+    pthread_mutex_destroy(&vm.ebuf_mutex);
+    pthread_mutex_destroy(&vm.mbuf_mutex);
+
+    pthread_mutex_destroy(&vm.pc_override_mutex);
+    pthread_mutex_destroy(&vm.pc_override_signal_mutex);
+
+    pthread_mutex_destroy(&vm.id_nop_mutex);
+    pthread_mutex_destroy(&vm.ex_nop_mutex);
+    pthread_mutex_destroy(&vm.mem_nop_mutex);
+    pthread_mutex_destroy(&vm.wb_nop_mutex);
+
+    pthread_mutex_destroy(&vm.id_stay_mutex);
+    pthread_mutex_destroy(&vm.ex_stay_mutex);
+    pthread_mutex_destroy(&vm.mem_stay_mutex);
+    pthread_mutex_destroy(&vm.wb_stay_mutex);
+
+    pthread_barrier_destroy(&vm.pipeline_cycle_barrier);
+}
+
 int16_t get_mem(uint16_t addr) {
     if (!supervisor_mode() && privileged_mem_addr(addr)) {
         errno = EFAULT;

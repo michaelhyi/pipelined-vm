@@ -13,11 +13,12 @@
 #include "stages/if.h"
 #include "stages/mem.h"
 #include "stages/wb.h"
+#include "util/vm_util.h"
 
 vm_t vm;
 size_t clock_cycle_counter;
 
-void vm_init(void) {
+void vm_init(int test) {
     memset(&vm, 0, sizeof(vm_t));
     clock_cycle_counter = 0;
 
@@ -31,36 +32,11 @@ void vm_init(void) {
     vm.ebuf.nop = 1;
     vm.mbuf.nop = 1;
 
-    // TODO: abstract to util 
-    pthread_mutex_init(&vm.running_mutex, NULL);
+    init_mutexes_and_barriers();
 
-    pthread_mutex_init(&vm.mem_mutex, NULL);
-    pthread_mutex_init(&vm.register_file_mutex, NULL);
-    pthread_mutex_init(&vm.pc_mutex, NULL);
-    pthread_mutex_init(&vm.cc_mutex, NULL);
-    pthread_mutex_init(&vm.psr_mutex, NULL);
-
-    pthread_mutex_init(&vm.fbuf_mutex, NULL);
-    pthread_mutex_init(&vm.dbuf_mutex, NULL);
-    pthread_mutex_init(&vm.ebuf_mutex, NULL);
-    pthread_mutex_init(&vm.mbuf_mutex, NULL);
-
-    pthread_mutex_init(&vm.pc_override_mutex, NULL);
-    pthread_mutex_init(&vm.pc_override_signal_mutex, NULL);
-
-    pthread_mutex_init(&vm.id_nop_mutex, NULL);
-    pthread_mutex_init(&vm.ex_nop_mutex, NULL);
-    pthread_mutex_init(&vm.mem_nop_mutex, NULL);
-    pthread_mutex_init(&vm.wb_nop_mutex, NULL);
-
-    pthread_mutex_init(&vm.id_stay_mutex, NULL);
-    pthread_mutex_init(&vm.ex_stay_mutex, NULL);
-    pthread_mutex_init(&vm.mem_stay_mutex, NULL);
-    pthread_mutex_init(&vm.wb_stay_mutex, NULL);
-
-    pthread_barrier_init(&vm.pipeline_cycle_barrier, NULL, NUM_PIPELINE_STAGES);
-
-    loader_run();
+    if (!test) {
+        loader_run();
+    }
 }
 
 void vm_run(void) {
@@ -96,33 +72,7 @@ void vm_run(void) {
 }
 
 void vm_teardown(void) {
-    pthread_mutex_destroy(&vm.running_mutex);
-
-    pthread_mutex_destroy(&vm.mem_mutex);
-    pthread_mutex_destroy(&vm.register_file_mutex);
-    pthread_mutex_destroy(&vm.pc_mutex);
-    pthread_mutex_destroy(&vm.cc_mutex);
-    pthread_mutex_destroy(&vm.psr_mutex);
-
-    pthread_mutex_destroy(&vm.fbuf_mutex);
-    pthread_mutex_destroy(&vm.dbuf_mutex);
-    pthread_mutex_destroy(&vm.ebuf_mutex);
-    pthread_mutex_destroy(&vm.mbuf_mutex);
-
-    pthread_mutex_destroy(&vm.pc_override_mutex);
-    pthread_mutex_destroy(&vm.pc_override_signal_mutex);
-
-    pthread_mutex_destroy(&vm.id_nop_mutex);
-    pthread_mutex_destroy(&vm.ex_nop_mutex);
-    pthread_mutex_destroy(&vm.mem_nop_mutex);
-    pthread_mutex_destroy(&vm.wb_nop_mutex);
-
-    pthread_mutex_destroy(&vm.id_stay_mutex);
-    pthread_mutex_destroy(&vm.ex_stay_mutex);
-    pthread_mutex_destroy(&vm.mem_stay_mutex);
-    pthread_mutex_destroy(&vm.wb_stay_mutex);
-
-    pthread_barrier_destroy(&vm.pipeline_cycle_barrier);
+    destroy_mutexes_and_barriers();
 
     printf("vm ran %ld clock cycles\n", clock_cycle_counter);
 }

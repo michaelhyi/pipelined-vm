@@ -178,7 +178,7 @@ void test_vm(void) {
 
 static void test_branch_not_taken(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[0].data = 2;
@@ -207,7 +207,7 @@ static void test_branch_not_taken(void) {
 
 static void test_branch_taken(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[0].data = 2;
@@ -238,7 +238,7 @@ static void test_branch_taken(void) {
 
 static void test_add_reg_mode(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[0].data = 2;
@@ -266,7 +266,7 @@ static void test_add_reg_mode(void) {
 
 static void test_add_imm_mode(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[6].data = (int16_t)0xF000;
@@ -293,7 +293,7 @@ static void test_add_imm_mode(void) {
 
 static void test_ld(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.mem[0x3000] = (int16_t)((OP_LD << 12) | (0 << 9) | 1); // ld r0, 1
@@ -319,7 +319,7 @@ static void test_ld(void) {
 
 static void test_st(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[0].data = 0x2110;
@@ -341,7 +341,7 @@ static void test_st(void) {
 
 static void test_jsr(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[0].data = 2;
@@ -370,7 +370,7 @@ static void test_jsr(void) {
 
 static void test_jsrr(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[0].data = 2;
@@ -400,7 +400,7 @@ static void test_jsrr(void) {
 
 static void test_and_reg_mode(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[0].data = 3;
@@ -428,7 +428,7 @@ static void test_and_reg_mode(void) {
 
 static void test_and_imm_mode(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[0].data = (int16_t)0xF000;
@@ -455,7 +455,7 @@ static void test_and_imm_mode(void) {
 
 static void test_ldr(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[5].data = (int16_t)0xEFFB;
@@ -483,7 +483,7 @@ static void test_ldr(void) {
 
 static void test_str(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[0].data = (int16_t)0x2110;
@@ -507,7 +507,7 @@ static void test_str(void) {
 
 static void test_not(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[0].data = 2;
@@ -534,7 +534,7 @@ static void test_not(void) {
 
 static void test_ldi(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.mem[0x3000] = (int16_t)((OP_LDI << 12) | (0 << 9) | 1); // ldi r0, 1
@@ -561,7 +561,7 @@ static void test_ldi(void) {
 
 static void test_sti(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[0].data = 0x4210;
@@ -584,7 +584,7 @@ static void test_sti(void) {
 
 static void test_jmp(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[0].data = 2;
@@ -610,7 +610,7 @@ static void test_jmp(void) {
 
 static void test_lea(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.mem[0x3000] = (int16_t)((OP_LEA << 12) | (0 << 9) | 1); // lea r0, 1
@@ -631,7 +631,7 @@ static void test_lea(void) {
 
 static void test_add_raw_hazard(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[0].data = 2;
@@ -657,7 +657,7 @@ static void test_add_raw_hazard(void) {
 
 static void test_st_raw_hazard(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[0].data = 2;
@@ -684,7 +684,7 @@ static void test_st_raw_hazard(void) {
 
 static void test_jsrr_raw_hazard(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[0].data = 0x3000;
@@ -715,7 +715,7 @@ static void test_jsrr_raw_hazard(void) {
 
 static void test_and_raw_hazard(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[0].data = 2;
@@ -744,7 +744,7 @@ static void test_and_raw_hazard(void) {
 
 static void test_ldr_raw_hazard(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[0].data = 0x3000;
@@ -773,7 +773,7 @@ static void test_ldr_raw_hazard(void) {
 
 static void test_str_raw_hazard(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[0].data = 0x3000;
@@ -799,7 +799,7 @@ static void test_str_raw_hazard(void) {
 
 static void test_not_raw_hazard(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[0].data = 2;
@@ -827,7 +827,7 @@ static void test_not_raw_hazard(void) {
 
 static void test_sti_raw_hazard(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.register_file[0].data = 2;
@@ -857,7 +857,7 @@ static void test_sti_raw_hazard(void) {
 
 static void test_jmp_raw_hazard(void) {
     // setup
-    vm_init();
+    vm_init(1);
 
     // when
     vm.mem[0x3000] = (int16_t)((OP_JSR << 12) | (1 << 11) | 1); // jsr 1
