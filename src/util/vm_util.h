@@ -26,7 +26,7 @@ void destroy_mutexes_and_barriers(void);
  *
  * Enter memory address 0x0000 to finish.
  */
-void io_view_mem(void);
+void memory_viewer_run(void);
 
 /**
  * Gets data from the VM's memory in a thread-safe manner.

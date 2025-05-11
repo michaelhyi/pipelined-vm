@@ -101,7 +101,7 @@ void destroy_mutexes_and_barriers(void) {
     pthread_barrier_destroy(&vm.pipeline_cycle_barrier);
 }
 
-void io_view_mem(void) {
+void memory_viewer_run(void) {
     while (1) {
         uint16_t addr;
         int16_t data;
