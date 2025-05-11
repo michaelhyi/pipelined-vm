@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "loader.h"
 #include "stages/ex.h"
 #include "stages/id.h"
 #include "stages/if.h"
@@ -30,6 +31,7 @@ void vm_init(void) {
     vm.ebuf.nop = 1;
     vm.mbuf.nop = 1;
 
+    // TODO: abstract to util 
     pthread_mutex_init(&vm.running_mutex, NULL);
 
     pthread_mutex_init(&vm.mem_mutex, NULL);
@@ -57,6 +59,8 @@ void vm_init(void) {
     pthread_mutex_init(&vm.wb_stay_mutex, NULL);
 
     pthread_barrier_init(&vm.pipeline_cycle_barrier, NULL, NUM_PIPELINE_STAGES);
+
+    loader_run();
 }
 
 void vm_run(void) {
