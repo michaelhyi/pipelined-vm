@@ -38,6 +38,9 @@ void vm_init(void) {
     pthread_mutex_init(&vm.ebuf_mutex, NULL);
     pthread_mutex_init(&vm.mbuf_mutex, NULL);
 
+    pthread_mutex_init(&vm.pc_override_mutex, NULL);
+    pthread_mutex_init(&vm.pc_override_signal_mutex, NULL);
+
     pthread_mutex_init(&vm.id_nop_mutex, NULL);
     pthread_mutex_init(&vm.ex_nop_mutex, NULL);
     pthread_mutex_init(&vm.mem_nop_mutex, NULL);
@@ -88,6 +91,9 @@ void vm_teardown(void) {
     pthread_mutex_destroy(&vm.dbuf_mutex);
     pthread_mutex_destroy(&vm.ebuf_mutex);
     pthread_mutex_destroy(&vm.mbuf_mutex);
+
+    pthread_mutex_destroy(&vm.pc_override_mutex);
+    pthread_mutex_destroy(&vm.pc_override_signal_mutex);
 
     pthread_mutex_destroy(&vm.id_nop_mutex);
     pthread_mutex_destroy(&vm.ex_nop_mutex);

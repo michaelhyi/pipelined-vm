@@ -4,6 +4,7 @@
 #include <pthread.h>
 
 #include "../util/if_util.h"
+#include "../util/vm_util.h"
 #include "../vm.h"
 
 /**
@@ -17,8 +18,12 @@ void *if_run(void *arg) {
     (void)arg;
 
     fbuf_t next_fbuf;
-    next_fbuf.ir = get_instruction_and_increment_pc();
-    save_pc(&next_fbuf);
+
+    uint16_t pc = get_pc();
+    next_fbuf.ir = get_mem(pc);
+    next_fbuf.pc = pc + 1;
+
+    set_pc(pc + 1);
 
     if_teardown(next_fbuf);
     return NULL;
@@ -34,6 +39,10 @@ static void if_teardown(fbuf_t next_fbuf) {
     pthread_mutex_unlock(&vm.id_nop_mutex);
 
     update_fbuf(&next_fbuf);
+
+    if (get_pc_override_signal()) {
+        set_pc(get_pc_override());
+    }
 
     pthread_exit(0);
 }

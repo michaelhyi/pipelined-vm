@@ -31,7 +31,7 @@ void *ex_run(void *arg) {
         // TODO: abstract into functions
         if (cc_match(cc, dbuf.cc)) {
             uint16_t new_pc = (uint16_t)(dbuf.operand1 + dbuf.operand2);
-            set_pc(new_pc); // TODO: what if this runs before IF increments PC
+            set_pc_override(new_pc);
 
             send_bubble_to_id();
             // TODO: if we squash an instruction in decode that incremented the
@@ -44,12 +44,12 @@ void *ex_run(void *arg) {
         send_bubble_to_id();
 
         uint16_t new_pc = (uint16_t)(dbuf.operand1 + dbuf.operand2);
-        set_pc(new_pc); // TODO: what if this runs before IF increments PC
+        set_pc_override(new_pc);
     } else if (ex_instruction_is_jsrr(dbuf)) {
         send_bubble_to_id();
 
         uint16_t new_pc = (uint16_t)dbuf.reg;
-        set_pc(new_pc);
+        set_pc_override(new_pc);
     } else if (dbuf.opcode == OP_AND) {
         next_ebuf.result = dbuf.operand1 & dbuf.operand2;
     } else if (dbuf.opcode == OP_NOT) {
@@ -58,7 +58,7 @@ void *ex_run(void *arg) {
         send_bubble_to_id();
 
         uint16_t new_pc = (uint16_t)dbuf.reg;
-        set_pc(new_pc);
+        set_pc_override(new_pc);
     } else if (dbuf.opcode == OP_TRAP) {
         // TODO: fetch starting address of trap handler using the trap vector
         // table, then set pc to starting address of trap handler

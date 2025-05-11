@@ -66,6 +66,9 @@ typedef struct vm_t {
     ebuf_t ebuf;
     mbuf_t mbuf;
 
+    uint16_t pc_override;
+    uint16_t pc_override_signal;
+
     uint16_t id_nop;
     uint16_t ex_nop;
     uint16_t mem_nop;
@@ -88,6 +91,9 @@ typedef struct vm_t {
     pthread_mutex_t dbuf_mutex;
     pthread_mutex_t ebuf_mutex;
     pthread_mutex_t mbuf_mutex;
+
+    pthread_mutex_t pc_override_mutex;
+    pthread_mutex_t pc_override_signal_mutex;
 
     pthread_mutex_t id_nop_mutex;
     pthread_mutex_t ex_nop_mutex;

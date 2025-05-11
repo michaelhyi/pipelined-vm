@@ -96,6 +96,14 @@ void set_register_data(uint16_t reg_num, int16_t data) {
     pthread_mutex_unlock(&vm.register_file_mutex);
 }
 
+uint16_t get_pc(void) {
+    pthread_mutex_lock(&vm.pc_mutex);
+    uint16_t pc = vm.pc;
+    pthread_mutex_unlock(&vm.pc_mutex);
+
+    return pc;
+}
+
 void set_pc(uint16_t pc) {
     pthread_mutex_lock(&vm.pc_mutex);
     vm.pc = pc;
@@ -169,6 +177,30 @@ void set_mbuf(mbuf_t mbuf) {
     pthread_mutex_lock(&vm.mbuf_mutex);
     memcpy(&vm.mbuf, &mbuf, sizeof(mbuf_t));
     pthread_mutex_unlock(&vm.mbuf_mutex);
+}
+
+uint16_t get_pc_override(void) {
+    pthread_mutex_lock(&vm.pc_override_mutex);
+    uint16_t pc_override = vm.pc_override;
+    pthread_mutex_unlock(&vm.pc_override_mutex);
+    return pc_override;
+}
+
+void set_pc_override(uint16_t new_pc) {
+    pthread_mutex_lock(&vm.pc_override_mutex);
+    vm.pc_override = new_pc;
+    pthread_mutex_unlock(&vm.pc_override_mutex);
+
+    pthread_mutex_lock(&vm.pc_override_signal_mutex);
+    vm.pc_override_signal = 1;
+    pthread_mutex_unlock(&vm.pc_override_signal_mutex);
+}
+
+uint16_t get_pc_override_signal(void) {
+    pthread_mutex_lock(&vm.pc_override_signal_mutex);
+    uint16_t pc_override_signal = vm.pc_override_signal;
+    pthread_mutex_unlock(&vm.pc_override_signal_mutex);
+    return pc_override_signal;
 }
 
 void send_bubble_to_id(void) {

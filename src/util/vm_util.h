@@ -47,6 +47,11 @@ int16_t get_register_data(uint16_t reg_num);
 void set_register_data(uint16_t reg_num, int16_t data);
 
 /**
+ * Gets the VM's PC in a thread-safe manner.
+ */
+uint16_t get_pc(void);
+
+/**
  * Sets the VM's PC in a thread-safe manner.
  *
  * @param pc the new PC to set
@@ -122,6 +127,23 @@ mbuf_t get_mbuf(void);
  * @param mbuf the new MBUF value to set
  */
 void set_mbuf(mbuf_t mbuf);
+
+/**
+ * Gets pc_override in a thread-safe manner.
+ */
+uint16_t get_pc_override(void);
+
+/**
+ * Sets pc_override and asserts its signal in a thread-safe manner.
+ *
+ * @param new_pc the new pc to set
+ */
+void set_pc_override(uint16_t new_pc);
+
+/**
+ * Gets pc_override_signal in a thread-safe manner.
+ */
+uint16_t get_pc_override_signal(void);
 
 /**
  * Asserts the NOP bit to the `ID` stage of the pipeline.
