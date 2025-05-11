@@ -40,11 +40,22 @@ void *wb_run(void *arg) {
         pthread_mutex_unlock(&vm.running_mutex);
     }
 
+    if (errno) {
+        wb_teardown();
+    }
+
     wb_teardown();
     return NULL;
 }
 
 static void wb_teardown(void) {
     pthread_barrier_wait(&vm.pipeline_cycle_barrier);
-    pthread_exit(0);
+
+    if (errno) {
+        int errno_cpy = errno;
+        errno = 0;
+        pthread_exit((void *)(intptr_t)errno_cpy);
+    }
+
+    pthread_exit((void *)(intptr_t)0);
 }

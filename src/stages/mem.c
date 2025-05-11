@@ -49,12 +49,22 @@ void *mem_run(void *arg) {
         pthread_mutex_unlock(&vm.ebuf_mutex);
     }
 
+    if (errno) {
+        mem_teardown(next_mbuf);
+    }
+
     mem_teardown(next_mbuf);
     return NULL;
 }
 
 static void mem_teardown(mbuf_t next_mbuf) {
     pthread_barrier_wait(&vm.pipeline_cycle_barrier);
+
+    if (errno) {
+        int errno_cpy = errno;
+        errno = 0;
+        pthread_exit((void *)(intptr_t)errno_cpy);
+    }
 
     // handle bubbles
     pthread_mutex_lock(&vm.wb_nop_mutex);
@@ -64,5 +74,11 @@ static void mem_teardown(mbuf_t next_mbuf) {
 
     update_mbuf(&next_mbuf);
 
-    pthread_exit(0);
+    if (errno) {
+        int errno_cpy = errno;
+        errno = 0;
+        pthread_exit((void *)(intptr_t)errno_cpy);
+    }
+
+    pthread_exit((void *)(intptr_t)0);
 }

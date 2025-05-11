@@ -25,12 +25,22 @@ void *if_run(void *arg) {
 
     set_pc(pc + 1);
 
+    if (errno) {
+        if_teardown(next_fbuf);
+    }
+
     if_teardown(next_fbuf);
     return NULL;
 }
 
 static void if_teardown(fbuf_t next_fbuf) {
     pthread_barrier_wait(&vm.pipeline_cycle_barrier);
+
+    if (errno) {
+        int errno_cpy = errno;
+        errno = 0;
+        pthread_exit((void *)(intptr_t)errno_cpy);
+    }
 
     // handle bubbles
     pthread_mutex_lock(&vm.id_nop_mutex);
@@ -44,5 +54,11 @@ static void if_teardown(fbuf_t next_fbuf) {
         set_pc(get_pc_override());
     }
 
-    pthread_exit(0);
+    if (errno) {
+        int errno_cpy = errno;
+        errno = 0;
+        pthread_exit((void *)(intptr_t)errno_cpy);
+    }
+
+    pthread_exit((void *)(intptr_t)0);
 }

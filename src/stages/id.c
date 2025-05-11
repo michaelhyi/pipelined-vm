@@ -91,8 +91,7 @@ void *id_run(void *arg) {
     }
 
     if (errno) {
-        // TODO: set errno = 0;
-        pthread_exit((void *)(intptr_t)errno);
+        id_teardown(next_dbuf);
     }
 
     id_teardown(next_dbuf);
@@ -102,6 +101,12 @@ void *id_run(void *arg) {
 static void id_teardown(dbuf_t next_dbuf) {
     pthread_barrier_wait(&vm.pipeline_cycle_barrier);
 
+    if (errno) {
+        int errno_cpy = errno;
+        errno = 0;
+        pthread_exit((void *)(intptr_t)errno_cpy);
+    }
+
     // handle bubbles
     pthread_mutex_lock(&vm.ex_nop_mutex);
     next_dbuf.nop = vm.ex_nop;
@@ -110,5 +115,11 @@ static void id_teardown(dbuf_t next_dbuf) {
 
     update_dbuf(next_dbuf);
 
-    pthread_exit(0);
+    if (errno) {
+        int errno_cpy = errno;
+        errno = 0;
+        pthread_exit((void *)(intptr_t)errno_cpy);
+    }
+
+    pthread_exit((void *)(intptr_t)0);
 }

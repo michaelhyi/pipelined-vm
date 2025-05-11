@@ -1,5 +1,7 @@
 #include "ex.h"
 
+#include <errno.h>
+
 #include "../isa.h"
 #include "../util/ex_util.h"
 #include "../util/vm_util.h"
@@ -62,6 +64,11 @@ void *ex_run(void *arg) {
     } else if (dbuf.opcode == OP_TRAP) {
         // TODO: fetch starting address of trap handler using the trap vector
         // table, then set pc to starting address of trap handler
+        // Some tests are failing because there is no trap handler
+    }
+
+    if (errno) {
+        ex_teardown(next_ebuf);
     }
 
     ex_teardown(next_ebuf);
@@ -71,6 +78,12 @@ void *ex_run(void *arg) {
 static void ex_teardown(ebuf_t next_ebuf) {
     pthread_barrier_wait(&vm.pipeline_cycle_barrier);
 
+    if (errno) {
+        int errno_cpy = errno;
+        errno = 0;
+        pthread_exit((void *)(intptr_t)errno_cpy);
+    }
+
     // handle bubbles
     pthread_mutex_lock(&vm.mem_nop_mutex);
     next_ebuf.nop = vm.mem_nop;
@@ -79,5 +92,11 @@ static void ex_teardown(ebuf_t next_ebuf) {
 
     update_ebuf(&next_ebuf);
 
-    pthread_exit(0);
+    if (errno) {
+        int errno_cpy = errno;
+        errno = 0;
+        pthread_exit((void *)(intptr_t)errno_cpy);
+    }
+
+    pthread_exit((void *)(intptr_t)0);
 }

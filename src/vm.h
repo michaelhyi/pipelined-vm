@@ -109,6 +109,7 @@ typedef struct vm_t {
 } vm_t;
 
 extern vm_t vm;
+extern size_t clock_cycle_counter;
 
 /**
  * Initializes the virtual machine.

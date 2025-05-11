@@ -212,7 +212,6 @@ static void test_branch_taken(void) {
     // when
     vm.register_file[0].data = 2;
     vm.register_file[1].data = 4;
-    // TODO: need CC busy bit
     vm.mem[0x3000] =
         (int16_t)((OP_ADD << 12) | (2 << 9) | (0 << 6) | 1);  // add r2, r0, r1
     vm.mem[0x3001] = (int16_t)((OP_BR << 12) | (1 << 9) | 1); // brp 1
