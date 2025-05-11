@@ -1,6 +1,8 @@
 #include "vm_util.h"
 
+#include <assert.h>
 #include <errno.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "../vm.h"
@@ -97,6 +99,23 @@ void destroy_mutexes_and_barriers(void) {
     pthread_mutex_destroy(&vm.wb_stay_mutex);
 
     pthread_barrier_destroy(&vm.pipeline_cycle_barrier);
+}
+
+void io_view_mem(void) {
+    while (1) {
+        uint16_t addr;
+        int16_t data;
+
+        printf("enter mem addr: 0x");
+        assert(scanf("%hx", &addr) == 1);
+
+        if (!addr) {
+            break;
+        }
+
+        data = vm.mem[addr];
+        printf("mem[0x%hx]=0x%x", addr, data);
+    }
 }
 
 int16_t get_mem(uint16_t addr) {

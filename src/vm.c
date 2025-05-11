@@ -75,4 +75,5 @@ void vm_teardown(void) {
     destroy_mutexes_and_barriers();
 
     printf("vm ran %ld clock cycles\n", clock_cycle_counter);
+    io_view_mem();
 }

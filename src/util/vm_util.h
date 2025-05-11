@@ -21,6 +21,14 @@ void init_mutexes_and_barriers(void);
 void destroy_mutexes_and_barriers(void);
 
 /**
+ * Allows the user to view the vm's memory via user I/O. The user will manually
+ * input memory addresses, which will return its respective data.
+ *
+ * Enter memory address 0x0000 to finish.
+ */
+void io_view_mem(void);
+
+/**
  * Gets data from the VM's memory in a thread-safe manner.
  *
  * @param addr memory address to get data from
