@@ -125,7 +125,9 @@ void vm_run(void);
 
 /**
  * Tears down the virtual machine.
+ *
+ * @param test 1 if running tests, 0 otherwise
  */
-void vm_teardown(void);
+void vm_teardown(int test);
 
 #endif

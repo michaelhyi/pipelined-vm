@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include "loader.h"
+#include "pipeline_table.h"
 #include "stages/ex.h"
 #include "stages/id.h"
 #include "stages/if.h"
@@ -37,10 +38,14 @@ void vm_init(int test) {
     if (!test) {
         loader_run();
     }
+
+    pipeline_table_init();
 }
 
 void vm_run(void) {
     while (vm.running) {
+        pipeline_table_add_row();
+
         pthread_t if_tid;
         pthread_t id_tid;
         pthread_t ex_tid;
@@ -71,9 +76,14 @@ void vm_run(void) {
     }
 }
 
-void vm_teardown(void) {
+void vm_teardown(int test) {
     destroy_mutexes_and_barriers();
 
     printf("vm ran %ld clock cycles\n", clock_cycle_counter);
-    memory_viewer_run();
+    pipeline_table_print();
+    pipeline_table_teardown();
+
+    if (!test) {
+        memory_viewer_run();
+    }
 }

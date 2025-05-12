@@ -200,7 +200,7 @@ static void test_branch_not_taken(void) {
     assert(expected_cc == actual_cc);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -231,7 +231,7 @@ static void test_branch_taken(void) {
     assert(expected_cc == actual_cc);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -259,7 +259,7 @@ static void test_add_reg_mode(void) {
     assert(expected_cc == actual_cc);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -286,7 +286,7 @@ static void test_add_imm_mode(void) {
     assert(expected_cc == actual_cc);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -312,7 +312,7 @@ static void test_ld(void) {
     assert(expected_cc == actual_cc);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -334,7 +334,7 @@ static void test_st(void) {
     assert(expected_mem == actual_mem);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -363,7 +363,7 @@ static void test_jsr(void) {
     assert(expected_r7 == actual_r7);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -393,7 +393,7 @@ static void test_jsrr(void) {
     assert(expected_r7 == actual_r7);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -421,7 +421,7 @@ static void test_and_reg_mode(void) {
     assert(expected_cc == actual_cc);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -448,7 +448,7 @@ static void test_and_imm_mode(void) {
     assert(expected_cc == actual_cc);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -476,7 +476,7 @@ static void test_ldr(void) {
     assert(expected_cc == actual_cc);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -500,7 +500,7 @@ static void test_str(void) {
     assert(expected_mem == actual_mem);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -527,7 +527,7 @@ static void test_not(void) {
     assert(expected_cc == actual_cc);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -554,7 +554,7 @@ static void test_ldi(void) {
     assert(expected_cc == actual_cc);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -577,7 +577,7 @@ static void test_sti(void) {
     assert(expected_mem == actual_mem);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -603,7 +603,7 @@ static void test_jmp(void) {
     assert(expected_r2 == actual_r2);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -624,7 +624,7 @@ static void test_lea(void) {
     assert(expected_r0 == actual_r0);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -650,7 +650,7 @@ static void test_add_raw_hazard(void) {
     assert(expected_r2 == actual_r2);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -677,7 +677,7 @@ static void test_st_raw_hazard(void) {
     assert(expected_mem == actual_mem);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -708,7 +708,7 @@ static void test_jsrr_raw_hazard(void) {
     assert(expected_r2 == actual_r2);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -737,7 +737,7 @@ static void test_and_raw_hazard(void) {
     assert(expected_r2 == actual_r2);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -766,7 +766,7 @@ static void test_ldr_raw_hazard(void) {
     assert(expected_r2 == actual_r2);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -792,7 +792,7 @@ static void test_str_raw_hazard(void) {
     assert(expected_mem == actual_mem);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -820,7 +820,7 @@ static void test_not_raw_hazard(void) {
     assert(expected_r2 == actual_r2);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -850,7 +850,7 @@ static void test_sti_raw_hazard(void) {
     assert(expected_mem == actual_mem);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
@@ -872,7 +872,7 @@ static void test_jmp_raw_hazard(void) {
     assert(expected_r7 == actual_r7);
 
     // teardown
-    vm_teardown();
+    vm_teardown(1);
 
     assert(!errno);
 }
