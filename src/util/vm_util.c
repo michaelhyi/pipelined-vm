@@ -114,7 +114,7 @@ void memory_viewer_run(void) {
         }
 
         data = vm.mem[addr];
-        printf("mem[0x%hx]=0x%x", addr, data);
+        printf("mem[0x%hx]=0x%x\n", addr, data);
     }
 }
 

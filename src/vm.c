@@ -25,6 +25,7 @@ void vm_init(int test) {
 
     vm.pc = 0x3000;
     vm.psr = (int16_t)(1 << 15);
+    vm.cc.data = 1;
 
     vm.running = 1;
 

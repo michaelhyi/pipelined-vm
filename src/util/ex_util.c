@@ -20,9 +20,9 @@ ebuf_t init_next_ebuf(dbuf_t dbuf) {
 }
 
 inline int cc_match(int16_t vm_cc, int16_t ir_cc) {
-    return bit_range(vm_cc, 2, 2) == bit_range(ir_cc, 2, 2) ||
-           bit_range(vm_cc, 1, 1) == bit_range(ir_cc, 1, 1) ||
-           bit_range(vm_cc, 0, 0) == bit_range(ir_cc, 0, 0);
+    return (bit_range(vm_cc, 2, 2) && bit_range(ir_cc, 2, 2)) ||
+           (bit_range(vm_cc, 1, 1) && bit_range(ir_cc, 1, 1)) ||
+           (bit_range(vm_cc, 0, 0) && bit_range(ir_cc, 0, 0));
 }
 
 inline int instruction_needs_add(int16_t opcode) {
