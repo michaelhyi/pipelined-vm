@@ -91,18 +91,22 @@ uint16_t get_pc(void);
 void set_pc(uint16_t pc);
 
 /**
- * Increments the condition code register's busy counter in a thread-safe
- * manner.
- */
-void increment_cc_busy_counter(void);
-
-/**
  * Gets the condition codes stored in the condition code register in a
  * thread-safe manner.
  *
  * @returns the vm's current conditions codes
  */
 int16_t get_cc_data(void);
+
+/**
+ * Increments the cc register's busy counter in a thread-safe manner.
+ */
+void increment_cc_busy_counter(void);
+
+/**
+ * Decrements the cc register's busy counter in a thread-safe manner.
+ */
+void decrement_cc_busy_counter(void);
 
 /**
  * Sets the vm's `running` bit in a thread-safe manner.

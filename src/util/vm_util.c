@@ -199,18 +199,24 @@ void set_pc(uint16_t pc) {
     pthread_mutex_unlock(&vm.pc_mutex);
 }
 
-void increment_cc_busy_counter(void) {
-    pthread_mutex_lock(&vm.cc_mutex);
-    vm.cc.busy_counter++;
-    pthread_mutex_unlock(&vm.cc_mutex);
-}
-
 int16_t get_cc_data(void) {
     pthread_mutex_lock(&vm.cc_mutex);
     int16_t cc = vm.cc.data;
     pthread_mutex_unlock(&vm.cc_mutex);
 
     return cc;
+}
+
+void increment_cc_busy_counter(void) {
+    pthread_mutex_lock(&vm.cc_mutex);
+    vm.cc.busy_counter++;
+    pthread_mutex_unlock(&vm.cc_mutex);
+}
+
+void decrement_cc_busy_counter(void) {
+    pthread_mutex_lock(&vm.cc_mutex);
+    vm.cc.busy_counter--;
+    pthread_mutex_unlock(&vm.cc_mutex);
 }
 
 void set_running(uint16_t new_running) {
