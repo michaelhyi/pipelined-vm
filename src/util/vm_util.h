@@ -193,4 +193,11 @@ void send_stay_to_id(void);
  */
 void send_stay_to_ex(void);
 
+/**
+ * Returns whether the nop bit to the `ex` stage of the pipeline is high.
+ *
+ * @returns 1 if a bubble is pending to `ex`, 0 otherwise
+ */
+unsigned int bubble_pending_ex(void);
+
 #endif

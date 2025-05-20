@@ -143,8 +143,6 @@ static void test_sti_raw_hazard(void);
  */
 static void test_jmp_raw_hazard(void);
 
-// TODO: assert cc in all tests
-
 void test_vm(void) {
     // TODO: test rti, trap
     test_branch_not_taken();

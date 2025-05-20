@@ -44,8 +44,7 @@ void *id_run(void *arg) {
     } else if (next_dbuf.opcode == OP_ADD || next_dbuf.opcode == OP_AND) {
         decode_add_and(fbuf, &next_dbuf);
 
-        // TODO: make thread-safe
-        if (!vm.ex_nop) {
+        if (!bubble_pending_ex()) {
             increment_busy_counter((uint16_t)next_dbuf.reg);
             increment_cc_busy_counter();
         }
@@ -53,7 +52,7 @@ void *id_run(void *arg) {
     } else if (next_dbuf.opcode == OP_LD || next_dbuf.opcode == OP_LDI ||
                next_dbuf.opcode == OP_LEA) {
         decode_ld_ldi_lea(fbuf, &next_dbuf);
-        if (!vm.ex_nop) {
+        if (!bubble_pending_ex()) {
             increment_busy_counter((uint16_t)next_dbuf.reg);
 
             if (next_dbuf.opcode != OP_LEA) {
@@ -65,16 +64,16 @@ void *id_run(void *arg) {
     } else if (id_instruction_is_jsr(fbuf.ir)) {
         decode_jsr(fbuf, &next_dbuf);
         send_bubble_to_id();
-        if (!vm.ex_nop)
+        if (!bubble_pending_ex())
             increment_busy_counter((uint16_t)7);
     } else if (id_instruction_is_jsrr(fbuf.ir) || next_dbuf.opcode == OP_JMP) {
         decode_jmp_jsrr(fbuf, &next_dbuf);
         send_bubble_to_id();
-        if (!vm.ex_nop)
+        if (!bubble_pending_ex())
             increment_busy_counter((uint16_t)7);
     } else if (next_dbuf.opcode == OP_LDR) {
         decode_ldr(fbuf, &next_dbuf);
-        if (!vm.ex_nop) {
+        if (!bubble_pending_ex()) {
             increment_busy_counter((uint16_t)next_dbuf.reg);
             increment_cc_busy_counter();
         }
@@ -82,7 +81,7 @@ void *id_run(void *arg) {
         decode_str(fbuf, &next_dbuf);
     } else if (next_dbuf.opcode == OP_NOT) {
         decode_not(fbuf, &next_dbuf);
-        if (!vm.ex_nop) {
+        if (!bubble_pending_ex()) {
             increment_busy_counter((uint16_t)next_dbuf.reg);
             increment_cc_busy_counter();
         }

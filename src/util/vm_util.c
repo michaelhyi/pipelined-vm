@@ -319,3 +319,10 @@ void send_stay_to_ex(void) {
 
     send_stay_to_id();
 }
+
+unsigned int bubble_pending_ex(void) {
+    pthread_mutex_lock(&vm.ex_nop_mutex);
+    unsigned int result = vm.ex_nop;
+    pthread_mutex_unlock(&vm.ex_nop_mutex);
+    return result;
+}
