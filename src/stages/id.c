@@ -90,7 +90,7 @@ void *id_run(void *arg) {
         decode_jmp_jsrr(fbuf, &next_dbuf);
         send_bubble_to_id();
 
-        if (!bubble_pending_ex()) {
+        if (next_dbuf.opcode != OP_JMP && !bubble_pending_ex()) {
             increment_busy_counter((uint16_t)7);
             reg_busy_inc = 1;
             incremented_reg = 7;
