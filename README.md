@@ -29,7 +29,7 @@ Run the Docker container:
 
 To start the VM, run:
 ```bash
-make # or make run
+make ARGS="-l <assembled lc-3 obj file path>"
 ```
 
 To test the VM, run:

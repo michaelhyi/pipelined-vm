@@ -2,12 +2,11 @@
 #define LOADER_H
 
 /**
- * Runs the loader, which relies on user I/O to manually input memory addresses
- * to load machine code. In the future, this loader will support the reading of
- * assembled object files.
+ * Runs the loader, which loads the assembled object file passed in via args
+ * into the vm.
  *
- * Enter memory address 0x0000 to complete loading.
+ * @param file_path string representing the path of the assembled obj file
  */
-void loader_run(void);
+void loader_run(char *file_path);
 
 #endif

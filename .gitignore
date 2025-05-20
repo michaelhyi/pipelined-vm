@@ -3,3 +3,5 @@
 
 vm
 vm-tests
+
+*.obj

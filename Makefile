@@ -14,7 +14,7 @@ TEST_OUTPUT = vm-tests
 
 
 run: compile
-	./$(SRC_OUTPUT)
+	./$(SRC_OUTPUT) $(ARGS)
 
 test: compile-tests
 	./$(TEST_OUTPUT)

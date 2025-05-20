@@ -5,6 +5,7 @@
 #include <pthread.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "loader.h"
@@ -19,7 +20,7 @@
 vm_t vm;
 size_t clock_cycle_counter;
 
-void vm_init(int test) {
+void vm_init(int test, char *obj_file_path) {
     memset(&vm, 0, sizeof(vm_t));
     clock_cycle_counter = 0;
 
@@ -37,7 +38,13 @@ void vm_init(int test) {
     init_mutexes_and_barriers();
 
     if (!test) {
-        loader_run();
+        loader_run(obj_file_path);
+
+        if (errno) {
+            errno = 0;
+            fprintf(stderr, "error loading file %s\n", obj_file_path);
+            exit(1);
+        }
     }
 
     pipeline_table_init();
