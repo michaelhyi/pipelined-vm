@@ -7,8 +7,8 @@ space of 2^16.
 The processor is divided into 5 stages: `IF`, `ID`, `EX`, `MEM`, `WB`. Each
 executes as a single thread to simulate parallelism. The virtual pipeline
 supports pipeline stalls, read-after-write hazard handling, and control hazard
-handling. Features that will be implemented in the future are branch prediction,
-data forwarding, branch prediction, and interrupt handlers.
+handling. Features that will be implemented in the future are an access
+violation handler, branch prediction, data forwarding, and interrupt handlers.
 
 ## Quick Start
 
