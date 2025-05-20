@@ -105,6 +105,14 @@ void increment_cc_busy_counter(void);
 int16_t get_cc_data(void);
 
 /**
+ * Sets the vm's `running` bit in a thread-safe manner.
+ *
+ * @param new_running the new running bit to set. must be 0 or 1
+ * @note sets errno to `EINVAL` if new_running is not 0 or 1
+ */
+void set_running(uint16_t new_running);
+
+/**
  * Gets the VM's current FBUF in a thread-safe manner.
  *
  * @returns the current `fbuf` value

@@ -37,9 +37,7 @@ void *wb_run(void *arg) {
         // TODO: for now, it is assumed that all traps passed in are HALT
         // statements. this will, obviously, change in the near future. this is
         // just for testing purposes
-        pthread_mutex_lock(&vm.running_mutex);
-        vm.running = 0;
-        pthread_mutex_unlock(&vm.running_mutex);
+        set_running(0);
     }
 
     if (errno) {

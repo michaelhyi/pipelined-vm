@@ -213,6 +213,12 @@ int16_t get_cc_data(void) {
     return cc;
 }
 
+void set_running(uint16_t new_running) {
+    pthread_mutex_lock(&vm.running_mutex);
+    vm.running = new_running;
+    pthread_mutex_unlock(&vm.running_mutex);
+}
+
 fbuf_t get_fbuf(void) {
     pthread_mutex_lock(&vm.fbuf_mutex);
     fbuf_t fbuf = vm.fbuf;
