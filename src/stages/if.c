@@ -52,11 +52,7 @@ static void if_teardown(fbuf_t next_fbuf) {
 
     if (get_pc_override_signal()) {
         set_pc(get_pc_override());
-
-        // TODO: abstract to function
-        pthread_mutex_lock(&vm.pc_override_signal_mutex);
-        vm.pc_override_signal = 0;
-        pthread_mutex_unlock(&vm.pc_override_signal_mutex);
+        set_pc_override_signal(0);
     }
 
     if (errno) {

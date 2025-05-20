@@ -178,6 +178,13 @@ void set_pc_override(uint16_t new_pc);
 uint16_t get_pc_override_signal(void);
 
 /**
+ * Sets pc_override_signal in a thread-safe manner.
+ *
+ * @param new_signal the new signal to set. must be a 0 or 1
+ */
+void set_pc_override_signal(uint16_t new_signal);
+
+/**
  * Asserts the NOP bit to the `ID` stage of the pipeline.
  */
 void send_bubble_to_id(void);

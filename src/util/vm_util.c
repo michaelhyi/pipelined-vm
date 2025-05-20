@@ -292,6 +292,17 @@ uint16_t get_pc_override_signal(void) {
     return pc_override_signal;
 }
 
+void set_pc_override_signal(uint16_t new_signal) {
+    if (new_signal != 0 && new_signal != 1) {
+        errno = EINVAL;
+        return;
+    }
+
+    pthread_mutex_lock(&vm.pc_override_signal_mutex);
+    vm.pc_override_signal = new_signal;
+    pthread_mutex_unlock(&vm.pc_override_signal_mutex);
+}
+
 void send_bubble_to_id(void) {
     pthread_mutex_lock(&vm.id_nop_mutex);
     vm.id_nop = 1;
