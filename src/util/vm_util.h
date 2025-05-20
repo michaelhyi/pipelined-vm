@@ -65,6 +65,20 @@ int16_t get_register_data(uint16_t reg_num);
 void set_register_data(uint16_t reg_num, int16_t data);
 
 /**
+ * Increments the busy counter of a register.
+ *
+ * @param register_num the number of the register to update
+ */
+void increment_busy_counter(uint16_t register_num);
+
+/**
+ * Decrements the busy counter of a register.
+ *
+ * @param register_num the number of the register to update
+ */
+void decrement_busy_counter(uint16_t register_num);
+
+/**
  * Gets the VM's PC in a thread-safe manner.
  */
 uint16_t get_pc(void);

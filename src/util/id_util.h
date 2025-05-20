@@ -118,13 +118,6 @@ void decode_not(fbuf_t fbuf, dbuf_t *dbuf);
 void decode_trap(fbuf_t fbuf, dbuf_t *dbuf);
 
 /**
- * Increments the busy counter of a register.
- *
- * @param register_num the number of the register to update
- */
-void increment_busy_counter(uint16_t register_num);
-
-/**
  * Updates `dbuf` with the next dbuf from the `ID` stage if its STAY signal is
  * not high.
  *

@@ -244,12 +244,6 @@ void decode_trap(fbuf_t fbuf, dbuf_t *dbuf) {
     dbuf->operand1 = bit_range(fbuf.ir, 0, 7);
 }
 
-void increment_busy_counter(uint16_t register_num) {
-    pthread_mutex_lock(&vm.register_file_mutex);
-    vm.register_file[register_num].busy_counter++;
-    pthread_mutex_unlock(&vm.register_file_mutex);
-}
-
 void update_dbuf(dbuf_t dbuf) {
     pthread_mutex_lock(&vm.ex_stay_mutex);
 

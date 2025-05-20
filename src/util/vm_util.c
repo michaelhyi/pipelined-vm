@@ -170,8 +170,18 @@ void set_register_data(uint16_t reg_num, int16_t data) {
     }
 
     vm.register_file[reg_num].data = data;
-    vm.register_file[reg_num]
-        .busy_counter--; // TODO: decouple this logic from this method
+    pthread_mutex_unlock(&vm.register_file_mutex);
+}
+
+void increment_busy_counter(uint16_t register_num) {
+    pthread_mutex_lock(&vm.register_file_mutex);
+    vm.register_file[register_num].busy_counter++;
+    pthread_mutex_unlock(&vm.register_file_mutex);
+}
+
+void decrement_busy_counter(uint16_t register_num) {
+    pthread_mutex_lock(&vm.register_file_mutex);
+    vm.register_file[register_num].busy_counter--;
     pthread_mutex_unlock(&vm.register_file_mutex);
 }
 
