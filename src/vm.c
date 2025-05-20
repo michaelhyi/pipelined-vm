@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "isa.h"
 #include "loader.h"
 #include "pipeline_table.h"
 #include "stages/ex.h"
@@ -22,6 +23,15 @@ size_t clock_cycle_counter;
 
 void vm_init(int test, char *obj_file_path) {
     memset(&vm, 0, sizeof(vm_t));
+
+    // halt handler
+    vm.mem[0x25] = 0x1000;
+    vm.mem[0x1000] = (int16_t)(OP_RESERVED << 12);
+    vm.mem[0x1001] = (int16_t)(OP_RESERVED << 12);
+    vm.mem[0x1002] = (int16_t)(OP_RESERVED << 12);
+    vm.mem[0x1003] = (int16_t)(OP_RESERVED << 12);
+    vm.mem[0x1004] = (int16_t)(OP_RESERVED << 12);
+
     clock_cycle_counter = 0;
 
     vm.pc = 0x3000;

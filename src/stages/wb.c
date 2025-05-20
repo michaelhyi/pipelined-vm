@@ -33,10 +33,7 @@ void *wb_run(void *arg) {
     } else if (mbuf.opcode == OP_JSR || mbuf.opcode == OP_JSRR) {
         set_register_data(7, (int16_t)mbuf.pc);
         decrement_busy_counter(7);
-    } else if (mbuf.opcode == OP_TRAP) {
-        // TODO: for now, it is assumed that all traps passed in are HALT
-        // statements. this will, obviously, change in the near future. this is
-        // just for testing purposes
+    } else if (mbuf.opcode == OP_RESERVED) {
         set_running(0);
     }
 

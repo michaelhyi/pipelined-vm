@@ -1,7 +1,7 @@
 .vscode
+asm
 .clang-format
 
 vm
 vm-tests
 
-*.obj

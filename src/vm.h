@@ -58,6 +58,8 @@ typedef struct vm_t {
     uint16_t pc;
     vm_register_t cc;
     int16_t psr;
+    uint16_t saved_ssp;
+    uint16_t saved_usp;
 
     uint16_t running;
 
@@ -84,6 +86,8 @@ typedef struct vm_t {
     pthread_mutex_t pc_mutex;
     pthread_mutex_t cc_mutex;
     pthread_mutex_t psr_mutex;
+    pthread_mutex_t saved_ssp_mutex;
+    pthread_mutex_t saved_usp_mutex;
 
     pthread_mutex_t running_mutex;
 

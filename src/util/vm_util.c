@@ -119,10 +119,11 @@ void memory_viewer_run(void) {
 }
 
 int16_t get_mem(uint16_t addr) {
-    if (!supervisor_mode() && privileged_mem_addr(addr)) {
-        errno = EFAULT;
-        return 0;
-    }
+    (void)(supervisor_mode());
+    // if (!supervisor_mode() && privileged_mem_addr(addr)) {
+    //     errno = EFAULT;
+    //     return 0;
+    // }
 
     pthread_mutex_lock(&vm.mem_mutex);
     int16_t data = vm.mem[addr];
@@ -132,10 +133,10 @@ int16_t get_mem(uint16_t addr) {
 }
 
 void set_mem(uint16_t addr, int16_t data) {
-    if (!supervisor_mode() && privileged_mem_addr(addr)) {
-        errno = EFAULT;
-        return;
-    }
+    // if (!supervisor_mode() && privileged_mem_addr(addr)) {
+    //     errno = EFAULT;
+    //     return;
+    // }
 
     pthread_mutex_lock(&vm.mem_mutex);
     vm.mem[addr] = data;
@@ -217,6 +218,45 @@ void decrement_cc_busy_counter(void) {
     pthread_mutex_lock(&vm.cc_mutex);
     vm.cc.busy_counter--;
     pthread_mutex_unlock(&vm.cc_mutex);
+}
+
+int16_t get_psr(void) {
+    pthread_mutex_lock(&vm.psr_mutex);
+    int16_t psr = vm.psr;
+    pthread_mutex_unlock(&vm.psr_mutex);
+    return psr;
+}
+
+void set_psr(int16_t new_psr) {
+    pthread_mutex_lock(&vm.psr_mutex);
+    vm.psr = new_psr;
+    pthread_mutex_unlock(&vm.psr_mutex);
+}
+
+uint16_t get_saved_ssp(void) {
+    pthread_mutex_lock(&vm.saved_ssp_mutex);
+    uint16_t saved_ssp = vm.saved_ssp;
+    pthread_mutex_unlock(&vm.saved_ssp_mutex);
+    return saved_ssp;
+}
+
+void set_saved_ssp(uint16_t new_saved_ssp) {
+    pthread_mutex_lock(&vm.saved_ssp_mutex);
+    vm.saved_ssp = new_saved_ssp;
+    pthread_mutex_unlock(&vm.saved_ssp_mutex);
+}
+
+uint16_t get_saved_usp(void) {
+    pthread_mutex_lock(&vm.saved_usp_mutex);
+    uint16_t saved_usp = vm.saved_usp;
+    pthread_mutex_unlock(&vm.saved_usp_mutex);
+    return saved_usp;
+}
+
+void set_saved_usp(uint16_t new_saved_usp) {
+    pthread_mutex_lock(&vm.saved_usp_mutex);
+    vm.saved_usp = new_saved_usp;
+    pthread_mutex_unlock(&vm.saved_usp_mutex);
 }
 
 void set_running(uint16_t new_running) {

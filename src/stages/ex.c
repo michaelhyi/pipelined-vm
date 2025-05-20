@@ -36,8 +36,6 @@ void *ex_run(void *arg) {
             set_pc_override(new_pc);
 
             send_bubble_to_id();
-            // TODO: if we squash an instruction in decode that incremented the
-            // busy counter, we need to decrement it here
             send_bubble_to_ex();
         }
     } else if (instruction_needs_add(dbuf.opcode)) {
@@ -62,9 +60,22 @@ void *ex_run(void *arg) {
         uint16_t new_pc = (uint16_t)dbuf.reg;
         set_pc_override(new_pc);
     } else if (dbuf.opcode == OP_TRAP) {
-        // TODO: fetch starting address of trap handler using the trap vector
-        // table, then set pc to starting address of trap handler
-        // Some tests are failing because there is no trap handler
+        // TODO: implement rti, undo check for access violation
+        send_bubble_to_id();
+        send_bubble_to_ex();
+
+        uint16_t r6 = (uint16_t)get_register_data(6);
+        set_saved_usp(r6);
+        set_register_data(6, (int16_t)get_saved_ssp());
+
+        set_register_data(6, get_register_data(6) - 1);
+        set_mem((uint16_t)get_register_data(6), (int16_t)get_pc());
+
+        set_register_data(6, get_register_data(6) - 1);
+        set_mem((uint16_t)get_register_data(6), get_psr());
+
+        set_psr((int16_t)(0 << 15));
+        set_pc((uint16_t)get_mem((uint16_t)dbuf.operand1));
     }
 
     if (errno) {

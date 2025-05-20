@@ -109,6 +109,48 @@ void increment_cc_busy_counter(void);
 void decrement_cc_busy_counter(void);
 
 /**
+ * Gets the psr in a thread-safe manner.
+ *
+ * @returns the vm's psr
+ */
+int16_t get_psr(void);
+
+/**
+ * Sets the psr in a thread-safe manner.
+ *
+ * @param new_psr the new psr to set
+ */
+void set_psr(int16_t new_psr);
+
+/**
+ * Gets the saved supervisor stack ptr in a thread-safe manner.
+ *
+ * @returns the saved supervisor stack ptr
+ */
+uint16_t get_saved_ssp(void);
+
+/**
+ * Sets the saved supervisor stack ptr in a thread-safe manner.
+ *
+ * @param new_saved_ssp the new supervisor stack ptr to save
+ */
+void set_saved_ssp(uint16_t new_saved_ssp);
+
+/**
+ * Gets the saved user stack ptr in a thread-safe manner.
+ *
+ * @returns the saved user stack ptr
+ */
+uint16_t get_saved_usp(void);
+
+/**
+ * Sets the saved user stack ptr in a thread-safe manner.
+ *
+ * @param new_saved_usp the new user stack ptr to save
+ */
+void set_saved_usp(uint16_t new_saved_usp);
+
+/**
  * Sets the vm's `running` bit in a thread-safe manner.
  *
  * @param new_running the new running bit to set. must be 0 or 1
