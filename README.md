@@ -10,10 +10,14 @@ supports pipeline stalls, read-after-write hazard handling, and control hazard
 handling. Features that will be implemented in the future are an access
 violation handler, branch prediction, data forwarding, and interrupt handlers.
 
-Tech Stack: C, LC-3 Assembly
+## Tech Stack
+- C
+- LC-3 Assembly
 
 ## Quick Start
-Requirements: Docker
+Requirements:
+- Docker
+- Georgia Tech CS 2110's LC-3 Tools
 
 Run the Docker container:
 ```bash
