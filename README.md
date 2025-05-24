@@ -10,20 +10,10 @@ supports pipeline stalls, read-after-write hazard handling, and control hazard
 handling. Features that will be implemented in the future are an access
 violation handler, branch prediction, data forwarding, and interrupt handlers.
 
+Tech Stack: C, LC-3 Assembly
+
 ## Quick Start
-
-Tools:
-- C
-- LC-3 Assembly
-- Unix
-- GDB
-- Make
-- Bash
-- Docker 
-
-Requirements:
-- Bash
-- Docker
+Requirements: Docker
 
 Run the Docker container:
 ```bash
