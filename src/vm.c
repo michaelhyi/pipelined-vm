@@ -85,8 +85,8 @@ void vm_run(int test) {
         pthread_join(mem_tid, &mem_err);
         pthread_join(wb_tid, &wb_err);
 
-        if (!(intptr_t)if_err || !(intptr_t)id_err || !(intptr_t)ex_err ||
-            !(intptr_t)mem_err || !(intptr_t)wb_err) {
+        if ((intptr_t)if_err || (intptr_t)id_err || (intptr_t)ex_err ||
+            (intptr_t)mem_err || (intptr_t)wb_err) {
             fprintf(stderr, "cycle %ld failed\n", clock_cycle_counter);
             vm_teardown(test);
             exit(1);
@@ -104,6 +104,8 @@ void vm_teardown(int test) {
     pipeline_table_teardown();
 
     if (!test) {
+        print_register_file(); // TODO: print should be a prefix or suffix?
+                               // parallelism
         memory_viewer_run();
     }
 }

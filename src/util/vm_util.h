@@ -29,6 +29,11 @@ void destroy_mutexes_and_barriers(void);
 void memory_viewer_run(void);
 
 /**
+ * Prints out the register file.
+ */
+void print_register_file(void);
+
+/**
  * Gets data from the VM's memory in a thread-safe manner.
  *
  * @param addr memory address to get data from

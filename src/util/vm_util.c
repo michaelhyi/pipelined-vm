@@ -101,6 +101,15 @@ void destroy_mutexes_and_barriers(void) {
     pthread_barrier_destroy(&vm.pipeline_cycle_barrier);
 }
 
+void print_register_file(void) {
+    printf("register_num    data\n");
+    printf("--------------------\n");
+
+    for (size_t i = 0; i < NUM_REGISTERS; i++) {
+        printf("%ld               0x%x\n", i, vm.register_file[i].data);
+    }
+}
+
 void memory_viewer_run(void) {
     while (1) {
         uint16_t addr;
