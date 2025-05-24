@@ -24,7 +24,7 @@ size_t clock_cycle_counter;
 void vm_init(int test, char *obj_file_path) {
     memset(&vm, 0, sizeof(vm_t));
 
-    // halt handler
+    // loads halt handler. TODO: abstract to util function
     vm.mem[0x25] = 0x1000;
     vm.mem[0x1000] = (int16_t)(OP_RESERVED << 12);
     vm.mem[0x1001] = (int16_t)(OP_RESERVED << 12);
@@ -53,6 +53,7 @@ void vm_init(int test, char *obj_file_path) {
         if (errno) {
             errno = 0;
             fprintf(stderr, "error loading file %s\n", obj_file_path);
+            destroy_mutexes_and_barriers();
             exit(1);
         }
     }
@@ -60,7 +61,7 @@ void vm_init(int test, char *obj_file_path) {
     pipeline_table_init();
 }
 
-void vm_run(void) {
+void vm_run(int test) {
     while (vm.running) {
         pipeline_table_add_row();
 
@@ -84,11 +85,12 @@ void vm_run(void) {
         pthread_join(mem_tid, &mem_err);
         pthread_join(wb_tid, &wb_err);
 
-        assert(!((intptr_t)if_err));
-        assert(!((intptr_t)id_err));
-        assert(!((intptr_t)ex_err));
-        assert(!((intptr_t)mem_err));
-        assert(!((intptr_t)wb_err));
+        if (!(intptr_t)if_err || !(intptr_t)id_err || !(intptr_t)ex_err ||
+            !(intptr_t)mem_err || !(intptr_t)wb_err) {
+            fprintf(stderr, "cycle %ld failed\n", clock_cycle_counter);
+            vm_teardown(test);
+            exit(1);
+        }
 
         clock_cycle_counter++;
     }

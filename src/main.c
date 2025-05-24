@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
     char *obj_file_path = argv[2];
 
     vm_init(0, obj_file_path);
-    vm_run();
+    vm_run(0);
     vm_teardown(0);
 
     return 0;

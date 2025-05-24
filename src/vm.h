@@ -116,7 +116,7 @@ extern vm_t vm;
 extern size_t clock_cycle_counter;
 
 /**
- * Initializes the virtual machine.
+ * Initializes the vm.
  *
  * @param test 1 if running tests, 0 otherwise
  * @param obj_file_path a string containing the assembled obj file's path
@@ -124,12 +124,14 @@ extern size_t clock_cycle_counter;
 void vm_init(int test, char *obj_file_path);
 
 /**
- * Runs the virtual machine.
+ * Runs the vm.
+ *
+ * @param test 1 if running tests, 0 otherwise
  */
-void vm_run(void);
+void vm_run(int test);
 
 /**
- * Tears down the virtual machine.
+ * Tears down the vm.
  *
  * @param test 1 if running tests, 0 otherwise
  */

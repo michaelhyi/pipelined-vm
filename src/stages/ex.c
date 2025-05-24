@@ -61,6 +61,7 @@ void *ex_run(void *arg) {
         set_pc_override(new_pc);
     } else if (dbuf.opcode == OP_TRAP) {
         // TODO: implement rti, undo check for access violation
+        // TODO: convert each to instructions
         send_bubble_to_id();
         send_bubble_to_ex();
 
